@@ -265,7 +265,7 @@ function ReverseDCF({ data }) {
 
   return (<>
     <SH>Financial Snapshot</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(140px, 100%),1fr))", gap: 10, marginBottom: 14 }}>
       <RateCard label="Stock Price" value={price} color="#818cf8" format="plain" subtitle={price ? `$${price.toFixed(2)}` : null} small />
       <RateCard label="Market Cap" value={mktCap} color="#3B82F6" format="bigdollar" small />
       <RateCard label="TTM Free Cash Flow" value={fcf} color="#10B981" format="bigdollar" small />
@@ -757,7 +757,7 @@ function VolSurface({ symbol, spot: initialSpot, chain: sharedChain }) {
 
   return (<>
     <SH>Options Overview</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(130px,1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(130px, 100%),1fr))", gap: 10, marginBottom: 14 }}>
       <RateCard label={<HelpTip term="spot">Spot Price</HelpTip>} value={spot} color="#818cf8" format="plain" subtitle={`$${spot?.toFixed(2)}`} small />
       <RateCard label={<HelpTip term="atmIV">ATM IV</HelpTip>} value={atmIV} color="#3B82F6" subtitle={atmIV ? `${atmIV.toFixed(1)}%` : "—"} small />
       <RateCard label={<HelpTip term="ivRange">IV Range</HelpTip>} value={null} color="#10B981" format="plain" subtitle={ivMin != null ? `${ivMin.toFixed(0)}% – ${ivMax.toFixed(0)}%` : "—"} small />
@@ -770,7 +770,7 @@ function VolSurface({ symbol, spot: initialSpot, chain: sharedChain }) {
     {/* ── Implied Move ── */}
     {impliedMoves.length > 0 && (<>
       <SH><HelpTip term="impliedMove">Volatility-scaled reference move</HelpTip> — ATM IV × square root of time</SH>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))", gap: 10, marginBottom: 14 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(180px, 100%),1fr))", gap: 10, marginBottom: 14 }}>
         {impliedMoves.map(im => (
           <div key={im.label} style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "12px 14px", position: "relative", overflow: "hidden" }}>
             <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "#818cf8", borderRadius: "14px 14px 0 0" }} />
@@ -928,7 +928,7 @@ function VolSurface({ symbol, spot: initialSpot, chain: sharedChain }) {
     {/* ── Greeks Profile (Delta / Gamma / Theta / Vega vs strike) ── */}
     {greeksData.length > 0 && (<>
       <SH><HelpTip term="greeks">Greeks Profile</HelpTip> — {smileExpiry} DTE ({optType === "C" ? "Calls" : "Puts"})</SH>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(320px,1fr))", gap: 14, marginBottom: 14 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(320px, 100%),1fr))", gap: 14, marginBottom: 14 }}>
         {[
           { key: "delta", label: "Delta",  color: "#10B981", desc: "Δ price per $1 spot move", precision: 3 },
           { key: "gamma", label: "Gamma",  color: "#F59E0B", desc: "Δ delta per $1 spot move", precision: 4 },
@@ -960,7 +960,7 @@ function VolSurface({ symbol, spot: initialSpot, chain: sharedChain }) {
     {/* ── Open Interest profile + Max Pain ── */}
     {oiProfile && oiProfile.chartData.length > 0 && (<>
       <SH>Open Interest Profile & <HelpTip term="maxPain">Max Pain</HelpTip> — {smileExpiry} DTE</SH>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(155px,1fr))", gap: 10, marginBottom: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(155px, 100%),1fr))", gap: 10, marginBottom: 12 }}>
         <RateCard label={<HelpTip term="maxPain">Max Pain Strike</HelpTip>} value={null} color="#F97316" format="plain" subtitle={oiProfile.maxPainStrike != null ? `$${oiProfile.maxPainStrike}` : "—"} small />
         <RateCard label={<HelpTip term="callOI">Total Call OI</HelpTip>} value={null} color="#10B981" format="plain" subtitle={oiProfile.totalCallOI.toLocaleString()} small />
         <RateCard label={<HelpTip term="putOI">Total Put OI</HelpTip>} value={null} color="#EF4444" format="plain" subtitle={oiProfile.totalPutOI.toLocaleString()} small />
@@ -1126,7 +1126,7 @@ function StockDetailView({ data, onBack, fmpKey }) {
       {data.quote && (
         <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 22px", marginBottom: 16 }}>
           <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.6, textTransform: "uppercase", marginBottom: 4 }}>Trading Information</div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))", gap: "0 24px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(130px, 100%), 1fr))", gap: "0 24px" }}>
             {statCell("Open", `$${fmtNum(q.open)}`)}
             {statCell("Prev Close", `$${fmtNum(q.previousClose)}`)}
             {statCell("Day Range", `$${fmtNum(q.dayLow)} – $${fmtNum(q.dayHigh)}`)}

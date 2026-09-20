@@ -64,12 +64,45 @@ body { margin: 0; }
 @media(max-width:560px) { .market-reading { display: block; } .market-reading .market-pulse { padding: 16px 0; } .market-controls { flex-wrap: wrap; } .market-fact { padding-right: 0; } .market-chart-controls { flex-wrap: wrap; } .market-economics > div { flex-direction: column; gap: 6px; } .market-economics dd { text-align: left; } }
 @media(max-width:760px) {
   .ledger-layout { flex-direction: column; }
-  .ledger-sidebar { width: 100% !important; position: static !important; display: flex; gap: 12px; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--border-subtle); padding-bottom: 12px; }
-  .ledger-nav-group { flex: 0 0 auto; margin-bottom: 0 !important; }
+  /* min-width:0 is load-bearing. As a flex item the sidebar defaults to
+     min-width:auto, so it refuses to shrink below the width of its nav row and
+     widens the whole layout — 662px inside a 358px column, which is what made
+     every page slide sideways. overflow-x:auto cannot help until the item is
+     allowed to be narrower than its content. */
+  .ledger-layout, .ledger-layout > div { min-width: 0; max-width: 100%; }
+  .ledger-sidebar { width: 100% !important; position: static !important; display: flex; align-items: center; gap: 6px; overflow-x: auto; min-width: 0; border-right: 0; border-bottom: 1px solid var(--border-subtle); padding-bottom: 8px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .ledger-sidebar::-webkit-scrollbar { display: none; }
+  /* Flatten the groups into one row of pills. The section headings (TODAY,
+     VALUATION, MACRO…) cost a whole line and earn nothing once the nav is a
+     strip you scroll — they are structure for a column, not a row. */
+  .ledger-nav-group { flex: 0 0 auto; margin-bottom: 0 !important; display: flex; gap: 6px; }
+  .ledger-nav-group > div:first-child { display: none; }
+  .ledger-nav-link { width: auto !important; white-space: nowrap; padding: 7px 13px !important; margin-bottom: 0 !important; font-size: 13px !important; border-radius: 999px !important; background: var(--bg-subtle) !important; }
+  .ledger-nav-link[aria-current=page] { box-shadow: none; background: var(--tab-active-bg) !important; color: var(--tab-active-color) !important; font-weight: 600 !important; }
   .ledger-sidebar > div:first-child { flex: 0 0 auto; }
-  .ledger-sidebar > button { flex: 0 0 95px; align-self: center; }
+  .ledger-sidebar > button { flex: 0 0 auto; align-self: center; }
   .ledger-layout > div { width: 100%; }
   .market-masthead { align-items: start; flex-direction: column; }
+
+  /* Nothing may widen the page. A table is the usual culprit: it sizes to its
+     content and, unwrapped, drags the document with it — you then scroll the
+     whole page sideways to read one row, which is the single worst thing a
+     phone layout can do. Letting each table scroll inside itself keeps the
+     page fixed. The dense panels avoid this entirely by reflowing to cards
+     (see DataTable); this is the floor for everything that has not. */
+  .ledger-app table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* The one rule that fixes most of it. A grid or flex child defaults to
+     min-width:auto, which means "never shrink below my content". Nested a few
+     deep, one wide table or long headline then forces every ancestor open and
+     the page scrolls sideways. This was behind the sidebar, the news ticker and
+     the Machine and Regional panels independently. Resetting it lets tracks
+     actually honour their 1fr. Anything that genuinely needs a floor sets
+     min-width explicitly in its inline style, which still wins on specificity. */
+  .ledger-app :where(div, section, article, main, li, td, th) { min-width: 0; }
+  /* Charts and anything else measured in pixels get the same ceiling. */
+  .ledger-app img, .ledger-app svg, .ledger-app canvas { max-width: 100%; }
+  .ledger-app .recharts-responsive-container { max-width: 100% !important; }
 }
 @media(prefers-reduced-motion:reduce) { .ledger-app *, .ledger-app *::before, .ledger-app *::after { transition: none !important; animation: none !important; } }
 

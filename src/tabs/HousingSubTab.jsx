@@ -111,7 +111,7 @@ function HousingSubTab({ hd, md, zillow, hideHealth = false }) {
 
     {/* National Overview Cards */}
     <SH>National Housing Overview</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(160px, 100%), 1fr))", gap: 10, marginBottom: 14 }}>
       <RateCard label="Typical Home Value" value={zn.zhvi?.current} color="#3B82F6" format="dollar" subtitle={zn.zhvi?.yoy != null ? `${zn.zhvi.yoy >= 0 ? "+" : ""}${zn.zhvi.yoy.toFixed(1)}% YoY` : "Zillow ZHVI"} date={zn.zhvi?.lastDate} />
       <RateCard label="Typical Monthly Rent" value={zn.zori?.current} color="#8B5CF6" format="plain" subtitle={zn.zori?.yoy != null ? `${zn.zori.yoy >= 0 ? "+" : ""}${zn.zori.yoy.toFixed(1)}% YoY` : "Zillow ZORI"} date={zn.zori?.lastDate} />
       <RateCard label="30-Year Mortgage" value={md?.MORTGAGE30US?.current} color="#F59E0B" subtitle="Fixed rate avg" date={md?.MORTGAGE30US?.lastDate} />
@@ -181,7 +181,7 @@ function HousingSubTab({ hd, md, zillow, hideHealth = false }) {
 
     {/* Construction Activity */}
     <SH>Construction Activity</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(140px, 100%), 1fr))", gap: 10, marginBottom: 14 }}>
       <RateCard label="Housing Starts" value={hd?.HOUST?.current} color="#10B981" format="thousands" subtitle="Thousands, SAAR" date={hd?.HOUST?.lastDate} small />
       <RateCard label="Building Permits" value={hd?.PERMIT?.current} color="#8B5CF6" format="thousands" subtitle="Thousands, SAAR" date={hd?.PERMIT?.lastDate} small />
       <RateCard label="Existing Sales" value={hd?.EXHOSLUSM495S?.current} color="#F59E0B" format="thousands" subtitle="Thousands, SAAR" date={hd?.EXHOSLUSM495S?.lastDate} small />
@@ -311,7 +311,7 @@ function HousingHealthPanel({ zn, metros }) {
     )}
 
     {/* Four-gauge dial */}
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(215px, 1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(215px, 100%), 1fr))", gap: 10, marginBottom: 14 }}>
       {hh && gauge("Affordability", hh.afford.light,
         `${hh.afford.current?.toFixed(1)}% of income`,
         `P&I on median home · p${hh.afford.pct} since ${hh.afford.since}`)}
@@ -351,7 +351,7 @@ function HousingHealthPanel({ zn, metros }) {
     )}
 
     {/* Price-to-rent + metro breadth, side by side */}
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(330px, 1fr))", gap: 12, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(330px, 100%), 1fr))", gap: 12, marginBottom: 14 }}>
       {zil.p2r.length > 12 && (
         <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 14px 6px 4px" }}>
           <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.5, textTransform: "uppercase", paddingLeft: 14, marginBottom: 6 }}>
@@ -478,7 +478,7 @@ function ReplacementCostPanel() {
     </div>
 
     {/* Cost pressure tiles */}
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(160px, 100%), 1fr))", gap: 10, marginBottom: 14 }}>
       {yoyTile("Construction Inputs", t.constructionInputs?.yoy, "materials PPI, YoY")}
       {yoyTile("Construction Wages", t.wages?.yoy, t.wages?.cur ? `$${t.wages.cur.toFixed(2)}/hr avg` : "YoY")}
       {yoyTile("Lumber", t.lumber?.yoy, "PPI, YoY")}

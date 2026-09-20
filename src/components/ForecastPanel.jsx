@@ -46,7 +46,7 @@ export default function ForecastPanel({ tag, live = {} }) {
     <div style={{ fontSize: 11, color: "#94a3b8", fontFamily: fonts.mono, marginBottom: 12, lineHeight: 1.5, maxWidth: 840 }}>
       Deep-research forecasts with percentile bands, run {FORECASTS_ASOF} via FutureSearch (public track record on Metaculus/markets). Every question resolves against a number this dashboard tracks or a public print — so each one is scoreable, unlike street targets. <span style={{ color: "#4ade80" }}>◆</span> = today&apos;s live value.
     </div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 12, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))", gap: 12, marginBottom: 14 }}>
       {items.map(f => (
         <div key={f.id} style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 18px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10 }}>

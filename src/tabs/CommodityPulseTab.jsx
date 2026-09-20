@@ -80,7 +80,7 @@ function Inventories({ inv }) {
   return (<>
     <SH>Inventories — What Is Actually in the Tanks (EIA, weekly)</SH>
     <div style={{ ...note, marginTop: -8, marginBottom: 8 }}>Level, week-on-week change, and the gap to the five-year average for the same week of the year — the seasonal yardstick the energy market prices off. Amber = tighter than normal, red = much tighter, cyan = ample.{tightest ? ` Tightest: ${tightest.label.toLowerCase()} ${pc(tightest.vs5y, 0)} vs its five-year average.` : ""}</div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(190px, 100%), 1fr))", gap: 10, marginBottom: 14 }}>
       {items.map(i => { const c = invTone(i.vs5y, i.tone); return (
         <div key={i.key} title={`${i.note} · ${i.date} · a year ago ${pc(i.yoyPct)} · five-year average ${invFmt(i.avg5y, i.unit)} (${i.yearsIn5y} yrs)`} style={{ ...card, padding: "10px 12px", borderLeft: `3px solid ${c}` }}>
           <div style={label}>{i.label}</div>
@@ -115,7 +115,7 @@ function CommodityPulseTab() {
   const chips = [["copper / gold", fin(m.copperGold) ? `${m.copperGold} (${pc(m.copperGoldChg6m, 0)} 6m)` : "—"], ["gold / oil", fin(m.goldOil) ? `${m.goldOil} bbl per oz` : "—"], ["dollar", fin(m.dxy) ? `${m.dxy} (${pc(m.dxyYoy)} y/y, p${m.dxyPct})` : "—"], ["real 10-yr", fin(m.realYield) ? `${m.realYield}% (p${m.realYieldPct})` : "—"], ["breakeven", fin(m.breakeven) ? `${m.breakeven}% (p${m.breakevenPct})` : "—"]];
 
   return (<>
-    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "minmax(240px, 1.1fr) minmax(320px, 1.6fr)", gap: 18, alignItems: "start" }}>
+    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 18, alignItems: "start" }}>
       <div>
         <div style={label}>Commodities · pulse</div>
         <div style={{ fontSize: 24, fontWeight: 800, color: oc, fontFamily: fonts.heading, letterSpacing: -0.7, lineHeight: 1.1, marginTop: 4 }}>{d.overall.label}</div>
@@ -151,7 +151,7 @@ function CommodityPulseTab() {
 
     <Inventories inv={d.inventories} />
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 12, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 14 }}>
       {chartBox("Real commodity prices since 1992 — IMF indexes in today's dollars (average = 100)",
         <ResponsiveContainer width="100%" height={180}><LineChart data={d.charts.realIndex} margin={{ top: 8, right: 8, bottom: 0, left: -14 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" /><XAxis dataKey="d" tick={axis} tickFormatter={x => x.slice(0, 4)} minTickGap={36} axisLine={false} tickLine={false} /><YAxis tick={axis} axisLine={false} tickLine={false} domain={["auto", "auto"]} />
@@ -190,7 +190,7 @@ function CommodityPulseTab() {
         `Today ${d.spxGoldStats.now} oz buys one S&P point (p${d.spxGoldStats.pct} since ${d.spxGoldStats.since}; peak ${d.spxGoldStats.peak.v} in ${d.spxGoldStats.peak.d.slice(0, 4)}, trough ${d.spxGoldStats.trough.v} in ${d.spxGoldStats.trough.d.slice(0, 4)}). When the line falls, stocks are losing to hard money even if they are rising in dollars — the Dalio question of whether paper wealth is real.`)}
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 12, marginBottom: 14 }}>
       <div style={card}>
         <div style={label}>By group · YTD, 1-yr, real-price percentile</div>
         {d.groups.map(g => (

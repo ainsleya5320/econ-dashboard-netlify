@@ -7,7 +7,7 @@ import { SH } from "../components/shared.jsx";
 import {
   GREEN, AMBER, RED, INDIGO, SLATE, DIM, CYAN, VIOLET, BLUE, ORANGE, PINK, TEAL,
   fin, card, label, note, tip, axis, pc, pp, fmtDay, th, td, tdL, tableStyle,
-  chip, DenseHeader, Panel, Note, RangeBar, pctile, lastV, lastD,
+  chip, DenseHeader, Panel, Note, RangeBar, pctile, lastV, lastD, DataTable, useIsPhone, chartH,
 } from "../components/dense.jsx";
 
 // ============================================================================
@@ -163,22 +163,15 @@ function RatesTab({ md, td: tdata, fmpKey, fredKey }) {
     : s210 < -0.1 ? "inverted" : s210 < 0.15 ? "flat" : s210 < 1 ? "modestly upward-sloping" : "steep";
   const realWord = !fin(real10) ? "" : real10 > 2.5 ? "restrictive by any post-2008 standard" : real10 > 1.5 ? "clearly positive in real terms" : real10 > 0 ? "barely positive in real terms" : "negative in real terms";
 
-  const curveRow = c => {
-    const arr = f[c.id], v = lastV(arr);
-    if (!fin(v)) return null;
-    const d1 = chg(c.id, 1), d30 = chg(c.id, 30), d365 = chg(c.id, 365);
-    const p = pctile((arr || []).map(o => o.v), v);
-    return (
-      <tr key={c.id} style={{ borderTop: "1px solid var(--border-subtle)" }}>
-        {tdL(c.label, "var(--text-primary)", { fontWeight: 600 })}
-        {td(pc(v, 2), INDIGO, { fontWeight: 600 })}
-        {td(bp(d1), !fin(d1) ? DIM : d1 > 0 ? RED : GREEN)}
-        {td(bp(d30), !fin(d30) ? DIM : d30 > 0 ? RED : GREEN)}
-        {td(bp(d365), !fin(d365) ? DIM : d365 > 0 ? RED : GREEN)}
-        <td style={{ padding: "4px 6px", textAlign: "right" }}><RangeBar pct={p} /></td>
-      </tr>
-    );
-  };
+  const curveRows = CURVE.filter(c => fin(lastV(f[c.id]))).map(c => {
+    const arr = f[c.id];
+    return {
+      key: c.id, label: c.label, v: lastV(arr),
+      d1: chg(c.id, 1), d30: chg(c.id, 30), d365: chg(c.id, 365),
+      p: pctile((arr || []).map(o => o.v), lastV(arr)),
+    };
+  });
+  const bpCell = d => <span style={{ color: !fin(d) ? DIM : d > 0 ? RED : GREEN }}>{bp(d)}</span>;
 
   const SpreadHover = ({ active, payload, label: l }) => {
     if (!active || !payload?.length) return null;
@@ -224,7 +217,7 @@ function RatesTab({ md, td: tdata, fmpKey, fredKey }) {
       ]}
     />
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(330px,1fr))", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(330px, 100%),1fr))", gap: 12, marginBottom: 12 }}>
       <Panel title="The curve today, a month ago, a year ago" right={fmtDay(asOf)} style={{ marginBottom: 0 }}>
         <ResponsiveContainer width="100%" height={232}>
           <LineChart data={chartCurve} margin={{ top: 6, right: 10, left: -12, bottom: 0 }}>
@@ -242,12 +235,17 @@ function RatesTab({ md, td: tdata, fmpKey, fredKey }) {
       </Panel>
 
       <Panel title="Every tenor — level, moves, and its own five-year range" style={{ marginBottom: 0 }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={tableStyle}>
-            <thead><tr>{th("tenor", "left")}{th("yield")}{th("1d")}{th("1m")}{th("1y")}{th("5y range")}</tr></thead>
-            <tbody>{CURVE.map(curveRow)}</tbody>
-          </table>
-        </div>
+        <DataTable
+          rows={curveRows}
+          cols={[
+            { key: "label", label: "tenor", primary: true },
+            { key: "v", label: "yield", render: r => <span style={{ color: INDIGO, fontWeight: 600 }}>{pc(r.v, 2)}</span> },
+            { key: "d1", label: "1d", render: r => bpCell(r.d1) },
+            { key: "d30", label: "1m", render: r => bpCell(r.d30) },
+            { key: "d365", label: "1y", render: r => bpCell(r.d365) },
+            { key: "range", label: "5y range", render: r => <RangeBar pct={r.p} /> },
+          ]}
+        />
         <Note>The range marker is the percentile of today's yield within its own five years of daily history — 100 means the highest it has been.</Note>
       </Panel>
     </div>
@@ -319,7 +317,7 @@ function RatesTab({ md, td: tdata, fmpKey, fredKey }) {
       <Note>Breakevens are TIPS-implied and carry a liquidity premium, so they sit a touch below true expected inflation. The 5y5y forward strips out the next five years entirely — it is the cleanest read on whether long-run expectations are still anchored.</Note>
     </Panel>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(330px,1fr))", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(330px, 100%),1fr))", gap: 12, marginBottom: 12 }}>
       <Panel title="Policy and money-market rates" style={{ marginBottom: 0 }}>
         <div style={{ overflowX: "auto" }}>
           <table style={tableStyle}>

@@ -191,7 +191,7 @@ function HyperscalerCapexPanel() {
 
     {/* Hero stats */}
     {stats && (
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 14 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: 10, marginBottom: 14 }}>
         <StatCard label="Total Capex Last Q" val={fmtB(stats.lastTotal)} sub={`${stats.lastDate} · ${fmtPct1(stats.yoyGrowth)} YoY`} color="#6366F1" />
         <StatCard label="Implied AI Capex" val={fmtB(stats.lastAi)} sub={`${fmtPct1(stats.yoyAiGrowth)} YoY${stats.lastTotal > 0 ? ` · ${((stats.lastAi/stats.lastTotal)*100).toFixed(0)}% of total` : ""}`} color="#10B981" />
         <StatCard label="TTM Total Capex" val={fmtB(stats.ttmTotal)} sub="Trailing 4 quarters" color="#3B82F6" />
@@ -222,7 +222,7 @@ function HyperscalerCapexPanel() {
       <div style={{ fontSize: 11, color: "#94a3b8", fontFamily: fonts.mono, marginBottom: 14, lineHeight: 1.5 }}>
         Companies don&apos;t publish AI-specific capex; these sliders apply your estimate of what fraction is AI-related, based on earnings-call disclosures. Adjust to test scenarios.
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))", gap: 16 }}>
         {companies.map(c => (
           <div key={c.symbol}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
@@ -356,7 +356,7 @@ function PowerBottleneckPanel() {
   const pjmPrev = PJM_CAPACITY[PJM_CAPACITY.length - 3]; // two auctions back = pre-spike base
   return (<>
     <SH>The Power Bottleneck — What the Grid Charges for Scarcity</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(330px, 1fr))", gap: 12, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(330px, 100%), 1fr))", gap: 12, marginBottom: 14 }}>
       <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 14px 6px 4px" }}>
         <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.5, textTransform: "uppercase", paddingLeft: 14, marginBottom: 6 }}>
           PJM Capacity Auction Clearing Price ($/MW-day)
@@ -462,7 +462,7 @@ function ComputePowerTab() {
 
     {/* ======== PRODUCTIVITY ======== */}
     <SH>Productivity - The Ultimate Test</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(200px, 100%),1fr))", gap: 10, marginBottom: 14 }}>
       <StatCard label="Nonfarm Productivity (idx)" val={prod?.current?.toFixed(1) ?? "-"} sub={`YoY ${fmtPct(prod?.yoy, 1)} | 5y ${fmtPct(prod?.fiveYr, 1)}`} color="#10B981" />
       <StatCard label="Info Sector Productivity (idx)" val={infoProd?.current?.toFixed(1) ?? "-"} sub={`YoY ${fmtPct(infoProd?.yoy, 1)} | ${fmtDate2(infoProd?.lastDate)}`} color="#14B8A6" />
     </div>
@@ -476,7 +476,7 @@ function ComputePowerTab() {
 
     {/* ======== CAPITAL FORMATION ======== */}
     <SH>Capital Formation - Where The Money Is Flowing</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(200px, 100%),1fr))", gap: 10, marginBottom: 14 }}>
       <StatCard label="Real Software Investment" val={fmtFredVal(softInv)} sub={`YoY ${fmtPct(softInv?.yoy, 1)} | 5y ${fmtPct(softInv?.fiveYr, 0)}`} color="#6366F1" />
       <StatCard label="Real IP Products Investment" val={fmtFredVal(ipInv)} sub={`YoY ${fmtPct(ipInv?.yoy, 1)} | 5y ${fmtPct(ipInv?.fiveYr, 0)}`} color="#8B5CF6" />
       <StatCard label="Info-Processing Equipment" val={fmtFredVal(hwInv)} sub={`YoY ${fmtPct(hwInv?.yoy, 1)} | 5y ${fmtPct(hwInv?.fiveYr, 0)}`} color="#A855F7" />
@@ -498,7 +498,7 @@ function ComputePowerTab() {
 
     {/* ======== PHYSICAL BUILDOUT ======== */}
     <SH>Physical Buildout - Chips &amp; Data Centers</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(200px, 100%),1fr))", gap: 10, marginBottom: 14 }}>
       <StatCard label="Semi Production (idx)" val={semis?.current?.toFixed(1) ?? "-"} sub={`YoY ${fmtPct(semis?.yoy, 1)} | 5y ${fmtPct(semis?.fiveYr, 0)}`} color="#F59E0B" />
       <StatCard label="Manufacturing Construction" val={fmtFredVal(mfgCons)} sub={`YoY ${fmtPct(mfgCons?.yoy, 1)} | 5y ${fmtPct(mfgCons?.fiveYr, 0)}`} color="#EF4444" />
     </div>
@@ -512,7 +512,7 @@ function ComputePowerTab() {
 
     {/* ======== EMPLOYMENT ======== */}
     <SH>Employment - Jobs In The AI Supply Chain</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(200px, 100%),1fr))", gap: 10, marginBottom: 14 }}>
       <StatCard label="Computer Systems Design" val={csdJobs?.current != null ? `${(csdJobs.current / 1000).toFixed(2)}M jobs` : "-"} sub={`YoY ${fmtPct(csdJobs?.yoy, 1)} | 5y ${fmtPct(csdJobs?.fiveYr, 0)}`} color="#3B82F6" />
       <StatCard label="Information Sector" val={infoJobs?.current != null ? `${(infoJobs.current / 1000).toFixed(2)}M jobs` : "-"} sub={`YoY ${fmtPct(infoJobs?.yoy, 1)} | 5y ${fmtPct(infoJobs?.fiveYr, 0)}`} color="#60A5FA" />
     </div>
@@ -527,7 +527,7 @@ function ComputePowerTab() {
     {/* ======== POWER ======== */}
     {power?.history?.length > 0 && (<>
       <SH>Power Demand - AI&apos;s Physical Footprint</SH>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 10, marginBottom: 14 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(200px, 100%),1fr))", gap: 10, marginBottom: 14 }}>
         <StatCard label="Electric Power Generation" val={power.current?.toFixed(1) ?? "-"} sub={`YoY ${fmtPct(power.yoy, 1)} | 5y ${fmtPct(power.fiveYr, 1)}`} color="#EAB308" />
       </div>
       <FredChart series={power} title="Electric Power Generation (Index, Monthly)" yoyHighlight yFormat={v => v.toFixed(1)} />
@@ -921,7 +921,7 @@ function UsageSignalsPanel() {
     <div style={{ fontSize: 11, color: "#94a3b8", fontFamily: fonts.mono, marginBottom: 12, lineHeight: 1.5, maxWidth: 820 }}>
       These three don&apos;t measure tokens — they <em>corroborate</em> the primary lenses above by tracking what developers do. None is a headline number on its own; here&apos;s the one-line read on each, with the charts a click away.
     </div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 10, marginBottom: 14 }}>
       <SignalCard name="Stack Overflow — AI Questions" {...reads.so} />
       <SignalCard name="GitHub — AI Repo Stars" {...reads.gh} />
       <SignalCard name="Cloudflare — Edge Model Mix" {...reads.cf} />
@@ -941,7 +941,7 @@ function UsageSignalsPanel() {
     {showRaw && (<>
     {/* ── HEADLINE: aggregate AI activity hero stats ── */}
     <SH>Aggregate AI Activity — Are Developers Building More or Less?</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 10, marginBottom: 18 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))", gap: 10, marginBottom: 18 }}>
       <StatCard
         label="SO Questions (Latest mo)"
         val={fmtN(soAggregate.latest)}
@@ -1634,7 +1634,7 @@ function ApiUsagePanels() {
     </div>
 
     {/* Hero growth stats */}
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 18 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: 10, marginBottom: 18 }}>
       <StatCard label="Tokens / Week (latest)" val={latestWeek ? `${fmtTok(latestWeek._total)}` : "—"} sub={latestWeek ? `Week of ${latestWeek.date}` : ""} color="#6366F1" />
       <StatCard label="52-Week Growth" val={growth != null ? `${growth >= 0 ? "+" : ""}${growth.toFixed(0)}%` : "—"} sub="Total market throughput" color="#10B981" />
       <StatCard label="Week-over-Week" val={wowTotal != null ? `${wowTotal >= 0 ? "+" : ""}${wowTotal.toFixed(1)}%` : "—"} sub="Latest vs prior week" color={wowTotal >= 0 ? "#10B981" : "#F97316"} />
@@ -1671,7 +1671,7 @@ function ApiUsagePanels() {
     {/* ── Market structure: the "do leaders keep the market?" KPIs ── */}
     {structure && (<>
       <SH>Market Structure — Concentration &amp; Open-Weights Share</SH>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
         <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "12px 16px", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "#22d3ee" }} />
           <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.4, textTransform: "uppercase" }}>Open-Weights Token Share</div>
@@ -1813,7 +1813,7 @@ function OrnnTokenPricePanel({ ornn }) {
   return (<>
     <SH>Token Prices by Company — Ornn OTPI (volume-weighted $/M tokens)</SH>
     {/* Pricing KPIs: the two numbers that decide the leading-models thesis */}
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 10, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
       {premNow != null && (
         <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "12px 16px", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: "#E8553A" }} />
@@ -1913,7 +1913,7 @@ function SupplyCeilingPanel() {
   const c = SUPPLY_CEILING;
   return (<>
     <SH>Supply Ceiling — CoWoS Packaging &amp; HBM</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(330px, 1fr))", gap: 12, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(330px, 100%), 1fr))", gap: 12, marginBottom: 14 }}>
       <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 14px 6px 4px" }}>
         <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.5, textTransform: "uppercase", paddingLeft: 14, marginBottom: 6 }}>
           TSMC CoWoS Capacity (k wafers/month)
@@ -1978,7 +1978,7 @@ function AIDebtPanel() {
     <div style={{ fontSize: 11, color: "#94a3b8", fontFamily: fonts.mono, marginBottom: 12, lineHeight: 1.5, maxWidth: 820 }}>
       SemiAnalysis forecasts AI debt becoming the <strong style={{ color: "#cbd5e1" }}>second-largest credit market after US mortgages</strong> — ~$7T outstanding by 2029. This tracker tallies <em>publicly announced, named facilities</em> (a floor on the real number, since much debt is never itemized). Curated by hand — add each headline deal to <code style={{ color: "#a5b4fc" }}>AI_DEBT_DEALS</code>.
     </div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 10, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(160px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
       <StatCard label="Announced to Date" val={fmtB(calc.total)} sub={`${calc.deals.length} tracked deals`} color={SD_INDIGO} />
       <StatCard label="Trailing-12mo Pace" val={fmtB(calc.pace12)} sub="new facilities announced" color={SD_GREEN} />
       <StatCard label="vs $7T Forecast" val={`${calc.pctOfForecast.toFixed(1)}%`} sub="of the 2029 endpoint" color={SD_AMBER} />

@@ -122,7 +122,7 @@ function LiquiditySubTab() {
   return (<>
     {/* ════════ DOLLAR LIQUIDITY ════════ */}
     <SH>U.S. Dollar Liquidity — How Much Cash Is Available to Markets</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(165px, 1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(165px, 100%), 1fr))", gap: 10, marginBottom: 14 }}>
       <StatTile label="Net Liquidity" val={fmtB(netLiqLatest?.v)} sub={`YoY ${fmtPct(netLiqYoY)} · Fed B/S − RRP − TGA`} color="#10B981" />
       <StatTile label="Fed Balance Sheet" val={fmtB(s.WALCL?.current)} sub={`YoY ${fmtPct(s.WALCL?.yoy)}`} color="#E8553A" />
       <StatTile label="Reverse Repo (RRP)" val={fmtB(s.RRPONTSYD?.current)} sub="Drained — was $2.5T in 2022" color="#F59E0B" />
@@ -147,7 +147,7 @@ function LiquiditySubTab() {
 
     {/* ════════ WHERE THE WORLD'S CASH SITS ════════ */}
     <SH>Where the Cash Sits — Big-3 Central Banks &amp; Money Stock</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(165px, 1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(165px, 100%), 1fr))", gap: 10, marginBottom: 14 }}>
       <StatTile label="Big-3 Central Banks" val={fmtB(big3)} sub="Fed + ECB + BOJ combined" color="#6366F1" />
       <StatTile label="ECB Balance Sheet" val={fmtB(s.ECBASSETSW?.current)} sub={`In USD @ ${data.fx?.eurUsd?.toFixed(3)} EURUSD`} color="#3B82F6" />
       <StatTile label="BOJ Balance Sheet" val={fmtB(s.JPNASSETS?.current)} sub={`In USD @ ${data.fx?.usdJpy?.toFixed(0)} USDJPY`} color="#EC4899" />
@@ -173,7 +173,7 @@ function LiquiditySubTab() {
 
     {/* ════════ THE DEBT ════════ */}
     <SH>U.S. Debt — How Much, and What It Costs</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(165px, 1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(165px, 100%), 1fr))", gap: 10, marginBottom: 14 }}>
       <StatTile label="Federal Debt" val={fmtB(s.GFDEBTN?.current)} sub={`YoY ${fmtPct(s.GFDEBTN?.yoy)}`} color="#EF4444" />
       <StatTile label="Debt / GDP" val={s.GFDEGDQ188S?.current != null ? `${s.GFDEGDQ188S.current.toFixed(0)}%` : "—"} sub="Above 120% — WWII territory" color="#F97316" />
       <StatTile label="Annual Interest Cost" val={fmtB(s.A091RC1Q027SBEA?.current)} sub={`YoY ${fmtPct(s.A091RC1Q027SBEA?.yoy)} · annualized`} color="#F59E0B" />
@@ -201,7 +201,7 @@ function LiquiditySubTab() {
             <div key={b.name} title={`${b.name}: ${fmtB(b.value)}`} style={{ width: `${(b.value / holders.total) * 100}%`, background: b.color, position: "relative" }} />
           ))}
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 8 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(210px, 100%), 1fr))", gap: 8 }}>
           {holders.breakdown.map(b => (
             <div key={b.name} style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{ width: 10, height: 10, borderRadius: 3, background: b.color, flexShrink: 0 }} />

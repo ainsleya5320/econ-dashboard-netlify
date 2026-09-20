@@ -422,7 +422,7 @@ export default function CommoditiesTab() {
                   <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: fonts.mono, marginTop: -8, marginBottom: 10 }}>
                     {meta.desc}
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 10, marginBottom: 14 }}>
+                  <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))", gap: 10, marginBottom: 14 }}>
                     {members.map(c => (
                       <SpotTile
                         key={c.symbol}

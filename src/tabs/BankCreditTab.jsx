@@ -93,7 +93,7 @@ export default function BankCreditTab() {
     </div>
 
     {/* ── Loan book cards ── */}
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(175px, 1fr))", gap: 10, marginBottom: 16 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(175px, 100%), 1fr))", gap: 10, marginBottom: 16 }}>
       {Object.entries(L).map(([id, l]) => (
         <StatCard key={id} label={l.label} val={`$${(l.level / 1000).toFixed(2)}T`}
           sub={`${l.yoy >= 0 ? "+" : ""}${l.yoy?.toFixed(1)}% YoY · p${l.yoyPct} of history`}
@@ -144,7 +144,7 @@ export default function BankCreditTab() {
 
     {/* ── Big vs small banks ── */}
     <SH>Where the Stress Hides — Top-100 Banks vs Everyone Else</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(175px, 1fr))", gap: 10, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(175px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
       {cardSplit[0] && <StatCard label="Card Charge-offs · Top 100" val={`${cardSplit[0].current.toFixed(2)}%`} sub={`1y chg ${cardSplit[0].chg1y >= 0 ? "+" : ""}${cardSplit[0].chg1y}`} color={GREEN} />}
       {cardSplit[1] && <StatCard label="Card Charge-offs · Small Banks" val={`${cardSplit[1].current.toFixed(2)}%`} sub={`1y chg ${cardSplit[1].chg1y >= 0 ? "+" : ""}${cardSplit[1].chg1y}`} color={RED} />}
       {cardSplit[0] && cardSplit[1] && <StatCard label="Small-Bank Premium" val={`${(cardSplit[1].current - cardSplit[0].current).toFixed(1)}pp`} sub="small minus large — the stress gap" color={AMBER} />}

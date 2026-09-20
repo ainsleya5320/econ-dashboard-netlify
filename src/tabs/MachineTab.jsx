@@ -101,7 +101,7 @@ function MachineTab() {
         <Dial name="Short-term debt cycle" big={S.name} tone={shortTone} sub={`stage ${stageIdx + 1} of 5 in Dalio's sequence · ${S.stages[stageIdx].met}/${S.stages[stageIdx].known} conditions met`} />
         <Dial name="Long-term debt cycle" big={`${L.stage} · ${L.beautiful.label}`} tone={longTone} sub={`total debt ${pc0(L.debtGdp, 0)} of GDP · nominal growth ${pc0(L.nominalGrowth)} vs ${pc0(L.effRate, 2)} paid on federal debt`} />
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 8, marginTop: 14 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 8, marginTop: 14 }}>
         {d.rules.map(r => { const s = STATUS[r.status] || STATUS["n/a"]; return (
           <div key={r.key} style={{ display: "flex", gap: 10, alignItems: "flex-start", background: "rgba(255,255,255,0.03)", borderRadius: 10, padding: "8px 10px" }}>
             <span style={{ fontSize: 9, fontWeight: 800, color: s.c, fontFamily: fonts.mono, border: `1px solid ${s.c}66`, borderRadius: 5, padding: "2px 6px", flexShrink: 0 }}>{s.t}</span>
@@ -111,7 +111,7 @@ function MachineTab() {
     </div>
 
     <Section title="1 · Productivity — The Line Everything Else Oscillates Around" sub="Over the long run, living standards rise with productivity; the credit cycles are swings around this line, not the line itself.">
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(320px, 1.3fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
         <div style={{ display: "grid", gap: 12 }}>
           <Board rows={[
             { label: "Output per hour, YoY", value: pc(P.ophYoy), tone: P.ophYoy >= 1.5 ? "green" : P.ophYoy >= 0.5 ? "amber" : "red", sub: `nonfarm business · ${P.ophAsOf}` },
@@ -152,7 +152,7 @@ function MachineTab() {
             <div style={{ ...note, marginTop: 6, fontStyle: "italic" }}>{s.dalio}</div>
           </div>); })}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(320px, 1.3fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
         <div style={{ display: "grid", gap: 12 }}>
           <Board rows={[
             { label: "Total credit growth, YoY", value: pc(I.creditYoy), tone: I.creditYoy > I.nominalYoy + 1 ? "amber" : "green", sub: `all sectors · a year ago ${pc(I.creditYrAgo)}`, title: "Credit is the engine of the short cycle: when it grows faster than income, the cycle is maturing" },
@@ -179,7 +179,7 @@ function MachineTab() {
     </Section>
 
     <Section title="3 · The Long-Term Debt Cycle — Burdens, Deleveraging, and the Four Levers" sub="Debt grows faster than income for decades until it can't; then the burden is reduced by some mix of austerity, defaults, redistribution and printing. A balanced mix is a beautiful deleveraging: nominal growth above the interest rate, with tolerable inflation.">
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(320px, 1.3fr)", gap: 12, marginBottom: 12, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))", gap: 12, marginBottom: 12, alignItems: "start" }}>
         <div style={{ display: "grid", gap: 12 }}>
           <Board rows={[
             { label: "Total debt / GDP, all sectors", value: pc0(L.debtGdp, 0), tone: L.chg5y > 5 ? "amber" : "green", sub: `${pp(L.chg1y, 0)} 1y · ${pp(L.chg5y, 0)} 5y · peak ${pc0(L.peak.v, 0)} in ${yr(L.peak.d)}` },
@@ -218,7 +218,7 @@ function MachineTab() {
       </div>
       <div style={{ ...card, marginBottom: 14 }}>
         <div style={label}>The four levers of a deleveraging — current setting</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: 10, marginTop: 8 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(230px, 100%), 1fr))", gap: 10, marginTop: 8 }}>
           {L.levers.map(lv => { const c = SETTING[lv.setting] || SLATE; return (
             <div key={lv.key} style={{ borderLeft: `3px solid ${c}`, paddingLeft: 10 }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><span style={{ fontSize: 12, fontWeight: 700, color: "#e2e8f0", fontFamily: fonts.heading }}>{lv.name}</span><span style={{ fontSize: 9.5, fontWeight: 800, color: c, fontFamily: fonts.mono, textTransform: "uppercase" }}>{lv.setting}</span></div>

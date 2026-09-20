@@ -86,7 +86,7 @@ export default function OwnerWealthPanel() {
       );
     };
     return (<>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(330px, 1fr) minmax(320px, 1fr)", gap: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))", gap: 12 }}>
         <div style={{ ...card, padding: "10px 10px 4px" }}>
           <div style={{ ...label, paddingLeft: 4 }}>Share of $1M+ filers vs share of all filers · tax year {d.taxYear}</div>
           <ResponsiveContainer width="100%" height={300}>
@@ -162,7 +162,7 @@ export default function OwnerWealthPanel() {
 
   // ── home state ────────────────────────────────────────────────────────────
   const homeView = () => (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(400px, 100%), 1fr))", gap: 12 }}>
       <div style={{ ...card, padding: "10px 10px 6px" }}>
         <div style={{ ...label, paddingLeft: 4, marginBottom: 6 }}>{d.homeState} counties · filers with AGI {C?.stubLabel || "in the top bracket"}</div>
         <div style={{ overflowX: "auto" }}>
@@ -215,7 +215,7 @@ export default function OwnerWealthPanel() {
     const w = d.wealthShares;
     const byProp = states.filter(s => s.proprietors).sort((a, b) => b.proprietors.yoy - a.proprietors.yoy);
     return (
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))", gap: 12 }}>
         <div style={{ ...card, padding: "10px 10px 6px" }}>
           <div style={{ ...label, paddingLeft: 4, marginBottom: 6 }}>Proprietors&apos; nonfarm income by state · quarterly, current</div>
           <div style={{ maxHeight: 330, overflowY: "auto" }}>

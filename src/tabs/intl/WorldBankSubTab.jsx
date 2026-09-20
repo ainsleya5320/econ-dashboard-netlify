@@ -132,7 +132,7 @@ function SnapshotCards({ latest, formatter, unit }) {
     .sort((a, b) => b.val - a.val);
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(170px,1fr))", gap: 10, marginBottom: 16 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(170px, 100%),1fr))", gap: 10, marginBottom: 16 }}>
       {sorted.map(c => (
         <div key={c.code} style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "12px 14px", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: c.color, borderRadius: "14px 14px 0 0" }} />
@@ -328,7 +328,7 @@ export default function WorldBankSubTab({ view }) {
       {leLine && <MultiLineChart series={leLine} yFormatter={v => `${v.toFixed(0)}`} height={300} title="Life Expectancy Over Time" />}
 
       <SH>Fertility & Unemployment</SH>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(170px,1fr))", gap: 10, marginBottom: 16 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(170px, 100%),1fr))", gap: 10, marginBottom: 16 }}>
         {COUNTRIES.map(c => {
           const fert = fertLatest[c.code];
           const unemp = unempLatest[c.code];

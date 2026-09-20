@@ -129,7 +129,7 @@ export default function ForecastsTab() {
       </div>
     )}
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(170px,1fr))", gap: 10, margin: "12px 0 18px" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(170px, 100%),1fr))", gap: 10, margin: "12px 0 18px" }}>
       <StatCard label="Markets Tracked" val={s.open ?? "—"} sub="open questions, refreshed ~6h" color={INDIGO} />
       <StatCard label="FS Second-Opinion Record" val={`${s.won ?? "—"}W / ${s.lost ?? "—"}L`} sub={s.winRate != null ? `${s.winRate}% on settled questions` : ""} color={s.winRate >= 55 ? GREEN : AMBER} />
       <StatCard label="Stock Valuations" val={scatter.rows.length} sub="S&P names, FS fair value vs price" color="#8B5CF6" />
@@ -140,7 +140,7 @@ export default function ForecastsTab() {
     {financial.map(c => (
       <div key={c.id} style={{ marginBottom: 18 }}>
         <SH>{c.label}</SH>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 12 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(420px, 100%), 1fr))", gap: 12 }}>
           {c.events.map(ev => (
             <div key={ev.event} style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "12px 18px" }}>
               {ev.outcomes.length > 1 ? (<>
@@ -166,7 +166,7 @@ export default function ForecastsTab() {
         {showWorld ? "▾ Hide" : "▸ Show"} politics &amp; world ({world.n} questions)
       </button>
       {showWorld && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 12, marginBottom: 18 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(420px, 100%), 1fr))", gap: 12, marginBottom: 18 }}>
           {world.events.map(ev => (
             <div key={ev.event} style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "12px 18px" }}>
               {ev.outcomes.length > 1 ? (<>
@@ -214,7 +214,7 @@ export default function ForecastsTab() {
       </div>
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(330px, 1fr))", gap: 12, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(330px, 100%), 1fr))", gap: 12, marginBottom: 14 }}>
       {[["Biggest Upside (FS long book)", scatter.topLong, GREEN], ["Biggest Downside (FS short book)", scatter.topShort, RED]].map(([label, list, color]) => (
         <div key={label} style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "12px 16px" }}>
           <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8 }}>{label}</div>

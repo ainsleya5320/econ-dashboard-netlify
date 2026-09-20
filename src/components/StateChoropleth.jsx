@@ -154,7 +154,7 @@ export default function StateChoropleth({ title, metrics, metric, setMetric, cac
     {hint && <div style={{ ...note, marginBottom: 10 }}>{hint}</div>}
 
     {/* headline card */}
-    <div style={{ ...card, padding: "14px 18px", marginBottom: 12, display: "grid", gridTemplateColumns: "minmax(220px, 1fr) minmax(300px, 1.4fr)", gap: 18, alignItems: "start" }}>
+    <div style={{ ...card, padding: "14px 18px", marginBottom: 12, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))", gap: 18, alignItems: "start" }}>
       <div>
         <div style={label}>National {cfg.label}</div>
         <div style={{ fontSize: 26, fontWeight: 800, color: "var(--text-primary)", fontFamily: fonts.heading, letterSpacing: -0.7, lineHeight: 1.1, marginTop: 3 }}>
@@ -166,7 +166,7 @@ export default function StateChoropleth({ title, metrics, metric, setMetric, cac
         </div>
       </div>
       {rows.length > 0 && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(130px, 1fr))", gap: 10 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(130px, 100%), 1fr))", gap: 10 }}>
           {[["Best", best, GOOD], ["Worst", worst, BAD]].map(([t, r, c]) => (
             <div key={t}>
               <div style={label}>{t}</div>

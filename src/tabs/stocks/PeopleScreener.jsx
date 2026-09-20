@@ -95,7 +95,7 @@ function PeopleScreener({ onSelectStock }) {
   };
 
   return (<>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
       {[
         ["S&P 500 median", perEmp(spMedian), `revenue per employee · ${d.coverage} companies covered`],
         ["Most productive", top ? `${top.symbol} ${perEmp(top.revPerEmp)}` : "—", top ? `${people(top.employees)} employees · ${top.sector}` : ""],
@@ -117,7 +117,7 @@ function PeopleScreener({ onSelectStock }) {
       <span style={{ fontSize: 10, color: DIM, fontFamily: fonts.mono }}>{filtered.length} companies · click a header to sort, a row to open · FY headcount and revenue from each 10-K (* = headcount from the company profile where the 10-K feed had no usable print) · refreshed {d.asOf ? new Date(d.asOf).toLocaleDateString() : "—"}{d.building ? ` · updating ${d.progress}` : ""}</span>
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.6fr) minmax(260px, 1fr)", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))", gap: 12, marginBottom: 12 }}>
       <div style={{ ...card, padding: "12px 10px 6px" }}>
         <div style={{ ...label, paddingLeft: 6 }}>Revenue per employee vs market cap per employee · log scales · color = sector</div>
         <ResponsiveContainer width="100%" height={340}>

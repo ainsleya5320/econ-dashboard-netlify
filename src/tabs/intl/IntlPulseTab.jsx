@@ -110,7 +110,7 @@ function BigMacPanel({ bm, s }) {
   const maxAbs = Math.max(30, ...list.map(b => Math.abs(b[mode])));
   return (<>
     <SH>Big Mac Index — Currency Valuation Against the Dollar</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.4fr) minmax(280px, 1fr)", gap: 12, marginBottom: 12, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", gap: 12, marginBottom: 12, alignItems: "start" }}>
       <div style={{ ...card, padding: "10px 12px" }}>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center", marginBottom: 8 }}>
           {[["rawNow", "Raw · today's FX"], ["raw", `Raw · ${s.asOf.slice(0, 7)} print`], ["adjNow", "GDP-adjusted · today's FX"], ["adj", `GDP-adjusted · ${s.asOf.slice(0, 7)} print`]].map(([k, t]) => <button key={k} onClick={() => setMode(k)} style={btn(mode === k)}>{t}</button>)}
@@ -176,7 +176,7 @@ function IntlPulseTab({ go }) {
   const ranking = [...d.rows].filter(r => fin(r.eq?.usd1y)).sort((a, b) => b.eq.usd1y - a.eq.usd1y);
   const maxR = Math.max(10, ...ranking.map(r => Math.abs(r.eq.usd1y)));
   return (<>
-    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "minmax(240px, 1.1fr) minmax(320px, 1.6fr)", gap: 18, alignItems: "start" }}>
+    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 18, alignItems: "start" }}>
       <div>
         <div style={label}>International · pulse</div>
         <div style={{ fontSize: 24, fontWeight: 800, color: oc, fontFamily: fonts.heading, letterSpacing: -0.7, lineHeight: 1.1, marginTop: 4 }}>{d.overall.label}</div>
@@ -193,7 +193,7 @@ function IntlPulseTab({ go }) {
     <div style={{ ...note, marginTop: -8, marginBottom: 8 }}>Click a column to sort. &quot;1 yr in USD&quot; is what a dollar investor actually earned: local index return compounded with the currency. Real FX = BIS real effective exchange rate vs its own 10-year average (positive = expensive). Big Mac = raw and GDP-adjusted valuation vs the dollar at today&apos;s exchange rate.</div>
     <Board rows={rows} sortKey={sortKey} setSortKey={setSortKey} />
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 12, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 14 }}>
       {chartBox("Broad dollar index — 10 years (Fed trade-weighted, goods & services)",
         <ResponsiveContainer width="100%" height={170}><LineChart data={d.charts.dollar} margin={{ top: 8, right: 8, bottom: 0, left: -14 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" /><XAxis dataKey="d" tick={axis} tickFormatter={x => x.slice(0, 4)} minTickGap={36} axisLine={false} tickLine={false} /><YAxis tick={axis} axisLine={false} tickLine={false} domain={["auto", "auto"]} />
@@ -216,7 +216,7 @@ function IntlPulseTab({ go }) {
           </div>); })}</div>,
         "Local index return compounded with the currency's move against the dollar — the number that lands in a U.S. account.")}
     </div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 12, marginBottom: 14 }}><VerdictCard s={s.dollar} /><VerdictCard s={s.risk} /><VerdictCard s={s.growth} /></div>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 14 }}><VerdictCard s={s.dollar} /><VerdictCard s={s.risk} /><VerdictCard s={s.growth} /></div>
 
     <BigMacPanel bm={d.bigmac} s={d.bigmacSummary} />
 

@@ -4,7 +4,7 @@ import { fonts } from "../../lib/styles.js";
 import {
   GREEN, AMBER, RED, INDIGO, SLATE, DIM, CYAN, VIOLET, BLUE, ORANGE, PINK, TEAL,
   fin, card, label, note, tip, axis, pc, pp, th, td, tdL, tableStyle,
-  chip, DenseHeader, Panel, Note,
+  chip, DenseHeader, Panel, Note, DataTable, useIsPhone,
 } from "../../components/dense.jsx";
 
 // ============================================================================
@@ -139,34 +139,23 @@ export default function HouseholdWealthPanel() {
     </div>
 
     <Panel title={`Net worth by ${cut === "wealth" ? "wealth percentile" : "generation"}`} right={`${C.asOf} · levels are means, not medians`} pad="10px 12px 8px">
-      <div style={{ overflowX: "auto" }}>
-        <table style={tableStyle}>
-          <thead><tr>
-            {th("group", "left")}{th("who", "left")}{th("households")}{th("total net worth")}{th("per household")}
-            {th("share")}{th("5y chg")}{th("entry cutoff")}{th("debt / assets")}
-          </tr></thead>
-          <tbody>
-            {G.map((g, i) => {
-              const dShare = fin(g.share) && fin(g.shareThen) ? g.share - g.shareThen : null;
-              return (
-                <tr key={g.key} style={{ borderTop: "1px solid var(--border-subtle)" }}>
-                  <td style={{ padding: "4px 6px", fontSize: 10.5, fontFamily: fonts.mono, color: "var(--text-primary)", fontWeight: 600, whiteSpace: "nowrap" }}>
-                    <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: 2, background: GROUP_COLORS[i % GROUP_COLORS.length], marginRight: 6 }} />{g.label}
-                  </td>
-                  {tdL(g.blurb, DIM, { fontSize: 9 })}
-                  {td(hh(g.households), "var(--text-secondary)")}
-                  {td(tril(g.netWorth), "var(--text-secondary)")}
-                  {td(perHh(g.perHousehold), GROUP_COLORS[i % GROUP_COLORS.length], { fontWeight: 700 })}
-                  {td(pc(g.share, 1), "var(--text-primary)", { fontWeight: 600 })}
-                  {td(fin(dShare) ? `${pp(dShare, 1)}pp` : "—", !fin(dShare) ? DIM : dShare > 0 ? GREEN : RED, { fontSize: 10 })}
-                  {td(fin(g.cutoff) ? perHh(g.cutoff) : "—", fin(g.cutoff) ? AMBER : DIM, { fontSize: 10 })}
-                  {td(pc(g.leverage, 1), g.leverage > 30 ? RED : g.leverage > 10 ? AMBER : "var(--text-secondary)", { fontSize: 10 })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        rows={G.map((g, i) => ({ ...g, key: g.key, i, color: GROUP_COLORS[i % GROUP_COLORS.length],
+          dShare: fin(g.share) && fin(g.shareThen) ? g.share - g.shareThen : null }))}
+        cols={[
+          { key: "label", label: "group", primary: true, render: r => (<>
+            <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: 2, background: r.color, marginRight: 6 }} />{r.label}
+          </>) },
+          { key: "blurb", label: "who", align: "left", hide: true, render: r => <span style={{ color: DIM, fontSize: 9 }}>{r.blurb}</span> },
+          { key: "hh", label: "households", render: r => hh(r.households) },
+          { key: "nw", label: "total net worth", render: r => tril(r.netWorth) },
+          { key: "perHh", label: "per household", render: r => <span style={{ color: r.color, fontWeight: 700 }}>{perHh(r.perHousehold)}</span> },
+          { key: "share", label: "share", render: r => <span style={{ color: "var(--text-primary)", fontWeight: 600 }}>{pc(r.share, 1)}</span> },
+          { key: "d5", label: "5y chg", render: r => <span style={{ color: !fin(r.dShare) ? DIM : r.dShare > 0 ? GREEN : RED }}>{fin(r.dShare) ? `${pp(r.dShare, 1)}pp` : "—"}</span> },
+          { key: "cutoff", label: "entry cutoff", render: r => <span style={{ color: fin(r.cutoff) ? AMBER : DIM }}>{fin(r.cutoff) ? perHh(r.cutoff) : "—"}</span> },
+          { key: "lev", label: "debt / assets", render: r => <span style={{ color: r.leverage > 30 ? RED : r.leverage > 10 ? AMBER : "var(--text-secondary)" }}>{pc(r.leverage, 1)}</span> },
+        ]}
+      />
       <Note>
         {cut === "wealth"
           ? <>The entry cutoff is the wealth it takes to reach a group&apos;s bottom edge. It comes straight from the survey
@@ -254,7 +243,7 @@ export default function HouseholdWealthPanel() {
 
     {scf && (
       <Panel title={`The corrective — SCF ${scf.year} medians against means`} right={scf.unit}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: "0 18px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(300px, 100%),1fr))", gap: "0 18px" }}>
           <div style={{ gridColumn: "1 / -1", marginBottom: 6 }}>
             <ResponsiveContainer width="100%" height={168}>
               <LineChart data={scf.allHistory} margin={{ top: 6, right: 10, left: -12, bottom: 0 }}>

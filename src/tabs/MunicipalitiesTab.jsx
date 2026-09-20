@@ -213,7 +213,7 @@ export default function MunicipalitiesTab({ go }) {
     {Picker}
 
     {/* ── header ───────────────────────────────────────────────────────── */}
-    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "minmax(260px, 1.1fr) minmax(340px, 1.6fr)", gap: 18, alignItems: "start", opacity: loading ? 0.55 : 1, transition: "opacity 0.2s" }}>
+    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))", gap: 18, alignItems: "start", opacity: loading ? 0.55 : 1, transition: "opacity 0.2s" }}>
       <div>
         <div style={label}>{CT.msa} · the {CT.region} economy</div>
         <div style={{ fontSize: 24, fontWeight: 800, color: H.color, fontFamily: fonts.heading, letterSpacing: -0.7, lineHeight: 1.1, marginTop: 4 }}>{H.label}</div>
@@ -226,7 +226,7 @@ export default function MunicipalitiesTab({ go }) {
 
     {/* ── labor ────────────────────────────────────────────────────────── */}
     <SH>Labor — Who Is Working, Where, and for How Much</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.15fr) minmax(330px, 1fr)", gap: 12, marginBottom: 12, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(330px, 100%), 1fr))", gap: 12, marginBottom: 12, alignItems: "start" }}>
       <Board rows={laborRows} title="Labor market" />
       <div style={{ display: "grid", gap: 12 }}>
         {chartBox(`Unemployment rate — metro vs ${CT.stateName} vs US, since 2000`,
@@ -248,7 +248,7 @@ export default function MunicipalitiesTab({ go }) {
           `${J.source}. The metro reads ${fin(J.metro) ? J.metro : "—"} against ${J.us} nationally — the fastest read on local hiring there is, and the one that moved first in 2022.`)}
       </div>
     </div>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(320px, 1fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
       {chartBox(`Payroll employment by sector — year-on-year change, ${ymd(P.d)}`,
         <ResponsiveContainer width="100%" height={220}><BarChart data={sectorBars} layout="vertical" margin={{ top: 4, right: 40, bottom: 0, left: 10 }}>
           {grid}<XAxis type="number" tick={axis} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} /><YAxis type="category" dataKey="name" tick={{ ...axis, fontSize: 9 }} width={130} axisLine={false} tickLine={false} />
@@ -269,7 +269,7 @@ export default function MunicipalitiesTab({ go }) {
 
     {/* ── housing ──────────────────────────────────────────────────────── */}
     <SH>Housing — Prices, Rents, Inventory, Permits</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.15fr) minmax(330px, 1fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(330px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
       <Board rows={housingRows} title="Housing" />
       <div style={{ display: "grid", gap: 12 }}>
         {cs?.series?.length ? chartBox(`Case-Shiller — ${CT.name} vs US 20-city, indexed (since ${cs.since})`,
@@ -292,7 +292,7 @@ export default function MunicipalitiesTab({ go }) {
 
     {/* ── prices ───────────────────────────────────────────────────────── */}
     <SH>Cost of Living — Local Prices Against the Nation</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(320px, 1fr) minmax(280px, 0.8fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
       <Board rows={priceRows} title="Prices" />
       {chartBox(`CPI, all items — ${Pr.cpi.label.toLowerCase()} vs US, % yoy since 2000`,
         <ResponsiveContainer width="100%" height={180}><LineChart data={Pr.cpi.series} margin={{ top: 6, right: 8, bottom: 0, left: -18 }}>
@@ -314,7 +314,7 @@ export default function MunicipalitiesTab({ go }) {
 
     {/* ── business ─────────────────────────────────────────────────────── */}
     <SH>Business Conditions — Layoffs, Insolvencies, Formation</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.2fr) minmax(320px, 1fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
       <div style={{ display: "grid", gap: 12 }}>
         {W ? (<div style={{ ...card, padding: "8px 10px", overflowX: "auto" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
@@ -346,7 +346,7 @@ export default function MunicipalitiesTab({ go }) {
               <div style={label}>Bankruptcies · {B.bk.court}</div>
               {go && <button onClick={() => go("credit", "defaults")} style={{ padding: "2px 8px", borderRadius: 6, border: "1px solid rgba(129,140,248,0.35)", background: "rgba(129,140,248,0.12)", color: "#c7d2fe", fontFamily: fonts.mono, fontSize: 9.5, cursor: "pointer" }}>open the tracker →</button>}
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: 8, marginTop: 8 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(120px, 100%), 1fr))", gap: 8, marginTop: 8 }}>
               {[["Filings, latest qtr", num(B.bk.total), pc(B.bk.yoy) + " yoy"], ["Trailing year", num(B.bk.t4), `p${B.bk.t4Pct} of the decade`], ["Business ch.11, qtr", num(B.bk.bizCh11), `${num(B.bk.bizCh11T4)} in a year, p${B.bk.bizCh11Pct}`], ["Live docket, 30d", `${B.bk.live30?.ch11 ?? 0} ch.11`, `${B.bk.live30?.ch7 ?? 0} ch.7 · ${B.bk.live30?.ch13 ?? 0} ch.13`]].map(([t, v, sub]) => (
                 <div key={t}><div style={label}>{t}</div><div style={{ fontSize: 15, fontWeight: 800, color: "var(--text-primary)", fontFamily: fonts.heading, letterSpacing: -0.4, marginTop: 2 }}>{v}</div><div style={note}>{sub}</div></div>))}
             </div>
@@ -381,7 +381,7 @@ export default function MunicipalitiesTab({ go }) {
 
     {/* ── growth & the local majors ────────────────────────────────────── */}
     <SH>Growth, Income, and the {CT.giantsName}</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1.1fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
       <div style={{ ...card, padding: "6px 8px", overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead><tr>{th("Annual (lagged a year)", "left")}{th("Latest")}{th("Year")}{th("Δ yr")}{th("5-yr CAGR")}{th("15 yrs", "center")}</tr></thead>

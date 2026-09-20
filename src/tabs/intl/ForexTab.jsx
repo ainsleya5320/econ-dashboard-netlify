@@ -183,7 +183,7 @@ export default function ForexFundamentals({ prices }) {
     const cols = [["Currency", "left"], ["Risk corr", "right"], ["Risk β", "right"], ["Cmdty corr", "right"], ["Cmdty β", "right"], ["Growth", "right"], ["Commodities", "right"], ["Risk aversion", "right"], ["Geopolitics", "right"], ["Global tilt", "right"]];
     const scatter = rows.filter(c => fin(c.sensitivity.riskCorr) && fin(c.sensitivity.cmdtyCorr)).map(c => ({ ccy: c.ccy, x: c.sensitivity.riskCorr, y: c.sensitivity.cmdtyCorr, z: 1 }));
     return (<>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: 10, marginBottom: 10 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(230px, 100%), 1fr))", gap: 10, marginBottom: 10 }}>
         {drivers.map(x => (
           <div key={x.key} style={card}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><span style={label}>{x.name}</span><span style={{ fontSize: 14, fontWeight: 800, color: dirColor(x.key, x.dir), fontFamily: fonts.heading }}>{dirArrow(x.dir)} {x.dir > 0 ? "rising" : x.dir < 0 ? "falling" : "flat"}</span></div>
@@ -197,7 +197,7 @@ export default function ForexFundamentals({ prices }) {
           </div>
         ))}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(280px, 1fr) minmax(320px, 2fr)", gap: 10, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", gap: 10, alignItems: "start" }}>
         <div style={{ ...card, padding: "10px 10px 4px" }}>
           <div style={{ ...label, paddingLeft: 4 }}>Measured sensitivity · 52 weeks</div>
           <ResponsiveContainer width="100%" height={250}>

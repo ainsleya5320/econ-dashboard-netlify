@@ -281,7 +281,7 @@ function BudgetSubTab({ fredKey }) {
 
       {loading && <div style={{ ...card, padding: 36, textAlign: "center", color: DIM, fontFamily: fonts.mono, fontSize: 11, marginBottom: 12 }}>Loading the Monthly Treasury Statement…</div>}
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(360px,1fr))", gap: 12, marginBottom: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(360px, 100%),1fr))", gap: 12, marginBottom: 12 }}>
         <Panel title="Where the money comes from" right={`vs FY${selectedYear - 1}${partial ? " same point" : ""}`} style={{ marginBottom: 0 }}>
           <div style={{ overflowX: "auto" }}>
             <table style={tableStyle}>
@@ -318,7 +318,7 @@ function BudgetSubTab({ fredKey }) {
       </div>
 
       <Panel title="What the debt costs — and what it will cost" right={`average interest rates as of ${rates?.asOf || "—"}`}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", gap: 14 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(300px, 100%),1fr))", gap: 14 }}>
           <div style={{ overflowX: "auto" }}>
             <table style={tableStyle}>
               <thead><tr>{th("security", "left")}{th("avg rate paid")}{th("market yield")}{th("gap on refi")}</tr></thead>

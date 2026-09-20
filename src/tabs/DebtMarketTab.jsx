@@ -121,7 +121,7 @@ function DebtMarketTab() {
 
     {/* Spread charts: HY vs IG (3y window — FRED/ICE license cap) + Baa−10Y long history */}
     <SH>Credit Spreads — What the Market Charges for Default Risk</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 14, marginBottom: 18 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))", gap: 14, marginBottom: 18 }}>
       <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 14px 6px 4px" }}>
         <div style={{ fontSize: 10.5, color: "#94a3b8", fontFamily: fonts.mono, paddingLeft: 12, marginBottom: 4 }}>
           HY vs IG option-adjusted spread (weekly · since {sp.since}, the window FRED licenses for ICE data)
@@ -177,7 +177,7 @@ function DebtMarketTab() {
 
     {/* Early-warning tiles */}
     <SH>Early Warning — What Leads the Default Cycle</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 10, marginBottom: 18 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(190px, 100%), 1fr))", gap: 10, marginBottom: 18 }}>
       {w.sloos && <WarnTile label="Banks Tightening C&I" value={`${w.sloos.current?.toFixed(1)}%`} note={sloosTone === "green" ? "easy" : sloosTone === "amber" ? "tightening" : "credit crunch"} sub={`SLOOS net % · leads defaults 2–4q · ${w.sloos.lastDate.slice(0, 7)}`} pct={w.sloos.pct} spark={w.sloos.spark} tone={sloosTone} />}
       {w.delinq && <WarnTile label="C&I Delinquency" value={`${w.delinq.current?.toFixed(2)}%`} note={delinqTone === "green" ? "low" : delinqTone === "amber" ? "creeping" : "elevated"} sub={`bank business loans · ${w.delinq.lastDate.slice(0, 7)}`} pct={w.delinq.pct} spark={w.delinq.spark} tone={delinqTone} />}
       {data.rates?.fedfunds && <WarnTile label="Fed Funds" value={`${data.rates.fedfunds.current?.toFixed(2)}%`} sub="the base of every borrowing cost" pct={data.rates.fedfunds.pct} spark={data.rates.fedfunds.spark} />}
@@ -186,7 +186,7 @@ function DebtMarketTab() {
 
     {/* Basket fundamentals */}
     <SH>Corporate Balance Sheets — {b.size}-Name Non-Financial Basket (FMP, annual)</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 14, marginBottom: 16 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))", gap: 14, marginBottom: 16 }}>
       <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 14px 6px 4px" }}>
         <div style={{ fontSize: 10.5, color: "#94a3b8", fontFamily: fonts.mono, paddingLeft: 12, marginBottom: 4 }}>
           Median interest coverage &amp; net debt / EBITDA by fiscal year

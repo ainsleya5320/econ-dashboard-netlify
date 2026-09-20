@@ -188,7 +188,7 @@ function UsPulseTab({ go }) {
   const Section = ({ title, sub, board, right }) => (<>
     <SH>{title}</SH>
     {sub && <div style={{ ...note, marginTop: -8, marginBottom: 8 }}>{sub}</div>}
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.5fr) minmax(300px, 1fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
       {board}
       <div style={{ display: "grid", gap: 12 }}>{right}</div>
     </div>
@@ -196,7 +196,7 @@ function UsPulseTab({ go }) {
 
   return (<>
     {/* header: regime · three scores · quadrant · real rates */}
-    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "minmax(240px, 1.1fr) minmax(300px, 1.6fr) auto", gap: 18, alignItems: "start" }}>
+    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 18, alignItems: "start" }}>
       <div>
         <div style={label}>U.S. economy · pulse</div>
         <div style={{ fontSize: 24, fontWeight: 800, color: oc, fontFamily: fonts.heading, letterSpacing: -0.7, lineHeight: 1.1, marginTop: 4 }}>{d.overall.label}</div>

@@ -106,7 +106,7 @@ export default function MemoryPricesPanel() {
     )}
 
     {/* headline KPI cards + breadth */}
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(160px,1fr))", gap: 10, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(160px, 100%),1fr))", gap: 10, marginBottom: 12 }}>
       {model.heads.map(h => (
         <div key={h.label} style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "12px 14px" }}>
           <div style={{ fontSize: 9.5, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.4, textTransform: "uppercase" }}>{h.label}</div>
@@ -162,7 +162,7 @@ export default function MemoryPricesPanel() {
       <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8 }}>
         All Tracked Parts — Session Average &amp; Change · {mem.asOf} · {mem.source}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: "4px 24px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(280px, 100%),1fr))", gap: "4px 24px" }}>
         {GROUP_ORDER.filter(g => model.groups[g]).map(g => (
           <div key={g}>
             <div style={{ fontSize: 9.5, color: "#94a3b8", fontFamily: fonts.mono, fontWeight: 700, margin: "6px 0 4px" }}>{GROUP_LABELS[g]}</div>

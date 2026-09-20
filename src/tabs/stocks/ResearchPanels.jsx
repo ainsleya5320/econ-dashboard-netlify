@@ -280,7 +280,7 @@ export function DividendSafety({ data, fmpKey }) {
         <PanelTitle>Dividend Safety</PanelTitle>
         <span style={{ fontSize: 12.5, fontWeight: 700, color: c.verdict.color, fontFamily: fonts.heading }}>{c.verdict.label}</span>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))", gap: "8px 20px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(120px, 100%), 1fr))", gap: "8px 20px" }}>
         {cell("Yield", c.yieldPct != null ? `${c.yieldPct.toFixed(2)}%` : "—")}
         {cell("Payout Ratio", c.payout != null ? `${(c.payout * 100).toFixed(0)}%` : "—", c.payout == null ? null : c.payout < 0.6 ? GREEN : c.payout < 0.8 ? AMBER : RED)}
         {cell("FCF Coverage", c.coverage != null ? `${c.coverage.toFixed(1)}×` : "—", c.coverage == null ? null : c.coverage > 1.5 ? GREEN : c.coverage > 1.1 ? AMBER : RED)}
@@ -536,7 +536,7 @@ export function PIEPanel({ data }) {
         <div style={{ fontSize: 9.5, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 10 }}>
           Base-case drivers — seeded from {data.symbol}&apos;s own history · tax {fmtPc(seed.tax)} · incr. investment {fmtPc(seed.incInv)} of ΔRev · EV {fmtCap(seed.ev)}
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(170px, 100%), 1fr))", gap: 16 }}>
           <PieSlider label="Revenue growth" value={g} onChange={setG} min={-0.10} max={0.40} step={0.005} fmt={fmtPc} />
           <PieSlider label="Operating margin" value={m} onChange={setM} min={0.01} max={0.60} step={0.005} fmt={fmtPc} />
           <PieSlider label="WACC" value={wacc} onChange={setWacc} min={0.06} max={0.12} step={0.0025} fmt={fmtPc} />
@@ -545,7 +545,7 @@ export function PIEPanel({ data }) {
       </div>
 
       {/* The three PIE reads */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 10, marginBottom: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(210px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
         {headline("Implied Revenue CAGR", fmtPc(calc.impliedG), `to justify EV over ${T}yrs at your ${fmtPc(m)} margin`, cmp(calc.impliedG, seed.cagr5))}
         {headline("Implied Op. Margin", fmtPc(calc.impliedM), `to justify EV at your ${fmtPc(g)} growth`, cmp(calc.impliedM, seed.margin5))}
         {headline("Implied Forecast Period", calc.mifp == null ? ">60 yrs" : `${calc.mifp} yrs`, "years of value-creating performance the price demands at your base case", calc.mifp == null ? RED : calc.mifp <= 5 ? GREEN : calc.mifp <= 15 ? AMBER : RED)}

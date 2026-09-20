@@ -233,7 +233,7 @@ function CpiTab({ cd }) {
       </Note>
     </Panel>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(340px,1fr))", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(340px, 100%),1fr))", gap: 12, marginBottom: 12 }}>
       <Panel title="Goods against services — two different inflations" style={{ marginBottom: 0 }}>
         <ResponsiveContainer width="100%" height={224}>
           <LineChart data={splitHist} margin={{ top: 6, right: 8, left: -10, bottom: 0 }}>
@@ -335,7 +335,7 @@ function ComponentTable({ components, cd, accent }) {
   const groups = [...new Set(items.map(x => x.group))];
 
   return (
-    <div style={{ marginTop: 8, display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(310px,1fr))", gap: "0 18px" }}>
+    <div style={{ marginTop: 8, display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(310px, 100%),1fr))", gap: "0 18px" }}>
       {groups.map(g => (
         <div key={g} style={{ breakInside: "avoid" }}>
           <div style={{ ...label, fontSize: 8.5, color: accent, margin: "8px 0 2px" }}>{g}</div>

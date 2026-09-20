@@ -399,7 +399,7 @@ function InternationalTab({ fmpKey, fredKey, gd }) {
     {intlSub === "markets" && (<>
       {!quotes ? <div style={{ textAlign: "center", padding: 40, color: "#64748b", fontFamily: fonts.mono, fontSize: 12 }}>Loading international market data...</div> : (<>
         <SH>International Market Overview</SH>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 10, marginBottom: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(200px, 100%),1fr))", gap: 10, marginBottom: 16 }}>
           {INTL_ETFS.map(e => {
             const q = quotes[e.symbol];
             const ytd = ytdPct[e.symbol];
@@ -512,7 +512,7 @@ function InternationalTab({ fmpKey, fredKey, gd }) {
 
         {/* Rate cards grid */}
         {!cbRatesLoading && !cbRatesError && rows.some(r => r.rate != null) && (<>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 10, marginBottom: 20 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))", gap: 10, marginBottom: 20 }}>
             {rows.map(cb => {
               if (cb.rate == null) return null;
               const spread = usRate != null ? cb.rate - usRate : null;
@@ -693,7 +693,7 @@ function InternationalTab({ fmpKey, fredKey, gd }) {
 
       {!fxQuotes ? <div style={{ textAlign: "center", padding: 40, color: "#64748b", fontFamily: fonts.mono, fontSize: 12 }}>Loading forex data...</div> : (<>
         <SH>Major Currency Pairs</SH>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(200px,1fr))", gap: 10, marginBottom: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(200px, 100%),1fr))", gap: 10, marginBottom: 16 }}>
           {FX_PAIRS.map(p => {
             const q = fxQuotes[p.symbol];
             const ytd = fxYtdPct[p.symbol];

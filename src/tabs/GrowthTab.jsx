@@ -118,7 +118,7 @@ export default function GrowthTab({ fredKey }) {
   const recess = charts.cfnai.filter(p => fin(p.cfnai) && p.cfnai < -0.7).length;
 
   return (<>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(150px, 100%), 1fr))", gap: 10, marginBottom: 14 }}>
       {head.map(([t, v, sub]) => (
         <div key={t} style={{ ...card, padding: "10px 12px" }}>
           <div style={label}>{t}</div>
@@ -128,7 +128,7 @@ export default function GrowthTab({ fredKey }) {
     </div>
 
     <SH>Activity — What Leads Output, and Output Itself</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.1fr) minmax(330px, 1fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(330px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
       <div style={{ ...card, padding: "6px 8px", overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead><tr>{th("Gauge", "left")}{th("Latest")}{th("As of")}{th("A year ago")}{th("3 yrs", "center")}</tr></thead>
@@ -162,7 +162,7 @@ export default function GrowthTab({ fredKey }) {
           `The dashed line is the recession threshold; the 3-month average has been below it in ${recess} months since 2000. Inventories relative to sales (right axis) rise before production is cut.`)}
       </div>
     </div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 12, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))", gap: 12, marginBottom: 14 }}>
       {chartBox("Core capital goods orders and building permits, % yoy since 2005",
         <ResponsiveContainer width="100%" height={170}><LineChart data={charts.lead} margin={{ top: 6, right: 8, bottom: 0, left: -18 }}>
           {grid}<XAxis dataKey="d" tick={axis} tickFormatter={yr4} minTickGap={34} axisLine={false} tickLine={false} /><YAxis tick={axis} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} domain={[-40, 40]} allowDataOverflow />

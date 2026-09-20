@@ -134,7 +134,7 @@ function ConsumerTab() {
     {/* Stress dial */}
     <SH>Consumer Stress Dial</SH>
     <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 18px", marginBottom: 18 }}>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 8 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(190px, 100%), 1fr))", gap: 8 }}>
         {LIGHTS.map(l => (
           <div key={l.id} style={{ display: "flex", alignItems: "center", gap: 9, padding: "8px 10px", background: "var(--bg-subtle)", borderRadius: 9, borderLeft: `3px solid ${TONE_C[l.tone]}` }}>
             <span style={{ width: 8, height: 8, borderRadius: "50%", background: TONE_C[l.tone], flexShrink: 0 }} />
@@ -170,7 +170,7 @@ function ConsumerTab() {
 
     {/* Affordability strip */}
     <SH>Affordability — What It Feels Like to Be a Household</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(155px, 1fr))", gap: 10, marginBottom: 18 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(155px, 100%), 1fr))", gap: 10, marginBottom: 18 }}>
       <AffTile label="Debt Service Ratio" value={c.debtService != null ? `${c.debtService.toFixed(1)}%` : "—"} sub="of disposable income" pct={s.TDSP?.pctRaw} spark={s.TDSP?.sparkRaw} sparkColor={c.debtService > 12.5 ? RED : INDIGO} />
       <AffTile label="Credit Card APR" value={c.cardApr != null ? `${c.cardApr.toFixed(1)}%` : "—"} sub="avg assessed rate" pct={s.TERMCBCCALLNS?.pctRaw} spark={s.TERMCBCCALLNS?.sparkRaw} sparkColor={RED} />
       <AffTile label="Savings Rate" value={c.savings != null ? `${c.savings.toFixed(1)}%` : "—"} sub={`${c.savingsPct}th pctile of history`} pct={c.savingsPct} spark={s.PSAVERT?.sparkRaw} sparkColor={c.savingsPct < 15 ? RED : INDIGO} />
@@ -187,7 +187,7 @@ function ConsumerTab() {
     <OwnerWealthPanel />
 
     <SH>The K-Shaped Consumer — Whose Strength?</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14, marginBottom: 16 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 14, marginBottom: 16 }}>
       <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 16px" }}>
         <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 4 }}>Top 1% Wealth Share</div>
         <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>

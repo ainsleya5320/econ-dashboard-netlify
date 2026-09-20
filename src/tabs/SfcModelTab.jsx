@@ -176,7 +176,7 @@ export default function SfcModelTab() {
 
   return (<>
     {/* ── header ───────────────────────────────────────────────────────── */}
-    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "minmax(260px, 1.15fr) minmax(330px, 1.5fr)", gap: 18, alignItems: "start" }}>
+    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))", gap: 18, alignItems: "start" }}>
       <div>
         <div style={label}>Stock-flow ledger · four-layer model</div>
         <div style={{ fontSize: 24, fontWeight: 800, color: H.color, fontFamily: fonts.heading, letterSpacing: -0.7, lineHeight: 1.1, marginTop: 4 }}>{H.label}</div>
@@ -194,7 +194,7 @@ export default function SfcModelTab() {
     {/* ── Layer 1: the ledger ──────────────────────────────────────────── */}
     <SH>Layer 1 — The Ledger, 46 Years of Balance Sheets</SH>
     <div style={{ ...note, marginTop: -8, marginBottom: 8 }}>Every row is FRED data, not model output: Z.1 financial accounts for the stocks, NIPA for the balances, the Distributional Financial Accounts for who holds what. Percentiles are against each series&apos; own history; tone marks the comfortable end, not the direction of travel.</div>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.1fr) minmax(330px, 1fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(330px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
       <div style={{ ...card, padding: "6px 8px", overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead><tr>{th("Series", "left")}{th("Latest")}{th("As of")}{th("1-yr Δ")}{th("Range since start", "left")}{th("44 qtrs", "center")}</tr></thead>
@@ -240,7 +240,7 @@ export default function SfcModelTab() {
           "The gap peaked at +9 before 2008 and reads −11 today: private credit is further below trend than at any point since the early 1990s. That is the deleveraging half of the Dalio long cycle, and the reason the private score is green while the public one is not.")}
       </div>
     </div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 12, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 14 }}>
       {chartBox("Debt by sector, % of GDP",
         <ResponsiveContainer width="100%" height={160}><LineChart data={d.charts.debt} margin={{ top: 6, right: 8, bottom: 0, left: -16 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" /><XAxis dataKey="date" tick={axis} tickFormatter={x => x.slice(0, 4)} minTickGap={34} axisLine={false} tickLine={false} /><YAxis tick={axis} axisLine={false} tickLine={false} />
@@ -316,7 +316,7 @@ export default function SfcModelTab() {
         ); })}
       </div>
     </div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 12, marginBottom: 14 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 14 }}>
       <VerdictCard title="Private credit (Dalio)" s={d.scores.credit} />
       <VerdictCard title="Interest channel (Mosler)" s={d.scores.interest} />
       <VerdictCard title="Measurement (dark output)" s={d.scores.measure} />
@@ -325,7 +325,7 @@ export default function SfcModelTab() {
     {/* ── the crux ─────────────────────────────────────────────────────── */}
     {crux && (<>
       <SH>The Crux — Does a Rate Hike Still Cool the Economy?</SH>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(280px, 0.8fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
         <div style={{ ...card, padding: "8px 10px", overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontVariantNumeric: "tabular-nums" }}>
             <thead><tr>{th("MPC out of capital income", "left")}{crux.debts.map(g => th(`gov debt ${g}%`))}</tr></thead>

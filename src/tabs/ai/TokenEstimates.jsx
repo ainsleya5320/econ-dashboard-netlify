@@ -91,7 +91,7 @@ export default function TokenEstimatesPanel() {
       </div>
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(430px, 1fr))", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(430px, 100%), 1fr))", gap: 12, marginBottom: 12 }}>
       {labs.map(l => (
         <div key={l.key} style={{ ...card, borderLeft: `3px solid ${l.color}` }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 6 }}>

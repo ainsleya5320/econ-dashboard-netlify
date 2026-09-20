@@ -119,7 +119,7 @@ export default function BankruptcyTab() {
 
   return (<>
     {/* ── header ───────────────────────────────────────────────────────── */}
-    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "minmax(260px, 1.15fr) minmax(330px, 1.5fr)", gap: 18, alignItems: "start" }}>
+    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))", gap: 18, alignItems: "start" }}>
       <div>
         <div style={label}>Bankruptcy · the insolvency cycle, Seattle first</div>
         <div style={{ fontSize: 24, fontWeight: 800, color: H.color, fontFamily: fonts.heading, letterSpacing: -0.7, lineHeight: 1.1, marginTop: 4 }}>{H.label}</div>
@@ -136,7 +136,7 @@ export default function BankruptcyTab() {
       {d.board.map(b => <button key={b.id} onClick={() => setCourt(b.id)} style={{ padding: "3px 9px", borderRadius: 999, cursor: "pointer", background: court === b.id ? `${COURT_COLOR[b.id]}22` : "rgba(255,255,255,0.03)", border: `1px solid ${court === b.id ? COURT_COLOR[b.id] : "rgba(255,255,255,0.08)"}`, color: court === b.id ? "#e2e8f0" : "#64748b", fontFamily: fonts.mono, fontSize: 10, whiteSpace: "nowrap" }}>{b.name}</button>)}
       <span style={{ ...note, marginLeft: 6 }}>pick a court · Seattle and Tacoma are the default</span>
     </div>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.05fr) minmax(330px, 1fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(330px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
       <div style={{ display: "grid", gap: 12 }}>
         <div style={card}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8, flexWrap: "wrap" }}>
@@ -196,7 +196,7 @@ export default function BankruptcyTab() {
 
     {/* ── West Coast board ─────────────────────────────────────────────── */}
     <SH>The Tracked Districts — Official Counts</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.3fr) minmax(320px, 1fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
       <div style={{ ...card, padding: "6px 8px", overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead><tr>{th("Court", "left")}{th(`Filings ${fq(home?.q)}`)}{th("Filings yoy")}{th(`Trailing yr vs ${d.national.since.slice(0, 4)}+`, "left")}{th("Biz ch.11 qtr")}{th("Ch.11 yoy")}{th("Live 30d ch.11")}{th("24 qtrs", "center")}</tr></thead>
@@ -223,7 +223,7 @@ export default function BankruptcyTab() {
 
     {/* ── national ─────────────────────────────────────────────────────── */}
     <SH>National — Official Filings by Chapter</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.3fr) minmax(300px, 1fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
       {chartBox(`Cases commenced per quarter by chapter, since ${fq(natChart[0]?.q)} · business Chapter 11 on the right axis`,
         <ResponsiveContainer width="100%" height={220}><AreaChart data={natChart} margin={{ top: 6, right: 6, bottom: 0, left: -6 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" /><XAxis dataKey="q" tick={axis} tickFormatter={x => x.slice(0, 4)} minTickGap={34} axisLine={false} tickLine={false} /><YAxis yAxisId="l" tick={axis} axisLine={false} tickLine={false} tickFormatter={k} width={44} /><YAxis yAxisId="r" orientation="right" tick={axis} axisLine={false} tickLine={false} tickFormatter={k} width={36} />

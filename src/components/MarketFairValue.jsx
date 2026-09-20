@@ -189,7 +189,7 @@ export default function MarketFairValuePanel() {
   );
   return (<>
     <SH>Market Valuation — Morningstar Bottom-Up Fair Value</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(170px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
       {stat("Today", fmtFv(ms.latest), `median P/FV across ~1,500 covered stocks · ${ms.asOf}`, msColor)}
       {stat("Since " + ms.start?.slice(0, 4), `${tone.label} · cheaper than ${ms.cheaperThan}%`, "of trading days in the archive", tone.color)}
       {stat("1-year range", `${fmtSigned(yrLo?.v)} to ${fmtSigned(yrHi?.v)}`, `${fmtDate(yrLo?.d)} low · ${fmtDate(yrHi?.d)} high`)}

@@ -87,7 +87,7 @@ export default function GpuEconomicsPanel() {
       </div>
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(420px, 1fr))", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(420px, 100%), 1fr))", gap: 12, marginBottom: 12 }}>
       <div style={{ ...card, padding: "10px 10px 4px" }}>
         <div style={{ ...label, paddingLeft: 4 }}>Cost per million output tokens · {A.referenceModel} · {floor} tok/s per user</div>
         <ResponsiveContainer width="100%" height={280}>

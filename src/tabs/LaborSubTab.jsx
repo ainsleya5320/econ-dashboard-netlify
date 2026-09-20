@@ -8,7 +8,7 @@ import { fetchFred } from "../lib/api.js";
 import {
   GREEN, AMBER, RED, INDIGO, SLATE, DIM, CYAN, VIOLET, BLUE, ORANGE, PINK, TEAL,
   fin, card, label, note, tip, axis, pc, pp, kk, fmtMon, fmtDay, th, td, tdL, tableStyle,
-  chip, DenseHeader, Panel, Note, RangeBar, pctile, lastV, lastD, backV,
+  chip, DenseHeader, Panel, Note, RangeBar, pctile, lastV, lastD, backV, DataTable, useIsPhone, chartH,
 } from "../components/dense.jsx";
 
 // ============================================================================
@@ -78,6 +78,7 @@ const IDS = [
   ...INDUSTRY.map(i => [i.id, 400]),
 ];
 
+const kDelta = v => (fin(v) ? `${v >= 0 ? "+" : "−"}${Math.abs(v).toFixed(0)}k` : "—");
 const mom = (arr, n = 1) => { const a = backV(arr, n), b = lastV(arr); return fin(a) && fin(b) ? b - a : null; };
 const avgMom = (arr, n) => { const d = mom(arr, n); return fin(d) ? d / n : null; };
 
@@ -216,7 +217,7 @@ function LaborSubTab({ fredKey }) {
       {["5Y", "10Y", "20Y", "MAX"].map(r => <button key={r} onClick={() => setRange(r)} style={rangeBtn(r)}>{r}</button>)}
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(350px,1fr))", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(350px, 100%),1fr))", gap: 12, marginBottom: 12 }}>
       <Panel title="Payrolls, monthly change" right="bars are months; the line is the three-month average" style={{ marginBottom: 0 }}>
         <ResponsiveContainer width="100%" height={236}>
           <ComposedChart data={payrollChange.map((p, i, a) => ({ ...p, avg3: i >= 2 ? (a[i].v + a[i - 1].v + a[i - 2].v) / 3 : null }))} margin={{ top: 6, right: 8, left: -12, bottom: 0 }}>
@@ -235,94 +236,73 @@ function LaborSubTab({ fredKey }) {
       </Panel>
 
       <Panel title="Where the jobs are coming from" right={`three-month average, ${fmtMon(asOf)}`} style={{ marginBottom: 0 }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={tableStyle}>
-            <thead><tr>{th("industry", "left")}{th("employed")}{th("share")}{th("1m")}{th("3m avg")}{th("12m")}</tr></thead>
-            <tbody>
-              {industryRows.map(r => (
-                <tr key={r.id} style={{ borderTop: "1px solid var(--border-subtle)" }}>
-                  <td style={{ padding: "3.5px 6px", fontSize: 10, fontFamily: fonts.mono, color: "var(--text-secondary)", whiteSpace: "nowrap" }}>
-                    <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: 2, background: r.color, marginRight: 6 }} />{r.label}
-                  </td>
-                  {td(`${(r.v / 1000).toFixed(1)}M`, "var(--text-primary)", { fontSize: 10 })}
-                  {td(pc(r.share, 1), DIM, { fontSize: 10 })}
-                  {td(fin(r.m1) ? `${r.m1 >= 0 ? "+" : "−"}${Math.abs(r.m1).toFixed(0)}k` : "—", !fin(r.m1) ? DIM : r.m1 > 0 ? GREEN : RED, { fontSize: 10 })}
-                  {td(fin(r.m3) ? `${r.m3 >= 0 ? "+" : "−"}${Math.abs(r.m3).toFixed(0)}k` : "—", !fin(r.m3) ? DIM : r.m3 > 0 ? GREEN : RED, { fontSize: 10, fontWeight: 600 })}
-                  {td(fin(r.m12) ? `${r.m12 >= 0 ? "+" : "−"}${Math.abs(r.m12).toFixed(0)}k` : "—", !fin(r.m12) ? DIM : r.m12 > 0 ? GREEN : RED, { fontSize: 10 })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          dense
+          rows={industryRows.map(r => ({ ...r, key: r.id }))}
+          cols={[
+            { key: "label", label: "industry", primary: true, render: r => (<>
+              <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: 2, background: r.color, marginRight: 6 }} />{r.label}
+            </>) },
+            { key: "v", label: "employed", render: r => `${(r.v / 1000).toFixed(1)}M` },
+            { key: "share", label: "share", render: r => <span style={{ color: DIM }}>{pc(r.share, 1)}</span> },
+            { key: "m1", label: "1m", render: r => <span style={{ color: !fin(r.m1) ? DIM : r.m1 > 0 ? GREEN : RED }}>{kDelta(r.m1)}</span> },
+            { key: "m3", label: "3m avg", render: r => <span style={{ color: !fin(r.m3) ? DIM : r.m3 > 0 ? GREEN : RED, fontWeight: 600 }}>{kDelta(r.m3)}</span> },
+            { key: "m12", label: "12m", render: r => <span style={{ color: !fin(r.m12) ? DIM : r.m12 > 0 ? GREEN : RED }}>{kDelta(r.m12)}</span> },
+          ]}
+        />
         <Note>
           {adding} of {industryRows.length} industries are adding on a three-month basis. When that count falls below about half, the headline is being carried by one or two sectors — historically health care and government — and the expansion is narrower than it looks.
         </Note>
       </Panel>
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(350px,1fr))", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(350px, 100%),1fr))", gap: 12, marginBottom: 12 }}>
       <Panel title="The full slack ladder, U-1 to U-6" right={fmtMon(D("UNRATE"))} style={{ marginBottom: 0 }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={tableStyle}>
-            <thead><tr>{th("measure", "left")}{th("counts", "left")}{th("rate")}{th("1y chg")}{th("20y range")}</tr></thead>
-            <tbody>
-              {LADDER.map(m => {
-                const arr = f[m.id], v = lastV(arr);
-                if (!fin(v)) return null;
-                const d12 = mom(arr, 12);
-                return (
-                  <tr key={m.id} style={{ borderTop: "1px solid var(--border-subtle)" }}>
-                    <td style={{ padding: "3.5px 6px", fontSize: 10.5, fontFamily: fonts.mono, color: "var(--text-primary)", fontWeight: 600, whiteSpace: "nowrap" }}>
-                      <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: 2, background: m.color, marginRight: 6 }} />{m.label}
-                    </td>
-                    {tdL(m.what, DIM, { fontSize: 9.5 })}
-                    {td(pc(v, 1), m.color, { fontWeight: 600 })}
-                    {td(fin(d12) ? `${pp(d12, 1)}pp` : "—", !fin(d12) ? DIM : d12 > 0 ? RED : GREEN)}
-                    <td style={{ padding: "3.5px 6px", textAlign: "right" }}><RangeBar pct={pctile((arr || []).slice(-240).map(o => o.v), v)} color={m.color} /></td>
-                  </tr>
-                );
-              })}
-              <tr style={{ borderTop: "1.5px solid var(--text-muted)" }}>
-                {tdL("U-6 minus U-3", SLATE)}{tdL("hidden slack", DIM, { fontSize: 9.5 })}
-                {td(fin(u6) && fin(u3) ? `${(u6 - u3).toFixed(1)}pp` : "—", AMBER, { fontWeight: 600 })}
-                {td("", DIM)}{td("", DIM)}
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          rows={[
+            ...LADDER.filter(m => fin(lastV(f[m.id]))).map(m => {
+              const arr = f[m.id], v = lastV(arr), d12 = mom(arr, 12);
+              return { key: m.id, m, v, d12, arr };
+            }),
+            { key: "gap", gap: true, v: fin(u6) && fin(u3) ? u6 - u3 : null },
+          ]}
+          cols={[
+            { key: "label", label: "measure", primary: true, render: r => (r.gap ? <span style={{ color: SLATE }}>U-6 minus U-3</span> : (<>
+              <span style={{ display: "inline-block", width: 7, height: 7, borderRadius: 2, background: r.m.color, marginRight: 6 }} />{r.m.label}
+            </>)) },
+            { key: "what", label: "counts", align: "left", hide: true, render: r => <span style={{ color: DIM, fontSize: 9.5 }}>{r.gap ? "hidden slack" : r.m.what}</span> },
+            { key: "rate", label: "rate", render: r => <span style={{ color: r.gap ? AMBER : r.m.color, fontWeight: 600 }}>{r.gap ? (fin(r.v) ? `${r.v.toFixed(1)}pp` : "—") : pc(r.v, 1)}</span> },
+            { key: "d12", label: "1y chg", render: r => (r.gap ? "" : <span style={{ color: !fin(r.d12) ? DIM : r.d12 > 0 ? RED : GREEN }}>{fin(r.d12) ? `${pp(r.d12, 1)}pp` : "—"}</span>) },
+            { key: "range", label: "20y range", render: r => (r.gap ? "" : <RangeBar pct={pctile((r.arr || []).slice(-240).map(o => o.v), r.v)} color={r.m.color} />) },
+          ]}
+        />
         <Note>The gap between U-6 and U-3 is the part of the labour market that wants more work but does not show up in the headline. It has averaged close to 4pp in expansions and widens first when conditions soften.</Note>
       </Panel>
 
       <Panel title="The series that turn first" right="direction against six months ago" style={{ marginBottom: 0 }}>
-        <div style={{ overflowX: "auto" }}>
-          <table style={tableStyle}>
-            <thead><tr>{th("indicator", "left")}{th("now")}{th("6m ago")}{th("change")}{th("reading", "left")}</tr></thead>
-            <tbody>
-              {LEADING.map(m => {
-                const arr = f[m.id], v = lastV(arr);
-                if (!fin(v)) return null;
-                const prev = backV(arr, m.id === "IC4WSA" ? 26 : 6);   // claims are weekly
-                const d = fin(prev) ? v - prev : null;
-                const fmt = x => !fin(x) ? "—" : m.unit === "k" ? (m.id === "IC4WSA" ? `${(x / 1000).toFixed(0)}k` : `${(x / 1000).toFixed(2)}M`) : m.unit === "%" ? pc(x, 1) : m.unit === "hr" ? x.toFixed(1) : x.toFixed(1);
-                const good = fin(d) && d !== 0 ? ((d > 0) !== m.invert) : null;
-                return (
-                  <tr key={m.id} style={{ borderTop: "1px solid var(--border-subtle)" }}>
-                    {tdL(m.label, "var(--text-secondary)", { fontSize: 10 })}
-                    {td(fmt(v), "var(--text-primary)", { fontWeight: 600, fontSize: 10 })}
-                    {td(fmt(prev), DIM, { fontSize: 10 })}
-                    {td(fin(d) ? (m.unit === "k" ? `${d >= 0 ? "+" : "−"}${Math.abs(d / 1000).toFixed(m.id === "IC4WSA" ? 0 : 2)}${m.id === "IC4WSA" ? "k" : "M"}` : `${pp(d, m.unit === "hr" ? 1 : 1)}`) : "—", good === null ? DIM : good ? GREEN : RED, { fontSize: 10 })}
-                    {tdL(m.note, DIM, { fontSize: 9 })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          rows={LEADING.filter(m => fin(lastV(f[m.id]))).map(m => {
+            const arr = f[m.id], v = lastV(arr);
+            const prev = backV(arr, m.id === "IC4WSA" ? 26 : 6);   // claims are weekly
+            const d = fin(prev) ? v - prev : null;
+            const fmt = x => !fin(x) ? "—" : m.unit === "k" ? (m.id === "IC4WSA" ? `${(x / 1000).toFixed(0)}k` : `${(x / 1000).toFixed(2)}M`) : m.unit === "%" ? pc(x, 1) : x.toFixed(1);
+            return { key: m.id, m, v, prev, d, fmt, good: fin(d) && d !== 0 ? ((d > 0) !== m.invert) : null };
+          })}
+          cols={[
+            { key: "label", label: "indicator", primary: true, render: r => r.m.label },
+            { key: "now", label: "now", render: r => <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{r.fmt(r.v)}</span> },
+            { key: "prev", label: "6m ago", render: r => <span style={{ color: DIM }}>{r.fmt(r.prev)}</span> },
+            { key: "chg", label: "change", render: r => <span style={{ color: r.good === null ? DIM : r.good ? GREEN : RED }}>
+              {fin(r.d) ? (r.m.unit === "k" ? `${r.d >= 0 ? "+" : "−"}${Math.abs(r.d / 1000).toFixed(r.m.id === "IC4WSA" ? 0 : 2)}${r.m.id === "IC4WSA" ? "k" : "M"}` : pp(r.d, 1)) : "—"}
+            </span> },
+            { key: "note", label: "reading", align: "left", render: r => <span style={{ color: DIM, fontSize: 9 }}>{r.m.note}</span> },
+          ]}
+        />
         <Note>Green is the direction that means a healthier labour market for that particular series — falling claims and falling layoffs are good; falling quits and falling hours are not.</Note>
       </Panel>
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(350px,1fr))", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(350px, 100%),1fr))", gap: 12, marginBottom: 12 }}>
       <Panel title="Unemployment — narrow against broad" style={{ marginBottom: 0 }}>
         <ResponsiveContainer width="100%" height={210}>
           <AreaChart data={clip(f.UNRATE).map(p => ({ d: p.d, u3: p.v, u6: (f.U6RATE || []).find(x => x.d === p.d)?.v ?? null }))} margin={{ top: 6, right: 8, left: -12, bottom: 0 }}>
@@ -359,7 +339,7 @@ function LaborSubTab({ fredKey }) {
       </Panel>
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(350px,1fr))", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(350px, 100%),1fr))", gap: 12, marginBottom: 12 }}>
       <Panel title="Openings per unemployed person, and the quits rate" style={{ marginBottom: 0 }}>
         <ResponsiveContainer width="100%" height={216}>
           <ComposedChart data={vu.filter(p => p.d >= cutoff).map(p => ({ ...p, quits: (f.JTSQUR || []).find(x => x.d === p.d)?.v ?? null }))} margin={{ top: 6, right: 16, left: -12, bottom: 0 }}>
@@ -414,7 +394,7 @@ function LaborSubTab({ fredKey }) {
       </Panel>
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(350px,1fr))", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(350px, 100%),1fr))", gap: 12, marginBottom: 12 }}>
       <Panel title="Participation — headline against prime age" style={{ marginBottom: 0 }}>
         <ResponsiveContainer width="100%" height={196}>
           <LineChart data={clip(f.CIVPART).map(p => ({

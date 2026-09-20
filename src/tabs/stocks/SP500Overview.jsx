@@ -144,7 +144,7 @@ function SP500Overview({ onSelectStock }) {
 
   return (<>
     {/* Headline stats */}
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 10, marginBottom: 16 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(150px, 100%), 1fr))", gap: 10, marginBottom: 16 }}>
       {[
         { l: "Median P/E", v: stats.medPe?.toFixed(1), sub: `${stats.n} constituents`, c: "#6366F1" },
         { l: "Median Earnings Yield", v: stats.medEy != null ? `${stats.medEy.toFixed(2)}%` : "—", sub: "1 ÷ P/E, TTM", c: "#10B981" },
@@ -207,7 +207,7 @@ function SP500Overview({ onSelectStock }) {
     </div>
 
     {/* Sector valuation + P/E distribution */}
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(280px, 1fr) minmax(280px, 1fr)", gap: 14, marginBottom: 16 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(280px, 100%), 1fr))", gap: 14, marginBottom: 16 }}>
       <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 16px" }}>
         <div style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: fonts.mono, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 8 }}>Median Earnings Yield by Sector — Cheapest First</div>
         <ResponsiveContainer width="100%" height={Math.max(240, sectorRows.length * 26)}>

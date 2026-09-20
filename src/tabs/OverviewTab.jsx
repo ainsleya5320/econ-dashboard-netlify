@@ -709,7 +709,7 @@ function OverviewTab({ fmpKey, onNavigate, onTicker }) {
         <TodayHero regime={regime} />
 
         {/* KPI band: what am I paid, and what does money cost */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 10 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(260px, 100%), 1fr))", gap: 10 }}>
           {/* bottom-up (Morningstar) beside the two top-down reads — spans the row */}
           <div style={{ gridColumn: "1 / -1" }}>
             <ValuationLensesCard erp={erp} dam={dam} onNavigate={onNavigate} />
@@ -735,7 +735,7 @@ function OverviewTab({ fmpKey, onNavigate, onTicker }) {
         </div>
 
         {/* Rates strip */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 8 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(150px, 100%), 1fr))", gap: 8 }}>
           {["DFF", "DGS2", "DGS10", "MORTGAGE30US"].map(id => rates.find(r => r.id === id)).filter(Boolean).map(r => <RateRow key={r.id} rate={r} />)}
         </div>
 

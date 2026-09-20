@@ -500,7 +500,7 @@ export default function SpecialSituations({ onSelectStock }) {
     const inp = { background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 6, color: "#e2e8f0", fontFamily: fonts.mono, fontSize: 10.5, padding: "5px 7px", width: "100%", boxSizing: "border-box" };
     if (entries.length === 0) return <div style={{ ...card, ...note, padding: 18, textAlign: "center" }}>Nothing pinned yet. Press + on any board row to bring it here with its dates, a thesis box and the checklist for its situation type.</div>;
     return (
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(420px, 1fr))", gap: 10 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(420px, 100%), 1fr))", gap: 10 }}>
         {entries.map(e => {
           const c = CAT[e.cat] || { label: e.cat, color: SLATE };
           const live = e.ticker ? quotes[e.ticker] : null;

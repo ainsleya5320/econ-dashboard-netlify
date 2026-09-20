@@ -138,3 +138,113 @@ export const last = arr => (arr && arr.length ? arr[arr.length - 1] : null);
 export const lastV = arr => { const x = last(arr); return x ? x.v : null; };
 export const lastD = arr => { const x = last(arr); return x ? x.d : null; };
 export const backV = (arr, n) => (arr && arr.length > n ? arr[arr.length - 1 - n].v : null);
+
+// ============================================================================
+// PHONES — the dense tables are the problem on a small screen. At 375px a
+// seven-column table shows its label and first two columns and clips the rest,
+// so the numbers you actually came for are the ones off-screen, reachable only
+// by scrolling a table sideways inside a page that scrolls down. DataTable
+// renders the same data as a real table on a wide screen and as one card per
+// row on a narrow one, where every value is visible and nothing scrolls
+// sideways.
+// ============================================================================
+
+// Matches a CSS media query and re-renders when it changes. Inline styles
+// cannot carry media queries, and this codebase styles almost everything
+// inline, so the breakpoint has to be readable from JavaScript.
+export function useMedia(query) {
+  const [hit, setHit] = React.useState(() => (typeof window === "undefined" ? false : window.matchMedia(query).matches));
+  React.useEffect(() => {
+    const m = window.matchMedia(query);
+    const sync = () => setHit(m.matches);
+    sync();
+    // Both listeners on purpose. The MediaQueryList "change" event is the right
+    // one, but it does not reliably fire under device emulation and has been
+    // patchy across mobile browsers on orientation change; window resize always
+    // fires. sync() only ever sets a boolean, so the duplicate is free — React
+    // bails out of the re-render when the value has not actually changed.
+    m.addEventListener("change", sync);
+    window.addEventListener("resize", sync);
+    window.addEventListener("orientationchange", sync);
+    return () => {
+      m.removeEventListener("change", sync);
+      window.removeEventListener("resize", sync);
+      window.removeEventListener("orientationchange", sync);
+    };
+  }, [query]);
+  return hit;
+}
+
+// 700px rather than a phone's 375: a narrow desktop window and a tablet in
+// portrait have the same problem, and the card layout reads fine at both.
+export const PHONE_QUERY = "(max-width: 700px)";
+export const useIsPhone = () => useMedia(PHONE_QUERY);
+
+/**
+ * cols: [{ key, label, align?, width?, primary?, hide?, render?(row) }]
+ *   primary  the row's identity — its heading on a card, first column in a table
+ *   hide     drop this column on a phone (use for anything decorative)
+ *   render   cell contents; falls back to row[key]
+ * rows: any[]  — each needs a stable `key`
+ */
+export function DataTable({ cols, rows, note: footnote, dense = false }) {
+  const phone = useIsPhone();
+  const shown = cols.filter(c => !(phone && c.hide));
+  const primary = shown.find(c => c.primary) || shown[0];
+  const rest = shown.filter(c => c !== primary);
+  const cell = (c, r) => (c.render ? c.render(r) : r[c.key]);
+
+  if (!phone) {
+    return (<>
+      <div style={{ overflowX: "auto" }}>
+        <table style={tableStyle}>
+          <thead><tr>{shown.map(c => th(c.label, c.align || (c === primary ? "left" : "right")))}</tr></thead>
+          <tbody>
+            {rows.map(r => (
+              <tr key={r.key} style={{ borderTop: "1px solid var(--border-subtle)" }}>
+                {shown.map(c => (
+                  <td key={c.key} style={{
+                    padding: dense ? "3.5px 6px" : "4px 6px", fontSize: dense ? 10 : 10.5,
+                    fontFamily: fonts.mono, whiteSpace: "nowrap",
+                    textAlign: c.align || (c === primary ? "left" : "right"),
+                    color: c === primary ? "var(--text-primary)" : "var(--text-secondary)",
+                    fontWeight: c === primary ? 600 : 400, width: c.width,
+                  }}>{cell(c, r)}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {footnote && <Note>{footnote}</Note>}
+    </>);
+  }
+
+  // one card per row: heading, then the values as a wrapping label/value grid
+  return (<>
+    <div style={{ display: "flex", flexDirection: "column", gap: 7, marginTop: 2 }}>
+      {rows.map(r => (
+        <div key={r.key} style={{ background: "var(--bg-subtle)", borderRadius: 9, padding: "8px 10px" }}>
+          <div style={{ fontSize: 11.5, fontFamily: fonts.mono, fontWeight: 600, color: "var(--text-primary)", marginBottom: 5 }}>
+            {cell(primary, r)}
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(88px, 100%),1fr))", gap: "5px 10px" }}>
+            {rest.map(c => (
+              <div key={c.key} style={{ minWidth: 0 }}>
+                <div style={{ ...label, fontSize: 8, marginBottom: 1 }}>{c.label}</div>
+                <div style={{ fontSize: 11, fontFamily: fonts.mono, color: "var(--text-secondary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {cell(c, r)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+    {footnote && <Note>{footnote}</Note>}
+  </>);
+}
+
+// Chart heights want to come down on a phone, and recharts needs far fewer
+// ticks before the axis turns to mush.
+export const chartH = (phone, desktop, mobile) => (phone ? mobile ?? Math.round(desktop * 0.78) : desktop);

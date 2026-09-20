@@ -89,7 +89,7 @@ export function GpuRentalsPanel({ compact = false }) {
   const chartRows = (g.ornn.rows || []).map(r => ({ d: r.d, h100: r.h100, h200: r.h200, b200: r.b200 }));
   return (<>
     {!compact && <SH>Compute Cost — GPU Rental Rates (live)</SH>}
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.2fr) minmax(300px, 1fr)", gap: 12, marginBottom: 12, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 12, alignItems: "start" }}>
       <div style={{ ...card, padding: "6px 8px", overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead><tr>{th("GPU", "left")}{th("Vast median $/hr")}{th("min")}{th("offers")}{th("Ornn index")}{th("30-d")}{th("RunPod from")}</tr></thead>
@@ -163,7 +163,7 @@ function AiPulseTab({ chainModel, chainHeadline, chainVerdicts }) {
   const chips = [["tokens / week", tok(T.week.total)], ["1-wk", pc(T.growth.w1)], ["4-wk", pc(T.growth.w4)], ["13-wk", pc(T.growth.w13)], ["52-wk", pc(T.growth.w52)], ["open weights", `${T.shares.open}%`], ["OTPI avg", fin(d.gpu.bridge.otpiAvg) ? `${usd(d.gpu.bridge.otpiAvg, 3)}/M` : "—"], ["H100", fin(d.gpu.h100SpotUsed) ? `${usd(d.gpu.h100SpotUsed)}/hr` : "—"], ["frontier", A ? `${A.best.name.slice(0, 22)} · ${A.best.idx}` : "—"]];
   const ScatterTip = ({ active, payload }) => { if (!active || !payload?.length) return null; const m = payload[0].payload; return <div style={{ ...tip, padding: "6px 8px", fontFamily: fonts.mono, color: "#cbd5e1" }}><div style={{ fontWeight: 700, color: "var(--text-primary)" }}>{m.name}</div><div>{m.creator} · index {m.idx} · {usd(m.price)}/M{fin(m.tps) ? ` · ${Math.round(m.tps)} tok/s` : ""}{m.pareto ? " · on the frontier" : ""}</div></div>; };
   return (<>
-    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "minmax(240px, 1.1fr) minmax(320px, 1.6fr)", gap: 18, alignItems: "start" }}>
+    <div style={{ ...card, padding: "14px 18px", marginBottom: 14, display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 18, alignItems: "start" }}>
       <div>
         <div style={label}>AI economy · pulse</div>
         <div style={{ fontSize: 24, fontWeight: 800, color: head?.color || SLATE, fontFamily: fonts.heading, letterSpacing: -0.7, lineHeight: 1.1, marginTop: 4 }}>{head?.label || "…"}</div>
@@ -176,7 +176,7 @@ function AiPulseTab({ chainModel, chainHeadline, chainVerdicts }) {
 
     <SH>The Token Tracker — Who Is Consuming Intelligence, and How Fast</SH>
     <div style={{ ...note, marginTop: -8, marginBottom: 8 }}>OpenRouter routes a large, model-agnostic slice of API traffic. Share and growth by lab come from its weekly series (complete weeks only, since {T.week.since}); the model movers come from the per-model rankings this dashboard snapshots daily ({T.snapshot.fullDays} complete snapshots since {T.snapshot.firstFull}).</div>
-    <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.25fr) minmax(320px, 1fr)", gap: 12, marginBottom: 12, alignItems: "start" }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(320px, 100%), 1fr))", gap: 12, marginBottom: 12, alignItems: "start" }}>
       <div style={{ ...card, padding: "6px 8px", overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead><tr>{th("Lab", "left")}{[["tokens", "Tokens / wk"], ["share", "Share"], ["chg4w", "4-wk"], ["chg13w", "13-wk"], ["models", "Models"]].map(([k, t]) => <th key={k} onClick={() => setLabSort(k)} style={{ padding: "5px 6px", fontSize: 8.5, color: labSort === k ? "#c7d2fe" : DIM, fontFamily: fonts.mono, textTransform: "uppercase", letterSpacing: 0.4, textAlign: "right", fontWeight: 600, borderBottom: "1px solid rgba(255,255,255,0.06)", cursor: "pointer", whiteSpace: "nowrap" }}>{t}</th>)}{th("26 wks", "center")}</tr></thead>
@@ -209,11 +209,11 @@ function AiPulseTab({ chainModel, chainHeadline, chainVerdicts }) {
 
     <SH>Intelligence vs Price — What a Point of Capability Costs</SH>
     {A ? (<>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10, marginBottom: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(170px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
         {[["Best model", `${A.best.name}`, `index ${A.best.idx} · ${usd(A.best.price)}/M · ${A.best.creator}`], ["Frontier at a discount", A.frontier ? A.frontier.name : "—", A.frontier ? `within 5 points of the best for ${usd(A.frontier.price)}/M` : ""], ["Top-10 median price", `${usd(A.top10MedianPrice)}/M`, `cost per intelligence point ${fin(A.top10CostPerPoint) ? usd(A.top10CostPerPoint, 3) : "—"}`], ["Cheapest at 80% of best", A.tiers[1]?.model ? `${usd(A.tiers[1].model.price)}/M` : "—", A.tiers[1]?.model ? `${A.tiers[1].model.name} (index ${A.tiers[1].model.idx} vs ${A.tiers[1].min} needed)` : "none"], ["Fastest near-frontier", A.fastest ? `${Math.round(A.fastest.tps)} tok/s` : "—", A.fastest ? `${A.fastest.name} · ${usd(A.fastest.price)}/M` : ""], ["Released last 90 days", `${A.releases90d}`, `of ${A.n} priced, indexed models`]].map(([t, v, sub]) => (
           <div key={t} style={{ ...card, padding: "10px 12px" }}><div style={label}>{t}</div><div style={{ fontSize: 14, fontWeight: 700, color: "var(--text-primary)", fontFamily: fonts.heading, letterSpacing: -0.3, marginTop: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }} title={v}>{v}</div><div style={note}>{sub}</div></div>))}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.4fr) minmax(300px, 1fr)", gap: 12, marginBottom: 14, alignItems: "start" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
         {chartBox("Intelligence Index vs blended price per 1M tokens (log) — the frontier is the upper-left edge",
           <ResponsiveContainer width="100%" height={300}><ScatterChart margin={{ top: 10, right: 16, bottom: 4, left: -6 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" /><XAxis type="number" dataKey="price" scale="log" domain={[0.02, 200]} ticks={[0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200]} tick={axis} tickFormatter={v => (v >= 1 ? `$${v}` : `${v * 100}¢`)} axisLine={false} tickLine={false} name="$/M" allowDataOverflow /><YAxis type="number" dataKey="idx" domain={["auto", "auto"]} tick={axis} axisLine={false} tickLine={false} width={34} name="index" /><ZAxis range={[22, 22]} />
@@ -232,7 +232,7 @@ function AiPulseTab({ chainModel, chainHeadline, chainVerdicts }) {
     </>) : <div style={{ ...card, marginBottom: 12, fontSize: 11, color: "#64748b", fontFamily: fonts.mono }}>Artificial Analysis data unavailable — add ARTIFICIAL_ANALYSIS_KEY to .env and restart.</div>}
 
     <GpuRentalsPanel />
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 12, marginBottom: 14 }}><VerdictCard title="Compute cost" s={s.compute} /></div>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 14 }}><VerdictCard title="Compute cost" s={s.compute} /></div>
 
     <InfoBox color={INDIGO}>
       <strong style={{ color: "#cbd5e1" }}>How to read it.</strong> The AI economy is a chain — tokens demanded → models that make them → data centers that run them → silicon they run on — and this page tracks the money-relevant joints. Token demand is the top line; the price of a token is falling by design (the frontier gets cheaper every quarter, the scatter shows how fast), so revenue growth needs volume to outrun deflation. The compute bridge converts a GPU-hour into a cost per million tokens and compares it with what tokens actually sell for; that spread, times utilization, is the margin every lab, cloud and chip vendor is fighting over. OpenRouter is one large sample, not the market: it over-weights open-weight and cost-sensitive traffic, so read shares as relative and growth as directional.

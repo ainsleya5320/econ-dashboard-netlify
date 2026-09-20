@@ -64,7 +64,7 @@ export default function DataHealthPanel({ sources = [] }) {
         <span style={{ color: "var(--text-muted)" }}>{open ? "Hide" : "Show"}</span>
       </button>
       {open && (
-        <div style={{ borderTop: "1px solid var(--border-subtle)", padding: "10px 14px 12px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 10 }}>
+        <div style={{ borderTop: "1px solid var(--border-subtle)", padding: "10px 14px 12px", display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: 10 }}>
           {sources.map(source => (
             <div key={source.label} style={{ display: "flex", gap: 8, alignItems: "baseline", minWidth: 0 }}>
               <StatusDot tone={source.tone} />

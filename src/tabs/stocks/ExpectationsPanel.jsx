@@ -216,7 +216,7 @@ function ValueLadder({ fcf, mktCap, implied, discRate, termGrowth, projYears }) 
       <div style={{ display: "flex", height: 22, borderRadius: 6, overflow: "hidden", marginTop: 10, background: "rgba(255,255,255,0.04)" }}>
         {parts.map(p => <div key={p.k} title={`${p.k}: ${big(p.v)}`} style={{ width: `${(p.v / total) * 100}%`, background: p.c, opacity: 0.85 }} />)}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginTop: 10 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(180px, 100%), 1fr))", gap: 12, marginTop: 10 }}>
         {parts.map(p => (
           <div key={p.k} style={{ display: "flex", gap: 8 }}>
             <div style={{ width: 4, borderRadius: 2, background: p.c, flexShrink: 0 }} />
@@ -273,7 +273,7 @@ function StreetCheck({ data, fcf, mktCap, shares, price, discRate, termGrowth, p
         <div style={{ position: "absolute", top: 20, left: `calc(${x(price)} - 1px)`, width: 2, height: 30, background: "#f1f5f9", zIndex: 2 }} />
         <div style={{ position: "absolute", top: 8, left: x(price), transform: "translateX(-50%)", fontSize: 10, fontWeight: 700, color: "#f1f5f9", fontFamily: fonts.mono, whiteSpace: "nowrap", zIndex: 2, background: "#0f172a", padding: "0 4px", borderRadius: 3 }}>price ${price.toFixed(2)}</div>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginTop: 8 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(200px, 100%), 1fr))", gap: 12, marginTop: 8 }}>
         {scen.map(s => (
           <div key={s.k} style={{ display: "flex", gap: 8 }}>
             <div style={{ width: 4, borderRadius: 2, background: s.c, flexShrink: 0 }} />

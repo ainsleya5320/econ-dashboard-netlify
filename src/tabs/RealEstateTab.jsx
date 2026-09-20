@@ -186,7 +186,7 @@ function ScoreCard({ name, sec, support, history, histKey, foot }) {
       </div>
       <div style={{ fontSize: 10.5, color: "#cbd5e1", fontFamily: fonts.mono, marginTop: 10, lineHeight: 1.5 }}>{sec && fin(sec.score) ? `${parts.join(", ")}.` : "Waiting for the anchor feeds."}</div>
       {sec && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 6, marginTop: 8 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(150px, 100%), 1fr))", gap: 6, marginTop: 8 }}>
           {sec.anchors.map(a => (
             <div key={a.key} style={{ background: "rgba(255,255,255,0.03)", borderRadius: 8, padding: "6px 8px" }}>
               <div style={{ fontSize: 9, color: "#64748b", fontFamily: fonts.mono, textTransform: "uppercase" }}>{a.label}</div>
@@ -223,12 +223,12 @@ function FairValueView({ housing, repl, cre, reit, comp, credit, rents, go }) {
   const supportCom = comp?.support?.commercial ? `CRE delinquency ${pc0(comp.support.commercial.dq, 2)} (p${comp.support.commercial.dqPct}, ${pc(comp.support.commercial.dqChg1y, 2)} 1y) · prices ${pc(comp.support.commercial.priceYoy)} YoY (${mon(comp.support.commercial.priceAsOf)}) · rental vacancy ${pc0(comp.support.commercial.rentalVacancy)}${credit?.sloos ? ` · ${credit.sloos.verdict.label.toLowerCase()} (SLOOS)` : ""}` : null;
   return (<>
     <SH>Valuation Context — Prices, Income and Financing</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))", gap: 12, marginBottom: 12 }}>
       <ScoreCard name="Residential" sec={comp?.residential} support={supportRes} history={comp?.history} histKey="res" />
       <ScoreCard name="Commercial" sec={comp?.commercial} support={supportCom} history={comp?.history} histKey="com" />
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))", gap: 10, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(210px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
       <Verdict title="Residential · health" verdict={hv?.label ?? "…"} color={hv?.color ?? SLATE}
         why={housing ? `affordability ${light(housing.afford?.light) === RED ? "red" : light(housing.afford?.light) === AMBER ? "amber" : "green"} (${pc0(housing.afford?.current)} of income, p${housing.afford?.pct}) · supply p${housing.supply?.pct} · valuation p${housing.valuation?.pct}` : "loading"}
         foot={<AsOf d={housing?.supply?.lastDate} cadence="monthly" src="Census / Freddie Mac via FRED" />} dest="Residential" onOpen={() => go("residential")} />
@@ -243,7 +243,7 @@ function FairValueView({ housing, repl, cre, reit, comp, credit, rents, go }) {
         foot={<AsOf d={reit?.asOf} cadence="weekly" src="FMP fundamentals + FRED 10Y" />} dest="Commercial" onOpen={() => go("commercial")} />
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 12, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 12 }}>
       <div style={card}>
         <div style={label}>Residential — the anchors</div>
         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 8, marginTop: 8 }}>
@@ -270,7 +270,7 @@ function FairValueView({ housing, repl, cre, reit, comp, credit, rents, go }) {
           <div style={label}>REIT enterprise EBITDA yield by property type · spread over the 10-year ({pc0(reit.tenYear, 2)})</div>
           <span style={note}>EBITDA ÷ enterprise value · {reit.coverage} bellwethers · {reit.asOf}</span>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: "4px 20px", marginTop: 8 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: "4px 20px", marginTop: 8 }}>
           {reit.bySector.map(s => {
             const c = s.spread == null ? SLATE : s.spread < 1 ? RED : s.spread < 2.5 ? AMBER : GREEN;
             return (
@@ -339,7 +339,7 @@ function ResidentialView({ hd, md, zillowData, housing, pipe, redfin, rents }) {
     {zn && <HousingHealthPanel zn={zn} metros={zillowData?.metros || []} />}
 
     <SH>What Would Have to Change</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: 10, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(230px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
       <Stat title="Back to normal affordability" value={wi?.toMedian ? `${pc(wi.toMedian.priceChg, 0)} prices` : "…"} color={wi?.toMedian ? (wi.toMedian.priceChg < -10 ? RED : wi.toMedian.priceChg < 0 ? AMBER : GREEN) : SLATE}
         sub={wi?.toMedian ? `…at today's ${pc0(housing.afford.rate, 2)} mortgage — or a ${pc0(wi.toMedian.rate, 2)} mortgage at today's prices. Payment share now ${pc0(housing.afford.current)} of income vs a long-run median of ${pc0(housing.afford.median)}.` : "loading /api/housing-health"}
         foot={<AsOf d={housing?.supply?.lastDate} cadence="monthly" src="Median price (Census) × Freddie Mac rate ÷ median income" />} />
@@ -352,7 +352,7 @@ function ResidentialView({ hd, md, zillowData, housing, pipe, redfin, rents }) {
         sub={lock ? `Homeowners pay ${pc0(lock.avgRate)} on average vs ${pc0(rateNow, 2)} to move · ${pc0(lock.below4, 0)} of all mortgages are below 4% · ${pc0(lock.ge6, 0)} at 6%+ (the share that can refinance when rates fall)` : pipe?.lockin?.error ? "FHFA file unavailable" : "loading FHFA NMDB"}
         foot={<AsOf d={lock?.asOf} cadence="quarterly" src="FHFA National Mortgage Database" />} />
     </div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))", gap: 12 }}>
       {ovr && <Series title="Monthly cost — own the typical home vs rent it ($/mo)" data={ovr.rows} lines={[{ key: "own", name: "Own (P&I + 2.6% carry)", color: INDIGO, width: 2 }, { key: "rent", name: "Rent (Zillow ZORI)", color: GREEN, width: 2 }]} yFmt={v => `$${(Number(v) / 1000).toFixed(1)}K`} xFmt={d => String(d).slice(0, 7)}
         foot={`Own = principal & interest on 80% of the Zillow typical value at that month's 30-year rate, plus ${(ovr.carry * 100).toFixed(1)}%/yr of value for tax, insurance and upkeep; no tax deduction, no appreciation. The gap is what a buyer pays for optionality on price.`} />}
       {lockRows.length > 0 && (
@@ -379,7 +379,7 @@ function ResidentialView({ hd, md, zillowData, housing, pipe, redfin, rents }) {
 
     <SH>The Tape — What Is Actually Clearing (Redfin, national)</SH>
     {rfl ? (<>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 10, marginBottom: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(160px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
         <Stat title="Median sale price" value={usd(rfl.price)} color={fin(rfYoy) ? (rfYoy < 0 ? RED : rfYoy < 2 ? AMBER : GREEN) : SLATE} sub={`${pc(rfYoy)} YoY · $${rfl.ppsf?.toFixed(0)}/sq ft · seasonally adjusted`} />
         <Stat title="Sale-to-list ratio" value={pc0(rfl.saleToList * 100)} color={tone(rfp?.saleToList, false)} sub={`p${rfp?.saleToList} since 2012 · below 100% = buyers negotiating · ${pc0(rfl.aboveList * 100, 0)} sold above list`} />
         <Stat title="Listings with price drops" value={pc0(rfl.priceDrops * 100, 0)} color={tone(rfp?.priceDrops, true)} sub={`p${rfp?.priceDrops} since 2012 · the leading tell for softening — sellers capitulating before prices print`} />
@@ -388,7 +388,7 @@ function ResidentialView({ hd, md, zillowData, housing, pipe, redfin, rents }) {
       </div>
       <AsOf d={redfin.asOf} cadence="monthly" src="Redfin Data Center" extra={`Redfin's public file last refreshed ${redfin.fileUpdated || "n/a"}`} />
       <div style={{ height: 8 }} />
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))", gap: 12 }}>
         <Series title="Sale-to-list ratio (%) — what buyers pay vs the ask" data={rfSeries.map(p => ({ d: p.d, v: fin(p.saleToList) ? +(p.saleToList * 100).toFixed(2) : null }))} lines={[{ key: "v", name: "Sale-to-list", color: INDIGO, width: 2 }]} yFmt={v => `${Number(v).toFixed(1)}%`} refY={100} foot="Above 100% = bidding wars (2021–22). The ratio leads price: it fell below 100% months before Case-Shiller rolled over in 2022." />
         <Series title="Share of listings with a price drop (%) and months of supply" data={rfSeries.map(p => ({ d: p.d, drops: fin(p.priceDrops) ? +(p.priceDrops * 100).toFixed(1) : null, months: p.months }))} lines={[{ key: "drops", name: "Price drops (% of listings)", color: RED, width: 2 }, { key: "months", name: "Months of supply", color: AMBER }]} yFmt={v => Number(v).toFixed(1)} foot="Price drops are the sellers' vote; months of supply is the arithmetic. Both rising together is the pre-correction pattern (2022); drops rising with supply flat is a slow grind." />
       </div>
@@ -396,7 +396,7 @@ function ResidentialView({ hd, md, zillowData, housing, pipe, redfin, rents }) {
 
     <SH>Supply Pipeline — What Is Being Built</SH>
     {cons ? (<>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 10, marginBottom: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(160px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
         <Stat title="Apartments under construction" value={kk(cons.multi)} color={cons.multiPct >= 85 ? RED : cons.multiPct >= 60 ? AMBER : GREEN} sub={`5+ units · ${pc(cons.multiYoy)} YoY · p${cons.multiPct} of history · peak ${kk(cons.multiPeak)} (${mon(cons.multiPeakDate)})`} />
         <Stat title="Single-family under construction" value={kk(cons.single)} color={SLATE} sub={`${pc(cons.singleYoy)} YoY · total ${kk(cons.underConstruction)} units`} />
         <Stat title="Completions" value={kk(cons.completions)} color={SLATE} sub={`annual rate · ${pc(cons.completionsYoy)} YoY · what lands on the rental market this year`} />
@@ -406,7 +406,7 @@ function ResidentialView({ hd, md, zillowData, housing, pipe, redfin, rents }) {
       </div>
       <AsOf d={cons.asOf} cadence="monthly" src="Census construction survey via FRED" />
       <div style={{ height: 8 }} />
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))", gap: 12 }}>
         <Series title="Units under construction (thousands) — apartments vs single-family" data={cons.series} lines={[{ key: "multi", name: "5+ units", color: AMBER, width: 2 }, { key: "single", name: "Single-family", color: INDIGO, width: 2 }, { key: "completions", name: "Completions (annual rate)", color: SLATE, dash: "4 3" }]} yFmt={v => `${Number(v).toFixed(0)}K`} foot="The apartment wave: the 2022–24 peak in 5+ unit construction is what is landing on the rental market now and holding rents down. When this line falls below completions, the wave has passed." />
         <Series title="Starts and permits (thousands, annual rate)" data={starts.series} lines={[{ key: "single", name: "SF starts", color: INDIGO, width: 2 }, { key: "multi", name: "MF starts", color: AMBER, width: 2 }, { key: "permitsSingle", name: "SF permits", color: INDIGO, dash: "4 3" }, { key: "permitsMulti", name: "MF permits", color: AMBER, dash: "4 3" }]} yFmt={v => `${Number(v).toFixed(0)}K`} foot="Permits lead starts by a few months; starts lead completions by a year (single-family) to two (apartments). Falling multifamily permits today mean tighter rental supply in 2027–28." />
         {lst?.series?.length > 0 && <Series title="Listing flow (Realtor.com) — new listings, active listings, share with a price cut" data={indexed({ newListings: lst.series.map(r => ({ d: r.d, v: r.newListings })), active: lst.series.map(r => ({ d: r.d, v: r.active })) }).map(r => ({ ...r, reduced: lst.series.find(x => x.d === r.d)?.reduced ?? null }))} lines={[{ key: "active", name: "Active listings (indexed)", color: INDIGO, width: 2 }, { key: "newListings", name: "New listings (indexed)", color: GREEN }, { key: "reduced", name: "Price-cut share (%)", color: RED, width: 2 }]} yFmt={v => Number(v).toFixed(0)} xFmt={d => String(d).slice(0, 7)} foot="Active and new listings indexed to the start of the series; the price-cut share is in percent on the same axis. Active listings rising faster than new listings = homes are not selling." />}
@@ -439,7 +439,7 @@ function KastleCard({ k }) {
         <span style={{ fontSize: 11, color: SLATE, fontFamily: fonts.mono }}>weekly average{fin(k.prev) ? ` · ${k.avg - k.prev >= 0 ? "+" : ""}${(k.avg - k.prev).toFixed(1)} vs prior week (${pc0(k.prev)})` : ""}{fin(k.peak) ? ` · peak day ${pc0(k.peak)}` : ""}</span>
       </div>
       {cities.length > 0 && (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "3px 20px", marginTop: 8 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(230px, 100%), 1fr))", gap: "3px 20px", marginTop: 8 }}>
           {cities.map(([name, v]) => (
             <div key={name} style={{ display: "flex", alignItems: "center", gap: 8, padding: "3px 0" }}>
               <span style={{ width: 96, fontSize: 10.5, color: "#cbd5e1", fontFamily: fonts.mono, flexShrink: 0 }}>{name}</span>
@@ -482,7 +482,7 @@ function CommercialView({ cre, reit, credit }) {
       <div style={{ fontSize: 11, color: SLATE, fontFamily: fonts.mono, marginTop: 6, lineHeight: 1.5, maxWidth: 860 }}>{cv.note} Prices {pc(cre.price.yoy)} YoY as of {mon(cre.price.asOf)}; CRE loan delinquency {pc0(cre.delinquency.cre.current, 2)} ({pc(cre.delinquency.cre.chg1y, 2)} over a year, p{cre.delinquency.cre.pct} of history); bank CRE loans {pc(cre.loans.yoy)} YoY{sl ? `; ${sl.verdict.label.toLowerCase()} on CRE loans (net ${sl.avg >= 0 ? "+" : ""}${sl.avg}% tightening)` : ""}.</div>
       <AsOf d={cre.price.asOf} cadence="quarterly" src="BIS commercial property price index via FRED" extra="the BIS index publishes with a ~1-year lag — the REIT table and lending standards below are the current read" />
     </div>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))", gap: 10, marginBottom: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(170px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
       <Stat title="CRE prices YoY" value={pc(cre.price.yoy)} color={cre.price.yoy < 0 ? RED : GREEN} sub={`BIS commercial property index · ${mon(cre.price.asOf)}`} />
       <Stat title="CRE loan delinquency" value={pc0(cre.delinquency.cre.current, 2)} color={cre.delinquency.cre.chg1y > 0 ? AMBER : GREEN} sub={`p${cre.delinquency.cre.pct} since 1991 · ${pc(cre.delinquency.cre.chg1y, 2)} 1y`} />
       <Stat title="Bank CRE loans YoY" value={pc(cre.loans.yoy)} color={cre.loans.yoy < 0 ? RED : cre.loans.yoy < 2 ? AMBER : GREEN} sub={`$${(cre.loans.current / 1000).toFixed(2)}T outstanding (H.8)`} />
@@ -493,7 +493,7 @@ function CommercialView({ cre, reit, credit }) {
     </div>
 
     <SH>Credit Availability &amp; Occupancy — The Current Read</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))", gap: 12 }}>
       {sl ? (
         <div style={{ ...card, padding: "12px 14px 6px", marginBottom: 12, position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: 0, left: 0, bottom: 0, width: 4, background: sl.verdict.color }} />
@@ -519,7 +519,7 @@ function CommercialView({ cre, reit, credit }) {
       <KastleCard k={credit?.kastle} />
     </div>
 
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: 12 }}>
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))", gap: 12 }}>
       <Series title="Commercial property prices — YoY % (BIS, quarterly)" data={priceRows} lines={[{ key: "yoy", name: "CRE price YoY", color: INDIGO, width: 2 }]} yFmt={v => `${Number(v).toFixed(0)}%`} refY={0} foot="Negative = values falling year over year. The 2009–10 and 2023–24 legs are the two corrections in this series." />
       <Series title="Loan delinquency — CRE vs residential mortgages (%)" data={dqRows} lines={[{ key: "cre", name: "CRE loans", color: RED, width: 2 }, { key: "mortgage", name: "Mortgages", color: SLATE }]} yFmt={v => `${Number(v).toFixed(1)}%`} foot="Fed H.8, all commercial banks. Commercial credit turns after prices; the peak in delinquencies has marked the price bottom." />
       <Series title="Construction spending — indexed to 100 (monthly, SAAR)" data={consRows} lines={[{ key: "commercial", name: "Commercial", color: INDIGO, width: 2 }, { key: "office", name: "Office", color: RED }, { key: "residential", name: "Residential", color: GREEN }, { key: "manufacturing", name: "Manufacturing", color: AMBER }]} yFmt={v => Number(v).toFixed(0)} foot="Supply response by segment. A price-above-replacement gap that persists shows up here as a building boom — the manufacturing line is the CHIPS/AI build." />
@@ -603,7 +603,7 @@ function MetroView({ rents }) {
       <span style={note}>Realtor.com listing series (FRED), Case-Shiller metro index, BLS metro unemployment, Zillow value &amp; rent. Seattle is the default; the choice is remembered.</span>
     </div>
     {!cur ? <div style={{ ...card, marginBottom: 12, fontSize: 11, color: "#64748b", fontFamily: fonts.mono }}>Loading {list.find(x => x.code === code)?.name || "metro"} (first load pulls ~9 FRED series)…</div> : (<>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(165px, 1fr))", gap: 10, marginBottom: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(165px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
         <Stat title="Median listing price" value={usd(L.price)} color={fin(L.priceYoy) ? (L.priceYoy < 0 ? RED : L.priceYoy < 2 ? AMBER : GREEN) : SLATE} sub={`${pc(L.priceYoy)} YoY · $${L.ppsf?.toFixed(0)}/sq ft (${pc(L.ppsfYoy)})`} />
         <Stat title="Active listings" value={fin(L.active) ? L.active.toLocaleString() : "—"} color={fin(L.activeYoy) ? (L.activeYoy > 20 ? RED : L.activeYoy > 5 ? AMBER : GREEN) : SLATE} sub={`${pc(L.activeYoy, 0)} YoY · new listings ${pc(L.newYoy, 0)} YoY (${fin(L.newListings) ? L.newListings.toLocaleString() : "—"}/mo)`} />
         <Stat title="Listings with a price cut" value={pc0(L.reducedShare)} color={fin(L.reducedShare) ? (L.reducedShare > 35 ? RED : L.reducedShare > 25 ? AMBER : GREEN) : SLATE} sub={`${pc0(L.reducedShare1y)} a year ago · days on market ${L.dom ?? "—"} (${L.dom1y ?? "—"} a year ago)`} />
@@ -613,7 +613,7 @@ function MetroView({ rents }) {
       </div>
       <AsOf d={L.asOf} cadence="monthly" src="Realtor.com via FRED" />
       <div style={{ height: 8 }} />
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(380px, 1fr))", gap: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(380px, 100%), 1fr))", gap: 12 }}>
         {cs?.series?.length > 0 && <Series title={`Case-Shiller — ${cur.name} vs the 20-city composite (indexed, ${cs.since} = 100)`} data={cs.series} lines={[{ key: "metro", name: cur.name, color: INDIGO, width: 2.2 }, { key: "us", name: "20-city", color: SLATE }]} yFmt={v => Number(v).toFixed(0)} foot="Relative performance is the story: a metro that outran the composite into 2022 has more to give back; one that lagged has less air underneath." />}
         <Series title="Median listing price ($) and $/sq ft" data={L.series.map(r => ({ d: r.d, price: r.price, ppsf: r.ppsf }))} lines={[{ key: "price", name: "Listing price", color: INDIGO, width: 2 }]} yFmt={v => usd(v)} xFmt={d => String(d).slice(0, 7)} foot={`$/sq ft ${fin(L.ppsf) ? `$${L.ppsf.toFixed(0)}` : "—"} today (${pc(L.ppsfYoy)} YoY). Listing prices lead sale prices; watch the YoY sign.`} />
         <Series title="Active vs new listings (count) — is the market clearing?" data={L.series.map(r => ({ d: r.d, active: r.active, newListings: r.newListings }))} lines={[{ key: "active", name: "Active listings", color: AMBER, width: 2 }, { key: "newListings", name: "New listings / mo", color: GREEN }]} yFmt={v => `${(Number(v) / 1000).toFixed(1)}K`} xFmt={d => String(d).slice(0, 7)} foot="Active rising while new listings are flat means homes are sitting; both falling is the lock-in freeze." />
