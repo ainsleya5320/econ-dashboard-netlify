@@ -95,7 +95,7 @@
       },
       {
         "month": "2026-09",
-        "count": 0
+        "count": 1
       }
     ],
     "chatgpt-api": [
@@ -291,7 +291,7 @@
       },
       {
         "month": "2026-09",
-        "count": 1
+        "count": 0
       }
     ],
     "huggingface-transformers": [
@@ -585,7 +585,7 @@
       },
       {
         "month": "2026-09",
-        "count": 0
+        "count": 1
       }
     ],
     "ollama": [
@@ -781,7 +781,7 @@
       },
       {
         "month": "2026-09",
-        "count": 2
+        "count": 1
       }
     ],
     "anthropic": [

@@ -50,7 +50,7 @@ export default function EmploymentDemand({focus}) {
   const [data,setData]=useState(null),[error,setError]=useState(''),[retry,setRetry]=useState(0);
   useEffect(()=>{
     const controller=new AbortController();setError('');
-    fetch(`/api/re-metro-employment?code=${encodeURIComponent(focus.code)}`,{signal:controller.signal}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.error||'Employment data is unavailable');return d;}).then(d=>{if(!controller.signal.aborted)setData(d);}).catch(e=>{if(e.name!=='AbortError')setError(e.message);});
+    fetch(`/api/re-metro-employment/${encodeURIComponent(focus.code)}`,{signal:controller.signal}).then(async r=>{const d=await r.json();if(!r.ok)throw new Error(d.error||'Employment data is unavailable');return d;}).then(d=>{if(!controller.signal.aborted)setData(d);}).catch(e=>{if(e.name!=='AbortError')setError(e.message);});
     return()=>controller.abort();
   },[focus.code,retry]);
   if(error)return <div className="lab-empty" role="status"><h2>Employment data unavailable</h2><p>{error}</p><button className="lab-button" onClick={()=>setRetry(v=>v+1)}>Retry employment data</button></div>;

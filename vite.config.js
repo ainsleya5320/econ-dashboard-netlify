@@ -31,10 +31,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const TICKERS_FILE = path.join(__dirname, 'tickers.json')
 const env = loadEnv('', __dirname, '')
 
-const FMP_KEY = env.VITE_FMP_KEY || ''
+const FMP_KEY = env.FMP_KEY || env.VITE_FMP_KEY || process.env.FMP_KEY || ''
 const EIA_KEY = env.EIA_API_KEY || process.env.EIA_API_KEY || '' // free key from eia.gov/opendata; weekly petroleum + gas inventories
 const AA_KEY = env.ARTIFICIAL_ANALYSIS_KEY || process.env.ARTIFICIAL_ANALYSIS_KEY || '' // free key from the Artificial Analysis Insights Platform; server-side only, 1,000 req/day
-const FRED_KEY = env.VITE_FRED_KEY || ''
+const FRED_KEY = env.FRED_KEY || env.VITE_FRED_KEY || process.env.FRED_KEY || ''
 const BLS_KEY = env.BLS_KEY || ''
 const BEA_KEY = env.BEA_KEY || ''
 // In-app assistant: Claude Opus 5 via the official SDK. Key stays server-side
@@ -3809,7 +3809,12 @@ export default defineConfig({
           res.setHeader('Access-Control-Allow-Origin', '*')
           try {
             const u = new URL(req.url || '', 'http://localhost')
-            const id = (u.searchParams.get('series_id') || '').trim()
+            // Netlify fork: the deployed site serves /api/fred/<ID>.json as a baked
+            // file. Accept that shape here as well, so the client uses one URL in
+            // dev and in production. Mounted at /api/fred, req.url arrives as
+            // "/DGS10.json".
+            const fromPath = (u.pathname.match(/^\/([A-Za-z0-9_.-]{1,64}?)(?:\.json)?$/) || [])[1]
+            const id = (fromPath || u.searchParams.get('series_id') || '').trim()
             const limit = Math.max(1, Math.min(100000, parseInt(u.searchParams.get('limit') || '100', 10) || 100))
             if (!/^[A-Za-z0-9_.-]{1,64}$/.test(id)) { res.statusCode = 400; res.end('{"error":"bad series_id"}'); return }
             const obs = await fetchFredSeries(id, limit) // shared cache, throttled, 429-retried
@@ -3916,6 +3921,31 @@ export default defineConfig({
           res.setHeader('Access-Control-Allow-Origin', '*')
           try { res.end(JSON.stringify(await fn(req))) } catch (e) { res.statusCode = 500; res.end(JSON.stringify({ error: e.message })) }
         })
+        // Netlify fork: the deployed site reaches FMP through
+        // netlify/functions/fmp.js so the key stays server-side. Mirror that
+        // path here, or `npm run dev` would send Stocks and Options to the SPA
+        // fallback and they would fail on parsing HTML as JSON.
+        server.middlewares.use('/api/fmp', async (req, res) => {
+          res.setHeader('Content-Type', 'application/json')
+          try {
+            const u = new URL(req.url || '/', 'http://x')
+            const endpoint = u.pathname.replace(/^\/+/, '').split('/')[0]
+            if (!endpoint) { res.statusCode = 400; res.end('{"error":"no endpoint"}'); return }
+            const qs = new URLSearchParams(u.search)
+            qs.set('apikey', FMP_KEY || '')
+            const r = await fetch(`https://financialmodelingprep.com/stable/${endpoint}?${qs}`, { headers: { 'User-Agent': UA } })
+            res.statusCode = r.status
+            res.end(await r.text())
+          } catch (e) { res.statusCode = 502; res.end(JSON.stringify({ error: e.message })) }
+        })
+        // Netlify fork: the deployed site serves one baked file per value, e.g.
+        // /api/municipality/seattle.json. Accept that alongside the query form.
+        // Mounted handlers see req.url stripped to "/seattle.json".
+        const pathOrQuery = (req, key) => {
+          const u = new URL(req.url || '/', 'http://x')
+          const m = u.pathname.match(/^\/([A-Za-z0-9_.-]{1,64}?)(?:\.json)?$/)
+          return m ? m[1] : (u.searchParams.get(key) || undefined)
+        }
         reRoute('/api/us-pulse', () => usPulse.get())
         reRoute('/api/intl-pulse', () => intlPulse.get())
         reRoute('/api/machine', () => machine.get())
@@ -3924,7 +3954,7 @@ export default defineConfig({
         reRoute('/api/ai-pulse', () => aiPulse.get())
         reRoute('/api/sfc', () => sfcModel.get())
         reRoute('/api/bankruptcy', () => bankruptcy.get())
-        reRoute('/api/municipality', req => municipalities.get(new URL(req.url || '/', 'http://x').searchParams.get('city') || undefined))
+        reRoute('/api/municipality', req => municipalities.get(pathOrQuery(req, 'city')))
         reRoute('/api/municipality-status', () => ({ cities: municipalities.status() }))
         reRoute('/api/special-situations', () => specialSituations.get())
         reRoute('/api/fx-fundamentals', () => fxFundamentals.get())
@@ -3958,7 +3988,7 @@ export default defineConfig({
         reRoute('/api/re-buildcost', () => reFeeds.buildCost())
         reRoute('/api/re-rents', () => reFeeds.rents())
         reRoute('/api/re-composite', () => reFeeds.composite())
-        reRoute('/api/re-metro', req => { const code = new URL(req.url || '/', 'http://x').searchParams.get('code'); return code ? reFeeds.metro(code) : { metros: reFeeds.METROS } })
+        reRoute('/api/re-metro', req => { const code = pathOrQuery(req, 'code'); return code ? reFeeds.metro(code) : { metros: reFeeds.METROS } })
         // warm the slow ones (51 throttled FRED calls; a 9 MB download) after the startup burst
         setTimeout(() => { reFeeds.buildCost().catch(() => {}); reFeeds.redfin().catch(() => {}); reFeeds.rents().catch(() => {}) }, 90 * 1000)
         setTimeout(() => { usPulse.get().catch(() => {}) }, 150 * 1000)

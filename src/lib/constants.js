@@ -2,7 +2,10 @@
 // throttle + retry + 30-min per-series cache. The old direct proxy
 // ("/fred-api/...") helped trip FRED's Akamai IP block — don't go back.
 const FRED_BASE = "/api/fred";
-const FMP_BASE = "https://financialmodelingprep.com/stable";
+// Netlify fork: FMP is reached through netlify/functions/fmp.js, which holds
+// the key server-side. Calling the upstream directly would compile a paid
+// credential into the client bundle of a public site.
+const FMP_BASE = "/api/fmp";
 
 const US_MORTGAGE_SERIES = { MORTGAGE30US: { label: "30-Year Fixed", color: "#E8553A" }, MORTGAGE15US: { label: "15-Year Fixed", color: "#F2A93B" }, MORTGAGE5US: { label: "5/1 ARM", color: "#4ECDC4" } };
 const GLOBAL_RATE_SERIES = {

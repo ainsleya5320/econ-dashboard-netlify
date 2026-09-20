@@ -1,0 +1,33 @@
+# ============================================================================
+# Netlify build. The data is baked into static JSON at build time rather than
+# served by functions: several feeds crawl EDGAR or the SEC and take minutes to
+# build cold, which no synchronous function would survive. See scripts/bake.mjs.
+#
+# Redeploy on a schedule to refresh the data — the feeds carry 4h-to-7d TTLs of
+# their own, so twice a day is ample. .github/workflows/refresh.yml does this
+# through a build hook.
+# ============================================================================
+[build]
+  command = "npm run build:netlify"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # the bake step drives a dev server and dozens of upstream fetches
+  NODE_OPTIONS = "--max-old-space-size=4096"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Long-lived immutable assets; the baked JSON is revalidated so a redeploy is
+# picked up immediately rather than after a browser cache expires.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

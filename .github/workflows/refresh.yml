@@ -1,0 +1,25 @@
+# Redeploy on a schedule so the baked data stays current.
+#
+# The feeds carry their own 4h-to-7d TTLs, so twice a day is comfortably ahead
+# of every one of them. Add the hook URL from Netlify (Site settings → Build &
+# deploy → Build hooks) as the NETLIFY_BUILD_HOOK repository secret.
+name: Refresh data
+
+on:
+  schedule:
+    - cron: '0 13 * * *'   # 06:00 Pacific
+    - cron: '0 1 * * *'    # 18:00 Pacific
+  workflow_dispatch:
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger a Netlify build
+        run: |
+          if [ -z "${{ secrets.NETLIFY_BUILD_HOOK }}" ]; then
+            echo "NETLIFY_BUILD_HOOK is not set — add it in repo settings → Secrets."
+            exit 1
+          fi
+          curl -fsS -X POST -d '{}' "${{ secrets.NETLIFY_BUILD_HOOK }}"
+          echo "Build triggered."

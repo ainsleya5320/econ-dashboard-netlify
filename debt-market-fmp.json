@@ -1,6 +1,48 @@
 {
-  "fetchedAt": 1788973794138,
+  "fetchedAt": 1789876100620,
   "byTicker": {
+    "MSFT": [
+      {
+        "fy": "2026",
+        "coverage": 50.9,
+        "netDebtToEbitda": 0.52
+      },
+      {
+        "fy": "2025",
+        "coverage": 53.9,
+        "netDebtToEbitda": 0.51
+      },
+      {
+        "fy": "2024",
+        "coverage": 37.3,
+        "netDebtToEbitda": 0.6
+      },
+      {
+        "fy": "2023",
+        "coverage": 45,
+        "netDebtToEbitda": 0.43
+      },
+      {
+        "fy": "2022",
+        "coverage": 40.4,
+        "netDebtToEbitda": 0.64
+      },
+      {
+        "fy": "2021",
+        "coverage": 29.8,
+        "netDebtToEbitda": 0.8
+      },
+      {
+        "fy": "2020",
+        "coverage": 20.4,
+        "netDebtToEbitda": 1
+      },
+      {
+        "fy": "2019",
+        "coverage": 16,
+        "netDebtToEbitda": 1.29
+      }
+    ],
     "AAPL": [
       {
         "fy": "2025",
@@ -41,90 +83,6 @@
         "fy": "2018",
         "coverage": 21.9,
         "netDebtToEbitda": 1.02
-      }
-    ],
-    "NVDA": [
-      {
-        "fy": "2026",
-        "coverage": 503.4,
-        "netDebtToEbitda": 0.01
-      },
-      {
-        "fy": "2025",
-        "coverage": 329.8,
-        "netDebtToEbitda": 0.02
-      },
-      {
-        "fy": "2024",
-        "coverage": 128.3,
-        "netDebtToEbitda": 0.11
-      },
-      {
-        "fy": "2023",
-        "coverage": 16.1,
-        "netDebtToEbitda": 1.44
-      },
-      {
-        "fy": "2022",
-        "coverage": 42.5,
-        "netDebtToEbitda": 0.87
-      },
-      {
-        "fy": "2021",
-        "coverage": 24.6,
-        "netDebtToEbitda": 1.21
-      },
-      {
-        "fy": "2020",
-        "coverage": 54.7,
-        "netDebtToEbitda": -2.43
-      },
-      {
-        "fy": "2019",
-        "coverage": 65.6,
-        "netDebtToEbitda": 0.29
-      }
-    ],
-    "META": [
-      {
-        "fy": "2025",
-        "coverage": 71.5,
-        "netDebtToEbitda": 0.46
-      },
-      {
-        "fy": "2024",
-        "coverage": 97,
-        "netDebtToEbitda": 0.06
-      },
-      {
-        "fy": "2023",
-        "coverage": 104.8,
-        "netDebtToEbitda": -0.08
-      },
-      {
-        "fy": "2022",
-        "coverage": 156.5,
-        "netDebtToEbitda": 0.32
-      },
-      {
-        "fy": "2021",
-        "coverage": 2032.7,
-        "netDebtToEbitda": -0.05
-      },
-      {
-        "fy": "2020",
-        "coverage": null,
-        "netDebtToEbitda": -0.18
-      },
-      {
-        "fy": "2019",
-        "coverage": 1199.3,
-        "netDebtToEbitda": -0.24
-      },
-      {
-        "fy": "2018",
-        "coverage": 2768.1,
-        "netDebtToEbitda": -0.33
       }
     ],
     "AMZN": [
@@ -211,214 +169,88 @@
         "netDebtToEbitda": -0.29
       }
     ],
-    "MSFT": [
+    "NVDA": [
       {
         "fy": "2026",
-        "coverage": 50.9,
-        "netDebtToEbitda": 0.52
+        "coverage": 503.4,
+        "netDebtToEbitda": 0.01
       },
       {
         "fy": "2025",
-        "coverage": 53.9,
-        "netDebtToEbitda": 0.51
+        "coverage": 329.8,
+        "netDebtToEbitda": 0.02
       },
       {
         "fy": "2024",
-        "coverage": 37.3,
-        "netDebtToEbitda": 0.6
+        "coverage": 128.3,
+        "netDebtToEbitda": 0.11
       },
       {
         "fy": "2023",
-        "coverage": 45,
-        "netDebtToEbitda": 0.43
+        "coverage": 16.1,
+        "netDebtToEbitda": 1.44
       },
       {
         "fy": "2022",
-        "coverage": 40.4,
-        "netDebtToEbitda": 0.64
+        "coverage": 42.5,
+        "netDebtToEbitda": 0.87
       },
       {
         "fy": "2021",
-        "coverage": 29.8,
-        "netDebtToEbitda": 0.8
+        "coverage": 24.6,
+        "netDebtToEbitda": 1.21
       },
       {
         "fy": "2020",
-        "coverage": 20.4,
-        "netDebtToEbitda": 1
+        "coverage": 54.7,
+        "netDebtToEbitda": -2.43
       },
       {
         "fy": "2019",
-        "coverage": 16,
-        "netDebtToEbitda": 1.29
+        "coverage": 65.6,
+        "netDebtToEbitda": 0.29
       }
     ],
-    "LLY": [
+    "META": [
       {
         "fy": "2025",
-        "coverage": 37.3,
-        "netDebtToEbitda": 1.27
+        "coverage": 71.5,
+        "netDebtToEbitda": 0.46
       },
       {
         "fy": "2024",
-        "coverage": 22.4,
-        "netDebtToEbitda": 1.99
+        "coverage": 97,
+        "netDebtToEbitda": 0.06
       },
       {
         "fy": "2023",
-        "coverage": 22.2,
-        "netDebtToEbitda": 2.62
+        "coverage": 104.8,
+        "netDebtToEbitda": -0.08
       },
       {
         "fy": "2022",
-        "coverage": 26.1,
-        "netDebtToEbitda": 1.64
-      },
-      {
-        "fy": "2021",
-        "coverage": 23.3,
-        "netDebtToEbitda": 1.62
-      },
-      {
-        "fy": "2020",
-        "coverage": 20.1,
-        "netDebtToEbitda": 1.45
-      },
-      {
-        "fy": "2019",
-        "coverage": 15,
-        "netDebtToEbitda": 1.95
-      },
-      {
-        "fy": "2018",
-        "coverage": 24.8,
-        "netDebtToEbitda": 0.54
-      }
-    ],
-    "UNH": [
-      {
-        "fy": "2025",
-        "coverage": 4.7,
-        "netDebtToEbitda": 2.34
-      },
-      {
-        "fy": "2024",
-        "coverage": 8.3,
-        "netDebtToEbitda": 1.84
-      },
-      {
-        "fy": "2023",
-        "coverage": 10,
-        "netDebtToEbitda": 1.16
-      },
-      {
-        "fy": "2022",
-        "coverage": 13.6,
-        "netDebtToEbitda": 1.08
-      },
-      {
-        "fy": "2021",
-        "coverage": 14.4,
-        "netDebtToEbitda": 0.91
-      },
-      {
-        "fy": "2020",
-        "coverage": 13.5,
-        "netDebtToEbitda": 1.05
-      },
-      {
-        "fy": "2019",
-        "coverage": 11.6,
-        "netDebtToEbitda": 1.33
-      },
-      {
-        "fy": "2018",
-        "coverage": 12.4,
-        "netDebtToEbitda": 1.3
-      }
-    ],
-    "MRK": [
-      {
-        "fy": "2025",
-        "coverage": 17.3,
-        "netDebtToEbitda": 1.27
-      },
-      {
-        "fy": "2024",
-        "coverage": 15.9,
-        "netDebtToEbitda": 0.97
-      },
-      {
-        "fy": "2023",
-        "coverage": 2.6,
-        "netDebtToEbitda": 4.26
-      },
-      {
-        "fy": "2022",
-        "coverage": 19,
-        "netDebtToEbitda": 0.91
-      },
-      {
-        "fy": "2021",
-        "coverage": 16.4,
-        "netDebtToEbitda": 1.48
-      },
-      {
-        "fy": "2020",
-        "coverage": 6.7,
-        "netDebtToEbitda": 2.49
-      },
-      {
-        "fy": "2019",
-        "coverage": 8.9,
-        "netDebtToEbitda": 1.55
-      },
-      {
-        "fy": "2018",
-        "coverage": 11.6,
-        "netDebtToEbitda": 1.23
-      }
-    ],
-    "JNJ": [
-      {
-        "fy": "2025",
-        "coverage": 26.4,
-        "netDebtToEbitda": 0.69
-      },
-      {
-        "fy": "2024",
-        "coverage": 29.3,
-        "netDebtToEbitda": 0.51
-      },
-      {
-        "fy": "2023",
-        "coverage": 30.3,
+        "coverage": 156.5,
         "netDebtToEbitda": 0.32
       },
       {
-        "fy": "2022",
-        "coverage": 76.1,
-        "netDebtToEbitda": 1.01
-      },
-      {
         "fy": "2021",
-        "coverage": 114.4,
-        "netDebtToEbitda": 0.72
+        "coverage": 2032.7,
+        "netDebtToEbitda": -0.05
       },
       {
         "fy": "2020",
-        "coverage": 98.2,
-        "netDebtToEbitda": 0.89
+        "coverage": null,
+        "netDebtToEbitda": -0.18
       },
       {
         "fy": "2019",
-        "coverage": 65.9,
-        "netDebtToEbitda": 0.42
+        "coverage": 1199.3,
+        "netDebtToEbitda": -0.24
       },
       {
         "fy": "2018",
-        "coverage": 21.1,
-        "netDebtToEbitda": 0.48
+        "coverage": 2768.1,
+        "netDebtToEbitda": -0.33
       }
     ],
     "AVGO": [
@@ -463,6 +295,48 @@
         "netDebtToEbitda": 1.43
       }
     ],
+    "JNJ": [
+      {
+        "fy": "2025",
+        "coverage": 26.4,
+        "netDebtToEbitda": 0.69
+      },
+      {
+        "fy": "2024",
+        "coverage": 29.3,
+        "netDebtToEbitda": 0.51
+      },
+      {
+        "fy": "2023",
+        "coverage": 30.3,
+        "netDebtToEbitda": 0.32
+      },
+      {
+        "fy": "2022",
+        "coverage": 76.1,
+        "netDebtToEbitda": 1.01
+      },
+      {
+        "fy": "2021",
+        "coverage": 114.4,
+        "netDebtToEbitda": 0.72
+      },
+      {
+        "fy": "2020",
+        "coverage": 98.2,
+        "netDebtToEbitda": 0.89
+      },
+      {
+        "fy": "2019",
+        "coverage": 65.9,
+        "netDebtToEbitda": 0.42
+      },
+      {
+        "fy": "2018",
+        "coverage": 21.1,
+        "netDebtToEbitda": 0.48
+      }
+    ],
     "ORCL": [
       {
         "fy": "2026",
@@ -505,46 +379,130 @@
         "netDebtToEbitda": 2.06
       }
     ],
-    "CVX": [
+    "LLY": [
       {
         "fy": "2025",
-        "coverage": 13.7,
-        "netDebtToEbitda": 0.97
+        "coverage": 37.3,
+        "netDebtToEbitda": 1.12
       },
       {
         "fy": "2024",
-        "coverage": 49,
-        "netDebtToEbitda": 0.39
+        "coverage": 21.8,
+        "netDebtToEbitda": 1.62
       },
       {
         "fy": "2023",
-        "coverage": 72,
-        "netDebtToEbitda": 0.26
+        "coverage": 22.2,
+        "netDebtToEbitda": 2.62
       },
       {
         "fy": "2022",
-        "coverage": 77.4,
-        "netDebtToEbitda": 0.08
+        "coverage": 26.1,
+        "netDebtToEbitda": 1.64
       },
       {
         "fy": "2021",
-        "coverage": 22.6,
-        "netDebtToEbitda": 0.65
+        "coverage": 23.3,
+        "netDebtToEbitda": 1.62
       },
       {
         "fy": "2020",
-        "coverage": -10,
-        "netDebtToEbitda": 3.71
+        "coverage": 20.1,
+        "netDebtToEbitda": 1.45
       },
       {
         "fy": "2019",
-        "coverage": 0.1,
-        "netDebtToEbitda": 0.88
+        "coverage": 15,
+        "netDebtToEbitda": 1.95
       },
       {
         "fy": "2018",
-        "coverage": 19.3,
-        "netDebtToEbitda": 0.63
+        "coverage": 24.8,
+        "netDebtToEbitda": 0.54
+      }
+    ],
+    "MRK": [
+      {
+        "fy": "2025",
+        "coverage": 17.3,
+        "netDebtToEbitda": 1.27
+      },
+      {
+        "fy": "2024",
+        "coverage": 15.9,
+        "netDebtToEbitda": 0.97
+      },
+      {
+        "fy": "2023",
+        "coverage": 2.6,
+        "netDebtToEbitda": 4.26
+      },
+      {
+        "fy": "2022",
+        "coverage": 19,
+        "netDebtToEbitda": 0.91
+      },
+      {
+        "fy": "2021",
+        "coverage": 16.4,
+        "netDebtToEbitda": 1.48
+      },
+      {
+        "fy": "2020",
+        "coverage": 6.7,
+        "netDebtToEbitda": 2.49
+      },
+      {
+        "fy": "2019",
+        "coverage": 8.9,
+        "netDebtToEbitda": 1.55
+      },
+      {
+        "fy": "2018",
+        "coverage": 11.6,
+        "netDebtToEbitda": 1.23
+      }
+    ],
+    "UNH": [
+      {
+        "fy": "2025",
+        "coverage": 4.7,
+        "netDebtToEbitda": 2.34
+      },
+      {
+        "fy": "2024",
+        "coverage": 8.3,
+        "netDebtToEbitda": 1.84
+      },
+      {
+        "fy": "2023",
+        "coverage": 10,
+        "netDebtToEbitda": 1.16
+      },
+      {
+        "fy": "2022",
+        "coverage": 13.6,
+        "netDebtToEbitda": 1.08
+      },
+      {
+        "fy": "2021",
+        "coverage": 14.4,
+        "netDebtToEbitda": 0.91
+      },
+      {
+        "fy": "2020",
+        "coverage": 13.5,
+        "netDebtToEbitda": 1.05
+      },
+      {
+        "fy": "2019",
+        "coverage": 11.6,
+        "netDebtToEbitda": 1.33
+      },
+      {
+        "fy": "2018",
+        "coverage": 12.4,
+        "netDebtToEbitda": 1.3
       }
     ],
     "PFE": [
@@ -589,46 +547,46 @@
         "netDebtToEbitda": 2.07
       }
     ],
-    "XOM": [
+    "CVX": [
       {
         "fy": "2025",
-        "coverage": 56.3,
-        "netDebtToEbitda": 0.48
+        "coverage": 13.7,
+        "netDebtToEbitda": 0.97
       },
       {
         "fy": "2024",
-        "coverage": 39.8,
-        "netDebtToEbitda": 0.25
+        "coverage": 49,
+        "netDebtToEbitda": 0.39
       },
       {
         "fy": "2023",
-        "coverage": 52.4,
-        "netDebtToEbitda": 0.14
+        "coverage": 72,
+        "netDebtToEbitda": 0.26
       },
       {
         "fy": "2022",
-        "coverage": 80.2,
-        "netDebtToEbitda": 0.11
+        "coverage": 77.4,
+        "netDebtToEbitda": 0.08
       },
       {
         "fy": "2021",
-        "coverage": 25.4,
-        "netDebtToEbitda": 0.77
+        "coverage": 22.6,
+        "netDebtToEbitda": 0.65
       },
       {
         "fy": "2020",
-        "coverage": -25.4,
-        "netDebtToEbitda": 3.46
+        "coverage": -10,
+        "netDebtToEbitda": 3.71
       },
       {
         "fy": "2019",
-        "coverage": 15.4,
-        "netDebtToEbitda": 1.1
+        "coverage": 0.1,
+        "netDebtToEbitda": 0.88
       },
       {
         "fy": "2018",
-        "coverage": 28.9,
-        "netDebtToEbitda": 0.69
+        "coverage": 19.3,
+        "netDebtToEbitda": 0.63
       }
     ],
     "PG": [
@@ -673,48 +631,6 @@
         "netDebtToEbitda": 2.75
       }
     ],
-    "WMT": [
-      {
-        "fy": "2026",
-        "coverage": 10.7,
-        "netDebtToEbitda": 1.21
-      },
-      {
-        "fy": "2025",
-        "coverage": 10.8,
-        "netDebtToEbitda": 1.22
-      },
-      {
-        "fy": "2024",
-        "coverage": 10.1,
-        "netDebtToEbitda": 1.41
-      },
-      {
-        "fy": "2023",
-        "coverage": 9.6,
-        "netDebtToEbitda": 1.67
-      },
-      {
-        "fy": "2022",
-        "coverage": 13,
-        "netDebtToEbitda": 1.36
-      },
-      {
-        "fy": "2021",
-        "coverage": 9.7,
-        "netDebtToEbitda": 1.34
-      },
-      {
-        "fy": "2020",
-        "coverage": 7.9,
-        "netDebtToEbitda": 1.87
-      },
-      {
-        "fy": "2019",
-        "coverage": 9.4,
-        "netDebtToEbitda": 2.05
-      }
-    ],
     "COP": [
       {
         "fy": "2025",
@@ -757,6 +673,174 @@
         "netDebtToEbitda": 0.53
       }
     ],
+    "WMT": [
+      {
+        "fy": "2026",
+        "coverage": 10.7,
+        "netDebtToEbitda": 1.21
+      },
+      {
+        "fy": "2025",
+        "coverage": 10.8,
+        "netDebtToEbitda": 1.22
+      },
+      {
+        "fy": "2024",
+        "coverage": 10.1,
+        "netDebtToEbitda": 1.41
+      },
+      {
+        "fy": "2023",
+        "coverage": 9.6,
+        "netDebtToEbitda": 1.67
+      },
+      {
+        "fy": "2022",
+        "coverage": 13,
+        "netDebtToEbitda": 1.36
+      },
+      {
+        "fy": "2021",
+        "coverage": 9.7,
+        "netDebtToEbitda": 1.34
+      },
+      {
+        "fy": "2020",
+        "coverage": 7.9,
+        "netDebtToEbitda": 1.87
+      },
+      {
+        "fy": "2019",
+        "coverage": 9.4,
+        "netDebtToEbitda": 2.05
+      }
+    ],
+    "XOM": [
+      {
+        "fy": "2025",
+        "coverage": 56.3,
+        "netDebtToEbitda": 0.48
+      },
+      {
+        "fy": "2024",
+        "coverage": 39.8,
+        "netDebtToEbitda": 0.25
+      },
+      {
+        "fy": "2023",
+        "coverage": 52.4,
+        "netDebtToEbitda": 0.14
+      },
+      {
+        "fy": "2022",
+        "coverage": 80.2,
+        "netDebtToEbitda": 0.11
+      },
+      {
+        "fy": "2021",
+        "coverage": 25.4,
+        "netDebtToEbitda": 0.77
+      },
+      {
+        "fy": "2020",
+        "coverage": -25.4,
+        "netDebtToEbitda": 3.46
+      },
+      {
+        "fy": "2019",
+        "coverage": 15.4,
+        "netDebtToEbitda": 1.1
+      },
+      {
+        "fy": "2018",
+        "coverage": 28.9,
+        "netDebtToEbitda": 0.69
+      }
+    ],
+    "KO": [
+      {
+        "fy": "2025",
+        "coverage": 8.3,
+        "netDebtToEbitda": 1.98
+      },
+      {
+        "fy": "2024",
+        "coverage": 6,
+        "netDebtToEbitda": 2.21
+      },
+      {
+        "fy": "2023",
+        "coverage": 7.4,
+        "netDebtToEbitda": 2.18
+      },
+      {
+        "fy": "2022",
+        "coverage": 12.4,
+        "netDebtToEbitda": 2.25
+      },
+      {
+        "fy": "2021",
+        "coverage": 6.5,
+        "netDebtToEbitda": 2.25
+      },
+      {
+        "fy": "2020",
+        "coverage": 6.3,
+        "netDebtToEbitda": 2.98
+      },
+      {
+        "fy": "2019",
+        "coverage": 10.7,
+        "netDebtToEbitda": 2.88
+      },
+      {
+        "fy": "2018",
+        "coverage": 9.6,
+        "netDebtToEbitda": 3.42
+      }
+    ],
+    "CAT": [
+      {
+        "fy": "2025",
+        "coverage": 10.9,
+        "netDebtToEbitda": 2.25
+      },
+      {
+        "fy": "2024",
+        "coverage": 25.5,
+        "netDebtToEbitda": 1.97
+      },
+      {
+        "fy": "2023",
+        "coverage": 25.4,
+        "netDebtToEbitda": 1.97
+      },
+      {
+        "fy": "2022",
+        "coverage": 17.8,
+        "netDebtToEbitda": 2.63
+      },
+      {
+        "fy": "2021",
+        "coverage": 14.2,
+        "netDebtToEbitda": 2.58
+      },
+      {
+        "fy": "2020",
+        "coverage": 8.9,
+        "netDebtToEbitda": 4.01
+      },
+      {
+        "fy": "2019",
+        "coverage": 19.9,
+        "netDebtToEbitda": 2.72
+      },
+      {
+        "fy": "2018",
+        "coverage": 20.7,
+        "netDebtToEbitda": 2.61
+      }
+    ],
     "MCD": [
       {
         "fy": "2025",
@@ -797,48 +881,6 @@
         "fy": "2018",
         "coverage": 9,
         "netDebtToEbitda": 2.94
-      }
-    ],
-    "COST": [
-      {
-        "fy": "2025",
-        "coverage": 67.4,
-        "netDebtToEbitda": -0.29
-      },
-      {
-        "fy": "2024",
-        "coverage": 54.9,
-        "netDebtToEbitda": 0
-      },
-      {
-        "fy": "2023",
-        "coverage": 50.7,
-        "netDebtToEbitda": -0.3
-      },
-      {
-        "fy": "2022",
-        "coverage": 49.3,
-        "netDebtToEbitda": 0.07
-      },
-      {
-        "fy": "2021",
-        "coverage": 39.2,
-        "netDebtToEbitda": 0.02
-      },
-      {
-        "fy": "2020",
-        "coverage": 33.1,
-        "netDebtToEbitda": -0.17
-      },
-      {
-        "fy": "2019",
-        "coverage": 31.6,
-        "netDebtToEbitda": -0.24
-      },
-      {
-        "fy": "2018",
-        "coverage": 28.2,
-        "netDebtToEbitda": 0.09
       }
     ],
     "PEP": [
@@ -925,256 +967,46 @@
         "netDebtToEbitda": 1.53
       }
     ],
-    "CAT": [
+    "COST": [
       {
         "fy": "2025",
-        "coverage": 10.9,
-        "netDebtToEbitda": 2.25
+        "coverage": 67.4,
+        "netDebtToEbitda": -0.29
       },
       {
         "fy": "2024",
-        "coverage": 25.5,
-        "netDebtToEbitda": 1.97
+        "coverage": 54.9,
+        "netDebtToEbitda": 0
       },
       {
         "fy": "2023",
-        "coverage": 25.4,
-        "netDebtToEbitda": 1.97
+        "coverage": 50.7,
+        "netDebtToEbitda": -0.3
       },
       {
         "fy": "2022",
-        "coverage": 17.8,
-        "netDebtToEbitda": 2.63
+        "coverage": 49.3,
+        "netDebtToEbitda": 0.07
       },
       {
         "fy": "2021",
-        "coverage": 14.2,
-        "netDebtToEbitda": 2.58
+        "coverage": 39.2,
+        "netDebtToEbitda": 0.02
       },
       {
         "fy": "2020",
-        "coverage": 8.9,
-        "netDebtToEbitda": 4.01
+        "coverage": 33.1,
+        "netDebtToEbitda": -0.17
       },
       {
         "fy": "2019",
-        "coverage": 19.9,
-        "netDebtToEbitda": 2.72
+        "coverage": 31.6,
+        "netDebtToEbitda": -0.24
       },
       {
         "fy": "2018",
-        "coverage": 20.7,
-        "netDebtToEbitda": 2.61
-      }
-    ],
-    "KO": [
-      {
-        "fy": "2025",
-        "coverage": 8.3,
-        "netDebtToEbitda": 1.98
-      },
-      {
-        "fy": "2024",
-        "coverage": 6,
-        "netDebtToEbitda": 2.21
-      },
-      {
-        "fy": "2023",
-        "coverage": 7.4,
-        "netDebtToEbitda": 2.18
-      },
-      {
-        "fy": "2022",
-        "coverage": 12.4,
-        "netDebtToEbitda": 2.25
-      },
-      {
-        "fy": "2021",
-        "coverage": 6.5,
-        "netDebtToEbitda": 2.25
-      },
-      {
-        "fy": "2020",
-        "coverage": 6.3,
-        "netDebtToEbitda": 2.98
-      },
-      {
-        "fy": "2019",
-        "coverage": 10.7,
-        "netDebtToEbitda": 2.88
-      },
-      {
-        "fy": "2018",
-        "coverage": 9.6,
-        "netDebtToEbitda": 3.42
-      }
-    ],
-    "T": [
-      {
-        "fy": "2025",
-        "coverage": 3.7,
-        "netDebtToEbitda": 2.85
-      },
-      {
-        "fy": "2024",
-        "coverage": 3.6,
-        "netDebtToEbitda": 3.13
-      },
-      {
-        "fy": "2023",
-        "coverage": 3.7,
-        "netDebtToEbitda": 3.27
-      },
-      {
-        "fy": "2022",
-        "coverage": -0.7,
-        "netDebtToEbitda": 7.17
-      },
-      {
-        "fy": "2021",
-        "coverage": 3.9,
-        "netDebtToEbitda": 3.29
-      },
-      {
-        "fy": "2020",
-        "coverage": 3.3,
-        "netDebtToEbitda": 5.06
-      },
-      {
-        "fy": "2019",
-        "coverage": 3.6,
-        "netDebtToEbitda": 3.14
-      },
-      {
-        "fy": "2018",
-        "coverage": 3.4,
-        "netDebtToEbitda": 2.8
-      }
-    ],
-    "DE": [
-      {
-        "fy": "2025",
-        "coverage": 2.7,
-        "netDebtToEbitda": 4.78
-      },
-      {
-        "fy": "2024",
-        "coverage": 3.4,
-        "netDebtToEbitda": 3.96
-      },
-      {
-        "fy": "2023",
-        "coverage": 5.9,
-        "netDebtToEbitda": 3.22
-      },
-      {
-        "fy": "2022",
-        "coverage": 8.5,
-        "netDebtToEbitda": 3.92
-      },
-      {
-        "fy": "2021",
-        "coverage": 7.7,
-        "netDebtToEbitda": 3.82
-      },
-      {
-        "fy": "2020",
-        "coverage": 3.5,
-        "netDebtToEbitda": 5.41
-      },
-      {
-        "fy": "2019",
-        "coverage": 3.3,
-        "netDebtToEbitda": 5.48
-      },
-      {
-        "fy": "2018",
-        "coverage": 3.6,
-        "netDebtToEbitda": 5.33
-      }
-    ],
-    "BA": [
-      {
-        "fy": "2025",
-        "coverage": -2,
-        "netDebtToEbitda": 5.91
-      },
-      {
-        "fy": "2024",
-        "coverage": -4,
-        "netDebtToEbitda": -5.28
-      },
-      {
-        "fy": "2023",
-        "coverage": -0.3,
-        "netDebtToEbitda": 17.24
-      },
-      {
-        "fy": "2022",
-        "coverage": -1.4,
-        "netDebtToEbitda": -88.51
-      },
-      {
-        "fy": "2021",
-        "coverage": -1.1,
-        "netDebtToEbitda": -287.53
-      },
-      {
-        "fy": "2020",
-        "coverage": -5.9,
-        "netDebtToEbitda": -5.57
-      },
-      {
-        "fy": "2019",
-        "coverage": -2.7,
-        "netDebtToEbitda": 24.62
-      },
-      {
-        "fy": "2018",
-        "coverage": 25.2,
-        "netDebtToEbitda": 0.44
-      }
-    ],
-    "HON": [
-      {
-        "fy": "2025",
-        "coverage": 4.9,
-        "netDebtToEbitda": 2.69
-      },
-      {
-        "fy": "2024",
-        "coverage": 6.4,
-        "netDebtToEbitda": 2.56
-      },
-      {
-        "fy": "2023",
-        "coverage": 8.2,
-        "netDebtToEbitda": 1.71
-      },
-      {
-        "fy": "2022",
-        "coverage": 15.5,
-        "netDebtToEbitda": 1.36
-      },
-      {
-        "fy": "2021",
-        "coverage": 18.1,
-        "netDebtToEbitda": 1.1
-      },
-      {
-        "fy": "2020",
-        "coverage": 15.9,
-        "netDebtToEbitda": 1.21
-      },
-      {
-        "fy": "2019",
-        "coverage": 19.2,
-        "netDebtToEbitda": 0.85
-      },
-      {
-        "fy": "2018",
-        "coverage": 18.3,
-        "netDebtToEbitda": 0.77
+        "coverage": 28.2,
+        "netDebtToEbitda": 0.09
       }
     ],
     "GE": [
@@ -1219,6 +1051,132 @@
         "netDebtToEbitda": -7.52
       }
     ],
+    "DE": [
+      {
+        "fy": "2025",
+        "coverage": 2.7,
+        "netDebtToEbitda": 4.78
+      },
+      {
+        "fy": "2024",
+        "coverage": 3.4,
+        "netDebtToEbitda": 3.96
+      },
+      {
+        "fy": "2023",
+        "coverage": 5.9,
+        "netDebtToEbitda": 3.22
+      },
+      {
+        "fy": "2022",
+        "coverage": 8.5,
+        "netDebtToEbitda": 3.92
+      },
+      {
+        "fy": "2021",
+        "coverage": 7.7,
+        "netDebtToEbitda": 3.82
+      },
+      {
+        "fy": "2020",
+        "coverage": 3.5,
+        "netDebtToEbitda": 5.41
+      },
+      {
+        "fy": "2019",
+        "coverage": 3.3,
+        "netDebtToEbitda": 5.48
+      },
+      {
+        "fy": "2018",
+        "coverage": 3.6,
+        "netDebtToEbitda": 5.33
+      }
+    ],
+    "HON": [
+      {
+        "fy": "2025",
+        "coverage": 4.9,
+        "netDebtToEbitda": 2.69
+      },
+      {
+        "fy": "2024",
+        "coverage": 6.4,
+        "netDebtToEbitda": 2.56
+      },
+      {
+        "fy": "2023",
+        "coverage": 8.2,
+        "netDebtToEbitda": 1.71
+      },
+      {
+        "fy": "2022",
+        "coverage": 15.5,
+        "netDebtToEbitda": 1.36
+      },
+      {
+        "fy": "2021",
+        "coverage": 18.1,
+        "netDebtToEbitda": 1.1
+      },
+      {
+        "fy": "2020",
+        "coverage": 15.9,
+        "netDebtToEbitda": 1.21
+      },
+      {
+        "fy": "2019",
+        "coverage": 19.2,
+        "netDebtToEbitda": 0.85
+      },
+      {
+        "fy": "2018",
+        "coverage": 18.3,
+        "netDebtToEbitda": 0.77
+      }
+    ],
+    "T": [
+      {
+        "fy": "2025",
+        "coverage": 3.7,
+        "netDebtToEbitda": 2.85
+      },
+      {
+        "fy": "2024",
+        "coverage": 3.6,
+        "netDebtToEbitda": 3.13
+      },
+      {
+        "fy": "2023",
+        "coverage": 3.7,
+        "netDebtToEbitda": 3.27
+      },
+      {
+        "fy": "2022",
+        "coverage": -0.7,
+        "netDebtToEbitda": 7.17
+      },
+      {
+        "fy": "2021",
+        "coverage": 3.9,
+        "netDebtToEbitda": 3.29
+      },
+      {
+        "fy": "2020",
+        "coverage": 3.3,
+        "netDebtToEbitda": 5.06
+      },
+      {
+        "fy": "2019",
+        "coverage": 3.6,
+        "netDebtToEbitda": 3.14
+      },
+      {
+        "fy": "2018",
+        "coverage": 3.4,
+        "netDebtToEbitda": 2.8
+      }
+    ],
     "UNP": [
       {
         "fy": "2025",
@@ -1259,6 +1217,48 @@
         "fy": "2018",
         "coverage": 9.8,
         "netDebtToEbitda": 1.96
+      }
+    ],
+    "BA": [
+      {
+        "fy": "2025",
+        "coverage": -2,
+        "netDebtToEbitda": 5.91
+      },
+      {
+        "fy": "2024",
+        "coverage": -4,
+        "netDebtToEbitda": -5.28
+      },
+      {
+        "fy": "2023",
+        "coverage": -0.3,
+        "netDebtToEbitda": 17.24
+      },
+      {
+        "fy": "2022",
+        "coverage": -1.4,
+        "netDebtToEbitda": -88.51
+      },
+      {
+        "fy": "2021",
+        "coverage": -1.1,
+        "netDebtToEbitda": -287.53
+      },
+      {
+        "fy": "2020",
+        "coverage": -5.9,
+        "netDebtToEbitda": -5.57
+      },
+      {
+        "fy": "2019",
+        "coverage": -2.7,
+        "netDebtToEbitda": 24.62
+      },
+      {
+        "fy": "2018",
+        "coverage": 25.2,
+        "netDebtToEbitda": 0.44
       }
     ],
     "DIS": [
@@ -1303,130 +1303,46 @@
         "netDebtToEbitda": 0.91
       }
     ],
-    "LIN": [
+    "DUK": [
       {
         "fy": "2025",
-        "coverage": 42.1,
-        "netDebtToEbitda": 1.69
-      },
-      {
-        "fy": "2024",
-        "coverage": 15,
-        "netDebtToEbitda": 1.37
-      },
-      {
-        "fy": "2023",
-        "coverage": 16.6,
-        "netDebtToEbitda": 1.27
-      },
-      {
-        "fy": "2022",
-        "coverage": 33.6,
-        "netDebtToEbitda": 1.34
-      },
-      {
-        "fy": "2021",
-        "coverage": 33.2,
-        "netDebtToEbitda": 1.25
-      },
-      {
-        "fy": "2020",
-        "coverage": 34.1,
-        "netDebtToEbitda": 1.66
-      },
-      {
-        "fy": "2019",
-        "coverage": 6.5,
-        "netDebtToEbitda": 1.51
-      },
-      {
-        "fy": "2018",
-        "coverage": 9.4,
-        "netDebtToEbitda": 1.52
-      }
-    ],
-    "CMCSA": [
-      {
-        "fy": "2025",
-        "coverage": 4.7,
-        "netDebtToEbitda": 2.18
-      },
-      {
-        "fy": "2024",
-        "coverage": 5.6,
-        "netDebtToEbitda": 2.44
-      },
-      {
-        "fy": "2023",
-        "coverage": 5.7,
-        "netDebtToEbitda": 2.66
-      },
-      {
-        "fy": "2022",
-        "coverage": 5.8,
-        "netDebtToEbitda": 3.53
-      },
-      {
-        "fy": "2021",
-        "coverage": 4.9,
-        "netDebtToEbitda": 2.46
-      },
-      {
-        "fy": "2020",
-        "coverage": 3.8,
-        "netDebtToEbitda": 3.06
-      },
-      {
-        "fy": "2019",
-        "coverage": 4.6,
-        "netDebtToEbitda": 2.95
-      },
-      {
-        "fy": "2018",
-        "coverage": 5.4,
-        "netDebtToEbitda": 3.62
-      }
-    ],
-    "NEE": [
-      {
-        "fy": "2025",
-        "coverage": 1.8,
-        "netDebtToEbitda": 5.74
-      },
-      {
-        "fy": "2024",
-        "coverage": 3.3,
-        "netDebtToEbitda": 5.76
-      },
-      {
-        "fy": "2023",
-        "coverage": 3.1,
-        "netDebtToEbitda": 4.21
-      },
-      {
-        "fy": "2022",
-        "coverage": 7,
-        "netDebtToEbitda": 6.88
-      },
-      {
-        "fy": "2021",
-        "coverage": 2.3,
-        "netDebtToEbitda": 6.26
-      },
-      {
-        "fy": "2020",
-        "coverage": 2.6,
-        "netDebtToEbitda": 5.41
-      },
-      {
-        "fy": "2019",
         "coverage": 2.4,
-        "netDebtToEbitda": 3.97
+        "netDebtToEbitda": 5.78
+      },
+      {
+        "fy": "2024",
+        "coverage": 2.3,
+        "netDebtToEbitda": 5.66
+      },
+      {
+        "fy": "2023",
+        "coverage": 2.3,
+        "netDebtToEbitda": 5.78
+      },
+      {
+        "fy": "2022",
+        "coverage": 2.5,
+        "netDebtToEbitda": 6.03
+      },
+      {
+        "fy": "2021",
+        "coverage": 2.5,
+        "netDebtToEbitda": 5.73
+      },
+      {
+        "fy": "2020",
+        "coverage": 2.1,
+        "netDebtToEbitda": 7.51
+      },
+      {
+        "fy": "2019",
+        "coverage": 2.6,
+        "netDebtToEbitda": 5.44
       },
       {
         "fy": "2018",
-        "coverage": 2.9,
-        "netDebtToEbitda": 2.85
+        "coverage": 2.2,
+        "netDebtToEbitda": 5.83
       }
     ],
     "VZ": [
@@ -1471,46 +1387,130 @@
         "netDebtToEbitda": 2.64
       }
     ],
-    "DUK": [
+    "CMCSA": [
       {
         "fy": "2025",
-        "coverage": 2.4,
-        "netDebtToEbitda": 5.78
+        "coverage": 4.7,
+        "netDebtToEbitda": 2.18
       },
       {
         "fy": "2024",
-        "coverage": 2.3,
-        "netDebtToEbitda": 5.66
+        "coverage": 5.6,
+        "netDebtToEbitda": 2.44
       },
       {
         "fy": "2023",
-        "coverage": 2.3,
-        "netDebtToEbitda": 5.78
+        "coverage": 5.7,
+        "netDebtToEbitda": 2.66
       },
       {
         "fy": "2022",
-        "coverage": 2.5,
-        "netDebtToEbitda": 6.03
+        "coverage": 5.8,
+        "netDebtToEbitda": 3.53
       },
       {
         "fy": "2021",
-        "coverage": 2.5,
-        "netDebtToEbitda": 5.73
+        "coverage": 4.9,
+        "netDebtToEbitda": 2.46
       },
       {
         "fy": "2020",
-        "coverage": 2.1,
-        "netDebtToEbitda": 7.51
+        "coverage": 3.8,
+        "netDebtToEbitda": 3.06
       },
       {
         "fy": "2019",
-        "coverage": 2.6,
-        "netDebtToEbitda": 5.44
+        "coverage": 4.6,
+        "netDebtToEbitda": 2.95
       },
       {
         "fy": "2018",
-        "coverage": 2.2,
-        "netDebtToEbitda": 5.83
+        "coverage": 5.4,
+        "netDebtToEbitda": 3.62
+      }
+    ],
+    "LIN": [
+      {
+        "fy": "2025",
+        "coverage": 42.1,
+        "netDebtToEbitda": 1.69
+      },
+      {
+        "fy": "2024",
+        "coverage": 15,
+        "netDebtToEbitda": 1.37
+      },
+      {
+        "fy": "2023",
+        "coverage": 16.6,
+        "netDebtToEbitda": 1.27
+      },
+      {
+        "fy": "2022",
+        "coverage": 33.6,
+        "netDebtToEbitda": 1.34
+      },
+      {
+        "fy": "2021",
+        "coverage": 33.2,
+        "netDebtToEbitda": 1.25
+      },
+      {
+        "fy": "2020",
+        "coverage": 34.1,
+        "netDebtToEbitda": 1.66
+      },
+      {
+        "fy": "2019",
+        "coverage": 6.5,
+        "netDebtToEbitda": 1.51
+      },
+      {
+        "fy": "2018",
+        "coverage": 9.4,
+        "netDebtToEbitda": 1.52
+      }
+    ],
+    "NEE": [
+      {
+        "fy": "2025",
+        "coverage": 1.8,
+        "netDebtToEbitda": 5.74
+      },
+      {
+        "fy": "2024",
+        "coverage": 3.3,
+        "netDebtToEbitda": 5.76
+      },
+      {
+        "fy": "2023",
+        "coverage": 3.1,
+        "netDebtToEbitda": 4.21
+      },
+      {
+        "fy": "2022",
+        "coverage": 7,
+        "netDebtToEbitda": 6.88
+      },
+      {
+        "fy": "2021",
+        "coverage": 2.3,
+        "netDebtToEbitda": 6.26
+      },
+      {
+        "fy": "2020",
+        "coverage": 2.6,
+        "netDebtToEbitda": 5.41
+      },
+      {
+        "fy": "2019",
+        "coverage": 2.4,
+        "netDebtToEbitda": 3.97
+      },
+      {
+        "fy": "2018",
+        "coverage": 2.9,
+        "netDebtToEbitda": 2.85
       }
     ],
     "SO": [

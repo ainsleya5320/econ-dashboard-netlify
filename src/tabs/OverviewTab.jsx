@@ -422,7 +422,8 @@ function RealYieldCard({ ey }) {
   const [s, setS] = useState(null);
   useEffect(() => {
     let alive = true;
-    const load = id => fetch(`/api/fred?series_id=${id}&limit=6500`).then(r => r.json())
+    // Netlify fork: baked path rather than the relay query form.
+    const load = id => fetch(`/api/fred/${id}`).then(r => r.json())
       .then(j => (j.observations || []).filter(o => o.value !== ".").map(o => ({ d: o.date, v: parseFloat(o.value) })).reverse())
       .catch(() => []);
     Promise.all([load("DFII10"), load("T10YIE")]).then(([real, be]) => { if (alive) setS({ real, be }); });

@@ -41,7 +41,7 @@ function OptionsTab({ fmpKey }) {
     let alive = true;
     setChain(null); setChainErr(null); setCloses(null); setTarget(null); setContext(null);
     fetchOptionsChain(symbol).then(d => { if (alive) setChain(d); }).catch(e => { if (alive) setChainErr(e?.message || "chain unavailable"); });
-    fetch(`/api/options-context?symbol=${encodeURIComponent(symbol)}`).then(r=>r.ok?r.json():Promise.reject()).then(d=>{if(alive)setContext(d);}).catch(()=>{if(alive)setContext({events:[],status:{earnings:'unavailable',dividends:'unavailable',rates:'unavailable'},partial:true});});
+    fetch(`/api/options-context/${encodeURIComponent(symbol)}`).then(r=>r.ok?r.json():Promise.reject()).then(d=>{if(alive)setContext(d);}).catch(()=>{if(alive)setContext({events:[],status:{earnings:'unavailable',dividends:'unavailable',rates:'unavailable'},partial:true});});
     if (fmpKey) {
       fetchFMP(`/historical-price-eod/full?symbol=${symbol}`, fmpKey).then(d => {
         const rows = Array.isArray(d) ? d : (d?.historical || []);

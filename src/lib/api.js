@@ -31,12 +31,19 @@ async function fetchJson(url, { label = "Request", timeoutMs = 15000, retries = 
 }
 
 async function fetchFred(id, key, limit = 12, _retries = 3) {
-  const d = await fetchJson(`${FRED_BASE}?series_id=${id}&api_key=${key}&file_type=json&sort_order=desc&limit=${limit}`, {
+  // Netlify fork: one baked file per series, served at this exact path. No
+  // redirect rule is involved, so `npm run preview` exercises the same URLs the
+  // deployed site will. The dev server answers this shape as well as the
+  // original query form.
+  const d = await fetchJson(`${FRED_BASE}/${encodeURIComponent(id)}`, {
     label: `FRED ${id}`,
     retries: _retries,
     retryDelayMs: 2000,
   });
-  return d.observations.filter(o => o.value !== ".").map(o => ({ d: o.date, v: parseFloat(o.value) })).reverse();
+  // The dev relay applied `limit` server-side. The baked per-series files hold
+  // the full history, so trim here — newest-first on the way in, oldest-first out.
+  const obs = d.observations.filter(o => o.value !== ".");
+  return obs.slice(0, limit).map(o => ({ d: o.date, v: parseFloat(o.value) })).reverse();
 }
 
 async function fetchFMP(endpoint, fmpKey) {

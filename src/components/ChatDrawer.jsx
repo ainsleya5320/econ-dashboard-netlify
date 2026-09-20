@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
+import { STATIC_BUILD } from "../lib/deploy.js";
 import { fonts } from "../lib/styles.js";
 import { getVerdictContext } from "../lib/assistantContext.js";
 
@@ -211,6 +212,13 @@ export default function ChatDrawer({ tab, md, td, gd, cd, csm, hd, aiModels, zil
     setInput("");
     setLoading(true);
     try {
+      // Netlify fork: answering a question needs an Anthropic key, and this build
+      // deliberately ships none. Say so plainly instead of letting the request
+      // fall through to the SPA fallback and fail as a JSON parse error.
+      if (STATIC_BUILD) {
+        setMessages(prev => [...prev, { role: "assistant", content: "Chat is off in the hosted build. It needs a live Anthropic key, and this version ships no credentials to the browser — every other panel reads data baked at build time. Run the app locally with an ANTHROPIC_API_KEY in .env to use it." }]);
+        return;
+      }
       // Re-fetch live data if needed before building context
       await fetchLiveData();
       const verdicts = await getVerdictContext().catch(() => "");

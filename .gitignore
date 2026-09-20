@@ -56,7 +56,8 @@ gpu-economics.json
 # Token estimates: 12h feed cache (data/ai/token-estimates.json is the tracked input table)
 token-estimates-out.json
 # The shared FRED observation cache (re-derivable; keyed by series, cadence-aware TTL)
-fred-cache.json
+# fred-cache.json is NOT ignored in this fork: it is committed as the seed
+# list of series the app uses, so a clean Netlify build knows what to fetch.
 # Owner wealth: 24h feed cache and the permanent SOI tax-year extracts (re-derivable)
 owner-wealth.json
 soi-archive.json
@@ -64,3 +65,8 @@ soi-archive.json
 capex-returns.json
 household-wealth.json
 scf-archive.json
+
+# Baked API responses are a build artifact — scripts/bake.mjs regenerates them
+# on every build, including on Netlify. fred-cache.json above is the seed and
+# IS committed; these are its output.
+public/api/

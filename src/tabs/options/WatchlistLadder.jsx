@@ -25,7 +25,7 @@ export default function WatchlistLadder({tickers,theses={},onInspect}) {
       for(let i=0;i<names.length&&alive;i+=3){
         const batch=await Promise.all(names.slice(i,i+3).map(async symbol=>{
           if(cache.current[symbol])return [symbol,cache.current[symbol]];
-          const [chain,event]=await Promise.allSettled([fetchOptionsChain(symbol),fetch(`/api/options-context?symbol=${encodeURIComponent(symbol)}`).then(r=>{if(!r.ok)throw Error('Unavailable');return r.json();})]);
+          const [chain,event]=await Promise.allSettled([fetchOptionsChain(symbol),fetch(`/api/options-context/${encodeURIComponent(symbol)}`).then(r=>{if(!r.ok)throw Error('Unavailable');return r.json();})]);
           return [symbol,{chain:chain.status==='fulfilled'?chain.value:null,error:chain.status==='rejected',context:event.status==='fulfilled'?event.value:null}];
         }));
         if(!alive)return;

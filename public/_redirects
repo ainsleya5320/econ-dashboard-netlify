@@ -1,0 +1,10 @@
+# FMP is the one live path: a function that holds the key server-side.
+/api/fmp/*  /.netlify/functions/fmp/:splat  200
+
+# Nothing else routes through here. Every /api response is baked to a static
+# file at exactly the path the client requests (scripts/bake.mjs), which is what
+# lets `npm run preview` exercise the same URLs the deployed site will —
+# _redirects is inert under preview, so anything depending on it is untestable.
+
+# SPA fallback, last so it never shadows the rule above.
+/*  /index.html  200

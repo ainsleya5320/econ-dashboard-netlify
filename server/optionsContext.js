@@ -37,10 +37,14 @@ export function createOptionsContext({dir,fmpKey}) {
   }
   function register(server) {
     server.middlewares.use('/api/options-context',async(req,res,next)=>{
-      const url=new URL(req.url||'/','http://localhost');if(url.pathname!=='/')return next();
+      const url=new URL(req.url||'/','http://localhost');
+      // Netlify fork: also accept /api/options-context/<SYMBOL>.json, which is how
+      // the baked file is addressed. req.url arrives stripped to "/SPY.json".
+      const viaPath=(url.pathname.match(/^\/([A-Za-z0-9_.-]{1,64}?)(?:\.json)?$/)||[])[1];
+      if(url.pathname!=='/'&&!viaPath)return next();
       res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');
       if(req.method!=='GET'){res.statusCode=405;res.end(JSON.stringify({error:'Method not allowed'}));return;}
-      try{res.end(JSON.stringify(await context(url.searchParams.get('symbol'))));}catch(e){res.statusCode=400;res.end(JSON.stringify({error:e.message}));}
+      try{res.end(JSON.stringify(await context(viaPath||url.searchParams.get('symbol'))));}catch(e){res.statusCode=400;res.end(JSON.stringify({error:e.message}));}
     });
   }
   return {context,register};

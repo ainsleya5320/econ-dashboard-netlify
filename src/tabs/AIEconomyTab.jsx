@@ -340,10 +340,12 @@ function BtosAdoptionPanel() {
 function PowerBottleneckPanel() {
   const [elec, setElec] = useState(null);
   useEffect(() => {
-    fetch("/api/fred?series_id=APU000072610&limit=240")
+    // Netlify fork: baked path, and the limit applied here since the file
+    // carries the full series.
+    fetch("/api/fred/APU000072610")
       .then(r => r.json())
       .then(d => {
-        const obs = (d.observations || []).map(o => ({ d: o.date, v: +o.value })).filter(o => isFinite(o.v)).reverse();
+        const obs = (d.observations || []).slice(0, 240).map(o => ({ d: o.date, v: +o.value })).filter(o => isFinite(o.v)).reverse();
         if (obs.length) setElec(obs);
       })
       .catch(() => {});

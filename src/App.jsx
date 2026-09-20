@@ -19,6 +19,7 @@ import CommoditiesTab from "./tabs/CommoditiesTab.jsx";
 import ChatDrawer from "./components/ChatDrawer.jsx";
 import DataHealthPanel from "./components/DataHealthPanel.jsx";
 import { collectLatestDate, sourceStatus } from "./lib/dataHealth.js";
+import { KEY_PLACEHOLDER } from "./lib/deploy.js";
 
 // A crash inside one tab (a feed handing a null to a formatter mid-reload, a
 // chart edge case) used to blank the whole app. Contain it to the tab and
@@ -88,7 +89,10 @@ export default function Dashboard() {
     try { localStorage.setItem("econ-dash-theme", darkMode ? "dark" : "light"); } catch {}
   }, [darkMode]);
 
-  const [fredKey, setFredKey] = useState(import.meta.env.VITE_FRED_KEY || ""); const [fmpKey, setFmpKey] = useState(import.meta.env.VITE_FMP_KEY || "");
+  // Netlify fork: no API key reaches the browser. FRED is baked to static
+  // files and FMP goes through a function, so both of these are placeholders
+  // that exist only to satisfy the components which gate on a key being set.
+  const [fredKey, setFredKey] = useState(KEY_PLACEHOLDER); const [fmpKey, setFmpKey] = useState(KEY_PLACEHOLDER);
   const [fredStatus, setFredStatus] = useState("idle"); const [isLive, setIsLive] = useState(false);
   const [tab, setTab] = useState(() => { const view=new URLSearchParams(window.location.search).get('view'); return ['realestate','research'].includes(view)?'realestate':['stocks','options'].includes(view)?view:'overview'; });
   useEffect(() => { if (tab === "research") setTab("realestate"); }, [tab]);

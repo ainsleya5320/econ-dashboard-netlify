@@ -102,10 +102,14 @@ export function createMetroEmployment({dir,blsKey=''}) {
   }
   function register(server) {
     server.middlewares.use('/api/re-metro-employment',async(req,res,next)=>{
-      const url=new URL(req.url||'/','http://localhost');if(url.pathname!=='/')return next();
+      const url=new URL(req.url||'/','http://localhost');
+      // Netlify fork: also accept /api/re-metro-employment/<code>.json, which is
+      // how the baked file is addressed. req.url arrives stripped to "/42660.json".
+      const viaPath=(url.pathname.match(/^\/([A-Za-z0-9_.-]{1,64}?)(?:\.json)?$/)||[])[1];
+      if(url.pathname!=='/'&&!viaPath)return next();
       res.setHeader('Content-Type','application/json');res.setHeader('Cache-Control','no-store');
       if(req.method!=='GET'){res.statusCode=405;res.end(JSON.stringify({error:'Method not allowed'}));return;}
-      try{res.end(JSON.stringify(await employment(url.searchParams.get('code'))));}
+      try{res.end(JSON.stringify(await employment(viaPath||url.searchParams.get('code'))));}
       catch(e){res.statusCode=400;res.end(JSON.stringify({error:e.message}));}
     });
   }

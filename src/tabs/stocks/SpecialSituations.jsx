@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { fonts, cardBg, cardBorder } from "../../lib/styles.js";
 import { InfoBox } from "../../components/shared.jsx";
 import SubViews from "../../components/SubViews.jsx";
+import { LS, lsGet, lsSet } from "../../lib/deploy.js";
 
 // ============================================================================
 // SPECIAL SITUATIONS — Greenblatt's "You Can Be a Stock Market Genius" and
@@ -81,6 +82,14 @@ export default function SpecialSituations({ onSelectStock }) {
   useEffect(() => {
     let alive = true;
     fetch("/api/special-situations").then(r => r.json()).then(x => { if (!alive) return; if (x.error) setErr(x.error); else setD(x); }).catch(e => alive && setErr(String(e)));
+    // Netlify fork: this build cannot write to the server, so pins live in
+    // localStorage. Anything saved here wins over the snapshot baked at build
+    // time; with nothing saved yet, that snapshot is the starting point.
+    const local = lsGet(LS.dealbook);
+    if (local && Array.isArray(local.entries)) {
+      setBook(local); setView(v => v || (local.entries.length ? "book" : "spinoffs"));
+      return;
+    }
     fetch("/api/special-dealbook").then(r => r.json()).then(x => { if (!alive) return; const b = x && Array.isArray(x.entries) ? x : { entries: [] }; setBook(b); setView(v => v || (b.entries.length ? "book" : "spinoffs")); }).catch(() => setView(v => v || "spinoffs"));
     const t = setInterval(() => setSecs(s => s + 1), 1000);
     return () => { alive = false; clearInterval(t); };
@@ -102,7 +111,7 @@ export default function SpecialSituations({ onSelectStock }) {
   const persist = next => {
     setBook(next);
     clearTimeout(saveTimer.current);
-    saveTimer.current = setTimeout(() => { fetch("/api/special-dealbook", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(next) }).catch(() => {}); }, 700);
+    saveTimer.current = setTimeout(() => { lsSet(LS.dealbook, next); }, 700);
   };
   const pinned = (cat, key) => book.entries.some(e => e.cat === cat && e.key === key);
   const pin = (cat, key, fields) => {

@@ -585,7 +585,10 @@ function MetroView({ rents }) {
   const [sortP2r, setSortP2r] = useState("desc");
   useEffect(() => { fetch("/api/re-metro").then(r => r.json()).then(d => setList(d.metros || [])).catch(() => {}); }, []);
   useEffect(() => { try { localStorage.setItem("re-metro", code); } catch {} }, [code]);
-  const m = useJson(`/api/re-metro?code=${code}`);
+  // Netlify fork: addressed as a baked file path rather than a query string, so
+  // it works identically in `npm run preview` and on Netlify. _redirects cannot
+  // be exercised locally, so no data path is allowed to depend on it.
+  const m = useJson(`/api/re-metro/${code}`);
   const cur = m && m.code === code ? m : null;
   const L = cur?.listing, cs = cur?.caseShiller, ur = cur?.unemployment, z = cur?.zillow;
   const natP2r = rents?.national?.p2r ?? null;

@@ -23,7 +23,7 @@ const FEEDS = {
   summary: "/api/dashboard-summary", erp: "/api/erp", ms: "/api/ms-fair-value", fg: "/api/fear-greed",
   kalecki: "/api/kalecki", debt: "/api/debt-market", bank: "/api/bank-credit", housing: "/api/housing-health",
   or: "/api/or-rankings-history", ornn: "/api/ornn", semi: "/api/semi-h100", mem: "/api/memory",
-  reComp: "/api/re-composite", rePipe: "/api/re-pipeline", redfin: "/api/redfin", creCredit: "/api/cre-credit", pulse: "/api/us-pulse", intl: "/api/intl-pulse", machine: "/api/machine", dam: "/api/damodaran-erp", commod: "/api/commodity-pulse", ai: "/api/ai-pulse", sfc: "/api/sfc", bk: "/api/bankruptcy", sea: "/api/municipality?city=seattle", sf: "/api/municipality?city=sf", austin: "/api/municipality?city=austin", nyc: "/api/municipality?city=nyc",
+  reComp: "/api/re-composite", rePipe: "/api/re-pipeline", redfin: "/api/redfin", creCredit: "/api/cre-credit", pulse: "/api/us-pulse", intl: "/api/intl-pulse", machine: "/api/machine", dam: "/api/damodaran-erp", commod: "/api/commodity-pulse", ai: "/api/ai-pulse", sfc: "/api/sfc", bk: "/api/bankruptcy", sea: "/api/municipality/seattle", sf: "/api/municipality/sf", austin: "/api/municipality/austin", nyc: "/api/municipality/nyc",
 };
 
 let cache = { text: "", ts: 0 };

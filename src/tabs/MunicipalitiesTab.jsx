@@ -127,7 +127,10 @@ export default function MunicipalitiesTab({ go }) {
     if (byCity[cityId] || pending.current[cityId]) return;
     pending.current[cityId] = true;
     setErr(null);
-    fetch(`/api/municipality?city=${cityId}`)
+  // Netlify fork: addressed as a baked file path rather than a query string, so
+  // it works identically in `npm run preview` and on Netlify. _redirects cannot
+  // be exercised locally, so no data path is allowed to depend on it.
+    fetch(`/api/municipality/${cityId}`)
       .then(r => r.json())
       .then(x => { if (x.error) setErr(x.error); else setByCity(prev => ({ ...prev, [cityId]: x })); })
       .catch(e => setErr(String(e)))
