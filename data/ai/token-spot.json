@@ -1,0 +1,187 @@
+{
+  "_README": "Reference constants for deriving a token cost floor from a GPU rental price. Every number here is either a published vendor spec or a stated assumption — nothing is measured from production traffic, which is exactly the gap the panel is built to show. `confidence` is honest: 'spec' means a datasheet figure, 'derived' means computed from architecture, 'assumption' means somebody picked it.",
+  "reviewed": "2026-09-21",
+  "chips": {
+    "_note": "Bandwidth and FLOPS are the two numbers the physics actually needs, and neither is in any feed the dashboard already pulls — they are typed in from vendor datasheets. Dense FLOPS, not the 2x sparsity marketing figure.",
+    "h100": {
+      "name": "H100 SXM5 80GB",
+      "hbmTBs": 3.35,
+      "memoryGB": 80,
+      "hbmType": "HBM3",
+      "flopsFP8": 1979000000000000.0,
+      "flopsFP16": 989000000000000.0,
+      "tdpW": 700,
+      "confidence": "spec",
+      "source": "NVIDIA H100 datasheet"
+    },
+    "h200": {
+      "name": "H200 SXM 141GB",
+      "hbmTBs": 4.8,
+      "memoryGB": 141,
+      "hbmType": "HBM3e",
+      "flopsFP8": 1979000000000000.0,
+      "flopsFP16": 989000000000000.0,
+      "tdpW": 700,
+      "confidence": "spec",
+      "source": "NVIDIA H200 datasheet"
+    },
+    "b200": {
+      "name": "B200 192GB",
+      "hbmTBs": 8.0,
+      "memoryGB": 192,
+      "hbmType": "HBM3e",
+      "flopsFP8": 4500000000000000.0,
+      "flopsFP4": 9000000000000000.0,
+      "flopsFP16": 2250000000000000.0,
+      "tdpW": 1000,
+      "confidence": "spec",
+      "source": "NVIDIA Blackwell datasheet"
+    },
+    "a100": {
+      "name": "A100 SXM 80GB",
+      "hbmTBs": 2.039,
+      "memoryGB": 80,
+      "hbmType": "HBM2e",
+      "flopsFP16": 312000000000000.0,
+      "tdpW": 400,
+      "confidence": "spec",
+      "source": "NVIDIA A100 datasheet",
+      "note": "No FP8 path — Ampere predates the FP8 tensor cores, so it decodes on FP16 weights."
+    },
+    "mi300x": {
+      "name": "AMD MI300X 192GB",
+      "hbmTBs": 5.3,
+      "memoryGB": 192,
+      "hbmType": "HBM3",
+      "flopsFP8": 2615000000000000.0,
+      "flopsFP16": 1307000000000000.0,
+      "tdpW": 750,
+      "confidence": "spec",
+      "source": "AMD MI300X datasheet"
+    }
+  },
+  "models": {
+    "_note": "Archetypes, not a catalogue. KV bytes per token is derived from layers x kv-heads x head-dim x 2 (K and V) x bytes-per-element, which is why it is marked derived rather than spec — the architecture is public, the arithmetic is ours.",
+    "dense70b": {
+      "label": "Dense 70B (Llama-class)",
+      "kind": "dense",
+      "totalParamsB": 70,
+      "activeParamsB": 70,
+      "kvBytesPerToken": 163840,
+      "quant": "FP8",
+      "bytesPerParam": 1,
+      "confidence": "derived",
+      "note": "80 layers, 8 KV heads, 128 head-dim, FP8 KV. The worked example in the brief."
+    },
+    "moe_frontier": {
+      "label": "Frontier MoE (DeepSeek-class)",
+      "kind": "moe",
+      "totalParamsB": 670,
+      "activeParamsB": 37,
+      "kvBytesPerToken": 70000,
+      "quant": "FP8",
+      "bytesPerParam": 1,
+      "confidence": "derived",
+      "note": "The wrinkle that matters: compute scales with the 37B active, but at large batch nearly every expert is touched each step, so bandwidth and memory scale closer to the 670B total. Cheap on FLOPs, greedy on HBM."
+    },
+    "small30b": {
+      "label": "Small dense 30B",
+      "kind": "dense",
+      "totalParamsB": 30,
+      "activeParamsB": 30,
+      "kvBytesPerToken": 98304,
+      "quant": "FP8",
+      "bytesPerParam": 1,
+      "confidence": "derived"
+    }
+  },
+  "assumptions": {
+    "_note": "This block is the whole argument. Every one of these is a guess standing in for something nobody outside a serving stack can observe, and each moves the answer more than the GPU price does.",
+    "batchSize": {
+      "value": 256,
+      "confidence": "assumption",
+      "why": "The single biggest lever. Weights are read once per step regardless of batch, so cost per token falls roughly as 1/batch until the KV cache dominates. Batch 1 and batch 256 differ by ~80x."
+    },
+    "contextTokens": {
+      "value": 4096,
+      "confidence": "assumption",
+      "why": "Sets how much KV cache is streamed per step. A 128K-context workload is a different commodity at a different price."
+    },
+    "bandwidthEfficiency": {
+      "value": 0.55,
+      "confidence": "assumption",
+      "why": "Fraction of theoretical HBM bandwidth a real serving stack achieves. The brief's 2.6ms-ideal vs 5ms-real implies roughly this."
+    },
+    "computeEfficiency": {
+      "value": 0.4,
+      "confidence": "assumption",
+      "why": "Model FLOPs utilisation during prefill. 35-45% is the usual published range for well-tuned stacks."
+    },
+    "fleetUtilisation": {
+      "value": 0.6,
+      "confidence": "assumption",
+      "why": "Demand is not flat at 3am. Idle hours still pay rent, so the realised cost is the modelled cost divided by this."
+    },
+    "outputPerInput": {
+      "value": 0.25,
+      "confidence": "assumption",
+      "why": "Blended cost needs a mix. Chat skews output-heavy, RAG and long-prompt skew input-heavy — and nobody publishes the real ratio."
+    },
+    "gpusPerNode": {
+      "value": 8,
+      "confidence": "assumption",
+      "why": "Serving happens on a node, not a card. Eight H100s give 26.8 TB/s aggregate bandwidth and 640 GB, which is what makes batch 256 at 4K context physically possible — it needs 238 GB and will not fit on one 80 GB card. Weights and KV are sharded by tensor parallelism, so the aggregate bytes moved per step are unchanged while bandwidth and capacity scale."
+    }
+  },
+  "missingInputs": [
+    {
+      "key": "batch",
+      "need": "Realised batch size in production",
+      "why": "Dominates the answer — it is the difference between $22 and $0.28 per million output tokens on the same hardware.",
+      "where": "Only the serving operator sees it. Closest public proxy: vLLM or SGLang benchmark suites at stated batch, or an inference provider publishing concurrency.",
+      "impact": "high"
+    },
+    {
+      "key": "mfu",
+      "need": "Achieved bandwidth and FLOPs efficiency",
+      "why": "Turns theoretical peak into real throughput; the gap between them is roughly 2x.",
+      "where": "MLPerf Inference submissions, or SemiAnalysis InferenceX runs which we already read for a few chips.",
+      "impact": "high"
+    },
+    {
+      "key": "mix",
+      "need": "Real input:output token ratio and context-length distribution",
+      "why": "Prefill and decode have different physics and differ ~100x in cost per token. Without the mix, a blended price is a guess.",
+      "where": "OpenRouter publishes per-model token counts but not the input/output split or context distribution.",
+      "impact": "high"
+    },
+    {
+      "key": "util",
+      "need": "Fleet utilisation over the day",
+      "why": "Idle GPU-hours are paid for and produce nothing, so this scales every number linearly.",
+      "where": "Cloud providers do not publish it. A spot-price duty cycle could proxy it — spot prices should spike when fleets are full.",
+      "impact": "medium"
+    },
+    {
+      "key": "arch",
+      "need": "Per-model architecture for priced models",
+      "why": "We can price a 70B dense archetype, but Artificial Analysis gives us prices for 33 models whose layer counts, KV-head counts and active-parameter fractions we do not have.",
+      "where": "Open-weight models publish config.json. Closed frontier models do not — which is why the market-price line can never be decomposed, only observed.",
+      "impact": "medium"
+    },
+    {
+      "key": "spot",
+      "need": "A genuine spot GPU market with depth",
+      "why": "Vast.ai medians are a thin, heterogeneous market; the SemiAnalysis index is a 1-year contract price, not spot. The two differ by more than the token cost we are trying to resolve.",
+      "where": "Would need an exchange with cleared volume. Does not exist yet — this is the thing Patel is arguing will emerge.",
+      "impact": "high"
+    },
+    {
+      "key": "specdec",
+      "need": "Speculative decoding acceptance rates",
+      "why": "Raises tokens per GPU-hour by 1.5-3x when it works, and is invisible from outside.",
+      "where": "Provider disclosure or inference-framework benchmarks.",
+      "impact": "medium"
+    }
+  ]
+}

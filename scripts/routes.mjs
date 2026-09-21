@@ -25,7 +25,7 @@ export const PLAIN = [
   're-buildcost', 're-composite', 're-metro-comparison', 're-pipeline',
   're-rents', 'redfin', 'reit-caprates', 'replacement-cost', 'semi-h100',
   'sfc', 'sp500-screener', 'special-dealbook', 'special-situations',
-  'tickers', 'token-estimates', 'us-pulse', 'usage-signals',
+  'tickers', 'token-estimates', 'token-spot', 'us-pulse', 'usage-signals',
 ]
 
 // Routes with a small, enumerable parameter set: one file per value, written to

@@ -22,6 +22,7 @@ import { createGpuEconomics } from './server/gpuEconomics.js'
 import { createTokenEstimates } from './server/tokenEstimates.js'
 import { createOwnerWealth } from './server/ownerWealth.js'
 import { createHouseholdWealth } from './server/householdWealth.js'
+import { createTokenSpot } from './server/tokenSpot.js'
 import { createCapexReturns } from './server/capexReturns.js'
 import { createMunicipalities } from './server/municipalities.js'
 import { STATE_FIPS } from './src/lib/constants.js'
@@ -1198,8 +1199,18 @@ async function fetchOpenRouterMarketShare() {
   }
 }
 
-// Normalize date to YYYY-MM-DD (OpenRouter returns "2026-04-22 00:00:00")
-const normDate = d => (d || '').slice(0, 10)
+// Normalize date to YYYY-MM-DD.
+// OpenRouter returns "2026-04-22 00:00:00", which slicing to 10 handles, but
+// the SemiAnalysis series returns RFC-2822 ("Fri, 01 Aug 2025 00:00:00 GMT")
+// and slicing that gives "Fri, 01 Au" — a string that is still ten characters,
+// still sorts, and is silently useless. It corrupted 1,106 of the index's 1,147
+// points. Parse anything that is not already ISO.
+const normDate = d => {
+  const s = String(d || '').trim()
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10)
+  const t = Date.parse(s)
+  return Number.isFinite(t) ? new Date(t).toISOString().slice(0, 10) : ''
+}
 
 // Today in server-local YYYY-MM-DD
 const todayStr = () => {
@@ -3080,7 +3091,10 @@ function parseSemiIndex(arr) {
   const byDate = {}
   for (const r of arr || []) {
     if (!r || !r.date) continue
-    const d = String(r.date).slice(0, 10)
+    // Their API returns RFC-2822 ("Fri, 01 Aug 2025 00:00:00 GMT"). Slicing that
+    // to ten characters yields "Fri, 01 Au" — still ten characters, still sorts,
+    // silently useless, and it corrupted 1,106 of the archive's 1,147 points.
+    const d = normDate(r.date)
     const num = v => (typeof v === 'number' && isFinite(v)) ? v : (v != null && isFinite(+v) ? +v : null)
     byDate[d] = { date: d, h100: num(r.h100), a100: num(r.a100), b200: num(r.b200) }
   }
@@ -3946,6 +3960,14 @@ export default defineConfig({
           const m = u.pathname.match(/^\/([A-Za-z0-9_.-]{1,64}?)(?:\.json)?$/)
           return m ? m[1] : (u.searchParams.get(key) || undefined)
         }
+
+        // Token spot (server/tokenSpot.js): derives a token cost floor from the
+        // GPU rental price using the prefill/decode physics, and plots it against
+        // what the market actually charges. Takes getSemiH100/getAiPrices directly
+        // rather than re-fetching its own copies over HTTP.
+        const tokenSpot = createTokenSpot({ dir: __dirname, UA, semiH100: getSemiH100, aiPrices: getAiPrices })
+        reRoute('/api/token-spot', () => tokenSpot.get())
+
         reRoute('/api/us-pulse', () => usPulse.get())
         reRoute('/api/intl-pulse', () => intlPulse.get())
         reRoute('/api/machine', () => machine.get())

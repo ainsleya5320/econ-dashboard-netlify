@@ -143,7 +143,7 @@ export function ValuationLensesCard({ erp, dam, onNavigate }) {
             <div style={{ ...label, fontSize: 9, color: "#475569" }}>Top-down · earnings yield − 10Y</div>
             {erp ? (<>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 3, flexWrap: "wrap" }}>
-                <span style={{ fontSize: 20, fontWeight: 700, color: erpColor, fontFamily: fonts.heading, letterSpacing: -0.6, lineHeight: 1 }}>{erp.currentErp > 0 ? "+" : ""}{erp.currentErp.toFixed(2)}pp</span>
+                <span style={{ fontSize: 20, fontWeight: 700, color: erpColor, fontFamily: fonts.heading, letterSpacing: -0.6, lineHeight: 1 }}>{fin(erp.currentErp) ? `${erp.currentErp > 0 ? "+" : ""}${erp.currentErp.toFixed(2)}pp` : "—"}</span>
                 {erp.verdict && <span style={{ fontSize: 9, fontWeight: 700, color: erpColor, background: `${erpColor}1e`, padding: "2px 7px", borderRadius: 6, fontFamily: fonts.mono }}>{erp.verdict}</span>}
               </div>
               <div style={{ fontSize: 9.5, color: SLATE, fontFamily: fonts.mono, marginTop: 3 }}>EY {erp.earningsYield?.toFixed(2)}% − 10Y {erp.tenYear?.toFixed(2)}%{fin(erp.percentile) ? ` · ${ord(erp.percentile)} pct / 25y` : ""}</div>
