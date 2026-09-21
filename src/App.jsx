@@ -20,6 +20,7 @@ import ChatDrawer from "./components/ChatDrawer.jsx";
 import DataHealthPanel from "./components/DataHealthPanel.jsx";
 import { collectLatestDate, sourceStatus } from "./lib/dataHealth.js";
 import { KEY_PLACEHOLDER } from "./lib/deploy.js";
+import { useResponsiveTables } from "./components/responsiveTables.jsx";
 
 // A crash inside one tab (a feed handing a null to a formatter mid-reload, a
 // chart edge case) used to blank the whole app. Contain it to the tab and
@@ -93,6 +94,9 @@ export default function Dashboard() {
   // files and FMP goes through a function, so both of these are placeholders
   // that exist only to satisfy the components which gate on a key being set.
   const [fredKey, setFredKey] = useState(KEY_PLACEHOLDER); const [fmpKey, setFmpKey] = useState(KEY_PLACEHOLDER);
+
+  // Label every table from its own thead so it can reflow to cards on a phone.
+  useResponsiveTables();
   const [fredStatus, setFredStatus] = useState("idle"); const [isLive, setIsLive] = useState(false);
   const [tab, setTab] = useState(() => { const view=new URLSearchParams(window.location.search).get('view'); return ['realestate','research'].includes(view)?'realestate':['stocks','options'].includes(view)?view:'overview'; });
   useEffect(() => { if (tab === "research") setTab("realestate"); }, [tab]);

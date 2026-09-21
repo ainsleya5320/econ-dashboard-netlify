@@ -85,12 +85,40 @@ body { margin: 0; }
   .market-masthead { align-items: start; flex-direction: column; }
 
   /* Nothing may widen the page. A table is the usual culprit: it sizes to its
-     content and, unwrapped, drags the document with it — you then scroll the
-     whole page sideways to read one row, which is the single worst thing a
-     phone layout can do. Letting each table scroll inside itself keeps the
-     page fixed. The dense panels avoid this entirely by reflowing to cards
-     (see DataTable); this is the floor for everything that has not. */
+     content and, unwrapped, drags the document with it. Scrolling inside
+     itself is the floor — better than moving the page, still poor to read. */
   .ledger-app table { display: block; max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Better than the floor: a table whose columns have been named from its own
+     thead (see components/responsiveTables.jsx) becomes one labelled block per
+     row — the shape DataTable produces, derived automatically. The header row
+     goes away because every value now carries its own label. */
+  .ledger-app table[data-reflow="labelled"] { display: block; overflow-x: visible; border-collapse: separate; border-spacing: 0; }
+  .ledger-app table[data-reflow="labelled"] thead { display: none; }
+  .ledger-app table[data-reflow="labelled"] tbody { display: flex; flex-direction: column; gap: 7px; }
+  .ledger-app table[data-reflow="labelled"] tbody tr {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(min(88px, 100%), 1fr));
+    gap: 5px 10px; background: var(--bg-subtle); border-radius: 9px; padding: 8px 10px; border-top: 0 !important;
+  }
+  /* the identity column spans the card and reads as its heading */
+  .ledger-app table[data-reflow="labelled"] tbody tr > *:first-child {
+    grid-column: 1 / -1; font-weight: 600; color: var(--text-primary) !important;
+    text-align: left !important; padding: 0 0 2px !important; font-size: 11.5px !important; white-space: normal !important;
+  }
+  .ledger-app table[data-reflow="labelled"] tbody td {
+    display: block; text-align: left !important; padding: 0 !important;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 11px !important;
+  }
+  .ledger-app table[data-reflow="labelled"] tbody td[data-label]::before {
+    content: attr(data-label); display: block;
+    font-size: 8px; letter-spacing: 0.5px; text-transform: uppercase;
+    color: var(--text-secondary); margin-bottom: 1px; font-family: 'IBM Plex Mono', monospace;
+  }
+  /* section headings inside a table ("Assets", "Liabilities & capital") */
+  .ledger-app table[data-reflow="labelled"] tbody tr[data-section] {
+    background: none; padding: 6px 0 0; border-radius: 0; display: block;
+  }
+  .ledger-app table[data-reflow="labelled"] tbody tr[data-section] > * { grid-column: auto; padding: 0 !important; }
 
   /* The one rule that fixes most of it. A grid or flex child defaults to
      min-width:auto, which means "never shrink below my content". Nested a few
