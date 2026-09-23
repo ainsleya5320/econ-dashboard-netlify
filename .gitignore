@@ -70,3 +70,8 @@ scf-archive.json
 # on every build, including on Netlify. fred-cache.json above is the seed and
 # IS committed; these are its output.
 public/api/
+
+# Silicon Data index marks: typed in by hand from their public index page. Their
+# licence covers internal use only, and this repo is public, so the file stays
+# on this machine. server/tokenSpot.js treats it as optional.
+data/ai/silicon-data-marks.json

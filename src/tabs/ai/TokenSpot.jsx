@@ -23,7 +23,84 @@ import {
 
 const usd = (v, dp = 2) => (fin(v) ? `$${v.toFixed(dp)}` : "—");
 const perM = (v, dp = 2) => (fin(v) ? `$${v.toFixed(dp)}` : "—");
+const times = v => (fin(v) ? `${v.toFixed(v < 10 ? 2 : 1)}×` : "—");
+const signed = v => (fin(v) ? `${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v).toFixed(1)}%` : "—");
 const IMPACT = { high: RED, medium: AMBER, low: SLATE };
+
+// ── Silicon Data readings ──
+// Present only on a machine holding data/ai/silicon-data-marks.json, which is
+// git-ignored: Silicon Data licenses its indices for internal use, and the repo
+// is public. Without the file the server sends no `siliconData` block and none
+// of this renders — which is what keeps it out of the Netlify build.
+function SiliconDataPanels({ sd, outShare }) {
+  const v = Object.fromEntries(sd.venues.map(x => [x.key, x]));
+  const outs = sd.venues.map(x => x.output).filter(fin);
+  const tok = Object.fromEntries(sd.tokens.map(t => [t.key, t]));
+  const floor = Object.fromEntries(sd.floors.map(f => [f.key, f]));
+  const dense = floor.dense70b;
+  const open = tok.open, prop = tok.proprietary;
+  const src = `Silicon Data · read ${fmtDay(sd.observed)} · internal use only`;
+  const floorCell = key => r => {
+    const f = floor[key];
+    return <span style={{ color: f?.fits ? "var(--text-secondary)" : DIM }}>{times(r.vsFloor?.[key])}{f && !f.fits ? " †" : ""}</span>;
+  };
+  const unfit = sd.floors.filter(f => !f.fits);
+
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))", gap: 12, marginBottom: 12 }}>
+      <Panel title="Where the hour is bought moves the floor" right={src} style={{ marginBottom: 0 }}>
+        <DataTable
+          dense
+          rows={sd.venues}
+          cols={[
+            { key: "label", label: "H100 market", primary: true },
+            { key: "rate", label: "$/hr", render: r => <span style={{ color: INDIGO, fontWeight: 600 }}>{usd(r.rate)}</span> },
+            { key: "vs", label: "vs contract", render: r => (r.key === "contract" || !v.contract ? "—" : signed((r.rate / v.contract.rate - 1) * 100)) },
+            { key: "output", label: "floor $/M out", render: r => <span style={{ color: CYAN, fontWeight: 600 }}>{perM(r.output, 3)}</span> },
+            { key: "blended", label: "blended $/M", render: r => perM(r.blended, 3) },
+            { key: "source", label: "source", hide: true, align: "left", render: r => <span style={{ color: DIM }}>{r.source}</span> },
+          ]}
+        />
+        <Note>
+          Same chip, same model, same serving assumptions: only the market the hour is bought in changes.
+          {v.neocloud && v.contract && <> Silicon Data's neo-cloud index sits {Math.abs(Math.round((v.neocloud.rate / v.contract.rate - 1) * 100))}%
+            {v.neocloud.rate < v.contract.rate ? " below" : " above"} SemiAnalysis's 1-year contract price.</>}
+          {v.neocloud && v.hyperscaler && <> A hyperscaler charges {times(v.hyperscaler.rate / v.neocloud.rate)} the neo-cloud rate.</>}
+          {outs.length > 1 && <> That spreads the floor from {perM(Math.min(...outs), 2)} to {perM(Math.max(...outs), 2)} per million output
+            tokens before a single serving assumption moves.</>} The chart above stays on the contract index because it is the only one
+          with history.
+        </Note>
+      </Panel>
+
+      <Panel title="Token indices against the derived floor" right={src} style={{ marginBottom: 0 }}>
+        <DataTable
+          dense
+          rows={sd.tokens}
+          cols={[
+            { key: "label", label: "index", primary: true },
+            { key: "usdPerM", label: "$/M blended", render: r => <span style={{ color: AMBER, fontWeight: 600 }}>{perM(r.usdPerM)}</span> },
+            { key: "chg7d", label: "7d", render: r => signed(r.chg7d) },
+            { key: "dense70b", label: "× 70B floor", render: floorCell("dense70b") },
+            { key: "small30b", label: "× 30B floor", render: floorCell("small30b") },
+            { key: "moe_frontier", label: "× MoE floor", hide: true, render: floorCell("moe_frontier") },
+          ]}
+        />
+        <Note>
+          Both sides from one source on one day: at Silicon Data's own H100 index ({usd(sd.floorRate)}/hr) the dense 70B archetype costs
+          {" "}{perM(dense?.blended, 2)} per blended million to make.
+          {open && <> Open-weight tokens sell for {times(open.vsFloor?.dense70b)} that{open.vsFloor?.dense70b < 2 ? ", which is close to cost — what a commodity looks like" : ""}.</>}
+          {prop && <> Proprietary tokens sell for {times(prop.vsFloor?.dense70b)}.</>}
+          {open && prop && <> The open-weight index is the fair comparison, since only open models have architectures we can put through
+            the physics. The {times(prop.usdPerM / open.usdPerM)} premium of proprietary over open is the price of the model, not of the compute.</>}
+          {" "}Caveat: the indices blend input and output in a mix Silicon Data does not publish; our blended floor assumes
+          {fin(outShare) ? ` ${Math.round(outShare * 100)}% output tokens` : " the output share below"}.
+          {unfit.length > 0 && <> † {unfit.map(f => f.label).join(", ")} does not fit on an 8-GPU H100 node, so that floor prices a
+            configuration nobody can rent.</>}
+        </Note>
+      </Panel>
+    </div>
+  );
+}
 
 export default function TokenSpotPanel() {
   const [d, setD] = useState(null);
@@ -47,6 +124,7 @@ export default function TokenSpotPanel() {
   if (!d) return <div style={{ ...card, marginBottom: 12, fontSize: 11, color: "var(--text-muted)", fontFamily: fonts.mono }}>Deriving a token price from the GPU rental curve…</div>;
 
   const l = d.latest, a = d.assumptions;
+  const sdOn = !!d.siliconData;
   const joined = d.history.filter(h => fin(h.markup));
   const markups = joined.map(h => h.markup);
   const floors = d.history.map(h => h.floorOutput).filter(fin);
@@ -137,6 +215,8 @@ export default function TokenSpotPanel() {
       </Note>
     </Panel>
 
+    {d.siliconData && <SiliconDataPanels sd={d.siliconData} outShare={a.outputPerInput?.value} />}
+
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))", gap: 12, marginBottom: 12 }}>
       <Panel title="Batching is the entire economics" right="cost per million output tokens, by batch size" style={{ marginBottom: 0 }}>
         <ResponsiveContainer width="100%" height={chartH(phone, 236)}>
@@ -190,7 +270,8 @@ export default function TokenSpotPanel() {
         rows={d.chips.filter(c => fin(c.spot)).map(c => ({ ...c, key: c.key }))}
         cols={[
           { key: "name", label: "chip", primary: true },
-          { key: "spot", label: "$/hr", render: r => usd(r.spot) },
+          { key: "spot", label: sdOn ? "rental $/hr" : "$/hr", render: r => usd(r.spot) },
+          ...(sdOn ? [{ key: "contract", label: "1-yr contract", hide: true, render: r => <span style={{ color: DIM }}>{usd(r.contract)}</span> }] : []),
           { key: "bw", label: "HBM TB/s", hide: true, render: r => r.hbmTBs.toFixed(2) },
           { key: "perTBs", label: "$/hr per TB/s", render: r => <span style={{ color: CYAN, fontWeight: 600 }}>{usd(r.norm.perTBs, 3)}</span> },
           { key: "perPFLOP", label: "$/hr per PFLOP", render: r => <span style={{ color: TEAL }}>{usd(r.norm.perPFLOP, 2)}</span> },
@@ -202,6 +283,9 @@ export default function TokenSpotPanel() {
           decides output-token economics; prefill is bought with FLOPs. Memory per dollar is the third axis and the quiet one — it caps how
           large a batch you can hold, which is what sets your position on the curve to the left. A chip can lose on headline rental and still
           win on all three.
+          {sdOn && <> Rental rates here are Silicon Data's indices, read {fmtDay(d.siliconData.observed)} — one source on one day, so the
+            chips compare like for like. The contract column is SemiAnalysis, which covers {d.chips.filter(c => fin(c.contract)).length} of
+            the {d.chips.length}.</>}
         </>}
       />
     </Panel>

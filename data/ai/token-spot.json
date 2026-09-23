@@ -1,6 +1,6 @@
 {
   "_README": "Reference constants for deriving a token cost floor from a GPU rental price. Every number here is either a published vendor spec or a stated assumption — nothing is measured from production traffic, which is exactly the gap the panel is built to show. `confidence` is honest: 'spec' means a datasheet figure, 'derived' means computed from architecture, 'assumption' means somebody picked it.",
-  "reviewed": "2026-09-21",
+  "reviewed": "2026-09-23",
   "chips": {
     "_note": "Bandwidth and FLOPS are the two numbers the physics actually needs, and neither is in any feed the dashboard already pulls — they are typed in from vendor datasheets. Dense FLOPS, not the 2x sparsity marketing figure.",
     "h100": {
@@ -152,7 +152,7 @@
       "key": "mix",
       "need": "Real input:output token ratio and context-length distribution",
       "why": "Prefill and decode have different physics and differ ~100x in cost per token. Without the mix, a blended price is a guess.",
-      "where": "OpenRouter publishes per-model token counts but not the input/output split or context distribution.",
+      "where": "OpenRouter publishes per-model token counts but not the input/output split or context distribution. Silicon Data's token indices are normalised for the mix but do not publish it.",
       "impact": "high"
     },
     {
@@ -171,9 +171,9 @@
     },
     {
       "key": "spot",
-      "need": "A genuine spot GPU market with depth",
-      "why": "Vast.ai medians are a thin, heterogeneous market; the SemiAnalysis index is a 1-year contract price, not spot. The two differ by more than the token cost we are trying to resolve.",
-      "where": "Would need an exchange with cleared volume. Does not exist yet — this is the thing Patel is arguing will emerge.",
+      "need": "A public GPU rental price with cleared volume behind it",
+      "why": "The rental price is the one input we treat as measured, and the measures disagree. Vast.ai is a thin, heterogeneous marketplace; SemiAnalysis is a 1-year contract index; Silicon Data's standardised rental indices are licensed for internal use and cannot be published. Where the hour is bought moves the floor more than which chip it is bought on.",
+      "where": "CME lists cash-settled H100 and B200 rental futures on NYMEX from 5 October 2026, pending regulatory review, settled against Silicon Data's indices. Exchange settlement prices would be the first public forward curve for GPU rent. Still to check: whether CME's settlements can be read by a script and republished.",
       "impact": "high"
     },
     {

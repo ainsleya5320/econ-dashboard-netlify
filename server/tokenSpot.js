@@ -137,6 +137,17 @@ export function createTokenSpot({ dir, UA, semiH100, aiPrices }) {
   const ref = JSON.parse(fs.readFileSync(path.join(dir, 'data', 'ai', 'token-spot.json'), 'utf8'))
   let mem = null, inflight = null
 
+  // Silicon Data marks (data/ai/silicon-data-marks.json), typed in by hand from
+  // their public index page. Optional and git-ignored: their licence covers
+  // internal use only and the repo is public, so a clean checkout — and the
+  // Netlify build made from one — runs without them and serves no
+  // `siliconData` block at all. Re-read on every build so an edited file shows
+  // up at the next cache expiry.
+  const readMarks = () => {
+    try { return JSON.parse(fs.readFileSync(path.join(dir, 'data', 'ai', 'silicon-data-marks.json'), 'utf8')) }
+    catch { return null }
+  }
+
   async function build() {
     const t0 = Date.now()
     const a = ref.assumptions
@@ -187,17 +198,58 @@ export function createTokenSpot({ dir, UA, semiH100, aiPrices }) {
     const rate = latest?.rate ?? null
     const detail = costPerMillion({ chip, model, rateUsdHr: rate, a })
 
-    // every chip at its own current rental, for the comparison table
+    const marks = readMarks()
+    const sd = marks?.gpu || {}
+    const saLast = series[series.length - 1] || {}
+
+    // every chip at its own current rental, for the comparison table.
+    // SemiAnalysis's contract index covers three of the five chips. Silicon
+    // Data's rental indices cover all five from one source on one day, so when
+    // the marks are present they price the whole table like for like and the
+    // contract price rides alongside.
     const chips = Object.entries(ref.chips).filter(([k]) => !k.startsWith('_')).map(([key, ch]) => {
-      const spot = key === 'h100' ? rate
-        : key === 'a100' ? (series[series.length - 1]?.a100 ?? null)
-        : key === 'b200' ? (series[series.length - 1]?.b200 ?? null)
-        : null
+      const contract = fin(saLast[key]) ? saLast[key] : null
+      const index = fin(sd[key]?.rate) ? sd[key].rate : null
+      const spot = index ?? contract
       const m = ch.flopsFP8 || ch.flopsFP16 ? costPerMillion({ chip: ch, model, rateUsdHr: spot, a }) : null
-      return { key, ...ch, spot: r2(spot), norm: normalise(ch, spot), perM: m }
+      return {
+        key, ...ch, spot: r2(spot), spotSource: index != null ? 'silicon-data' : 'semianalysis',
+        contract: r2(contract), norm: normalise(ch, spot), perM: m,
+      }
     })
 
+    // ── Silicon Data: where the hour is bought, and what tokens sell for ──
+    let siliconData = null
+    if (marks) {
+      const h = sd.h100 || {}
+      // One chip, one model, one set of serving assumptions, three places to
+      // buy the hour. Which market a provider rents from is an input the
+      // physics cannot resolve, and it moves the floor more than the chip does.
+      const venues = [
+        { key: 'neocloud', label: 'Neo-cloud rental index', source: ['Silicon Data', h.ticker].filter(Boolean).join(' '), rate: h.rate },
+        { key: 'contract', label: '1-year contract index', source: 'SemiAnalysis', rate },
+        { key: 'hyperscaler', label: 'Hyperscaler rental', source: 'Silicon Data', rate: h.hyperscaler },
+      ].filter(v => fin(v.rate)).map(v => {
+        const c = costPerMillion({ chip, model, rateUsdHr: v.rate, a })
+        return { ...v, rate: r2(v.rate), nodeRate: c.nodeRate, output: c.output, input: c.input, blended: c.blended }
+      })
+      // The token indices are blended prices, so they sit against the blended
+      // floor — priced at Silicon Data's own H100 index, so both sides of the
+      // comparison come from one source on one day.
+      const floorRate = fin(h.rate) ? h.rate : rate
+      const floors = Object.entries(ref.models).filter(([k]) => !k.startsWith('_')).map(([key, m]) => {
+        const c = costPerMillion({ chip, model: m, rateUsdHr: floorRate, a })
+        return { key, label: m.label, blended: c.blended, output: c.output, input: c.input, fits: c.fits }
+      })
+      const tokens = Object.entries(marks.tokens || {}).filter(([k]) => !k.startsWith('_')).map(([key, t]) => ({
+        key, ...t,
+        vsFloor: Object.fromEntries(floors.map(f => [f.key, fin(f.blended) && f.blended > 0 ? r2(t.usdPerM / f.blended) : null])),
+      }))
+      siliconData = { observed: marks.observed, url: marks.url, licence: marks.licence, venues, floorRate: r2(floorRate), floors, tokens }
+    }
+
     return {
+      ...(siliconData ? { siliconData } : {}),
       built: new Date().toISOString(), tookMs: Date.now() - t0,
       reviewed: ref.reviewed,
       chip: { key: 'h100', ...chip }, model,
