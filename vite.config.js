@@ -24,6 +24,7 @@ import { createOwnerWealth } from './server/ownerWealth.js'
 import { createHouseholdWealth } from './server/householdWealth.js'
 import { createTokenSpot } from './server/tokenSpot.js'
 import { createTightening } from './server/tightening.js'
+import { createTradeFlows } from './server/tradeFlows.js'
 import { createCapexReturns } from './server/capexReturns.js'
 import { createMunicipalities } from './server/municipalities.js'
 import { STATE_FIPS } from './src/lib/constants.js'
@@ -3976,6 +3977,11 @@ export default defineConfig({
         // Treasury FiscalData tables.
         const tightening = createTightening({ fetchFredSeries, UA, dir: __dirname })
         reRoute('/api/tightening', () => tightening.get())
+        // Trade flows (server/tradeFlows.js): tariff vs exchange-rate
+        // pass-through, dollar invoicing, REER vs current account, global
+        // imbalances, the disinflation last mile. International → Forex and Pulse.
+        const tradeFlows = createTradeFlows({ fetchFredSeries, UA, dir: __dirname })
+        reRoute('/api/trade-flows', () => tradeFlows.get())
 
         reRoute('/api/us-pulse', () => usPulse.get())
         reRoute('/api/intl-pulse', () => intlPulse.get())

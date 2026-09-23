@@ -1,0 +1,2812 @@
+{
+ "_README": "Share of each economy's goods exports and imports invoiced in US dollars, euros, renminbi and its own currency, in percent. Derived from the Global Trade Invoicing Currency Patterns Database (version of 29 August 2025): the latest year each economy reports, plus an earlier year (2005 or later, at least eight years before) where one exists, so a trend can be read. Reference table, refreshed when the authors update (every two to three years).",
+ "source": "Global Trade Invoicing Currency Patterns Database, globalcurrenciesdatabase.com",
+ "citation": "Boz, E., A. Brüggen, C. Casas, G. Georgiadis, G. Gopinath and A. Mehl (2025), \"Patterns of Invoicing Currency in Global Trade in a Fragmenting World Economy\", IMF Working Paper WP/25/178.",
+ "licence": "CC BY-NC-SA 4.0 — attribution required, non-commercial use only, derivatives under the same licence.",
+ "version": "2025-08-29",
+ "missing": "China and Mexico do not report; Canada reports only 2001; India stops in 2014. The home-currency column is empty where the home currency is the dollar or the euro.",
+ "economies": {
+  "USA": {
+   "name": "United States",
+   "latest": {
+    "year": 2023,
+    "xUSD": 95.8,
+    "xEUR": 1.3,
+    "xCNY": 0.3,
+    "xHome": null,
+    "mUSD": 94.8,
+    "mEUR": 3,
+    "mCNY": 0.3,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 95.6,
+    "xEUR": 1.5,
+    "xCNY": null,
+    "xHome": 0,
+    "mUSD": 93.9,
+    "mEUR": 3.2,
+    "mCNY": null,
+    "mHome": 0
+   }
+  },
+  "GBR": {
+   "name": "United Kingdom",
+   "latest": {
+    "year": 2023,
+    "xUSD": 39.7,
+    "xEUR": 14.4,
+    "xCNY": 0.9,
+    "xHome": 29.6,
+    "mUSD": 35.1,
+    "mEUR": 19.7,
+    "mCNY": null,
+    "mHome": 27.2
+   },
+   "earlier": {
+    "year": 2010,
+    "xUSD": 25.5,
+    "xEUR": 14.6,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 40.8,
+    "mEUR": 19.4,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "AUT": {
+   "name": "Austria",
+   "latest": {
+    "year": 2023,
+    "xUSD": 6.4,
+    "xEUR": 89.6,
+    "xCNY": 0.3,
+    "xHome": null,
+    "mUSD": 6.3,
+    "mEUR": 92.6,
+    "mCNY": 0.4,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2006,
+    "xUSD": 6.3,
+    "xEUR": 90.1,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 5.4,
+    "mEUR": 92.3,
+    "mCNY": 0,
+    "mHome": null
+   }
+  },
+  "BEL": {
+   "name": "Belgium",
+   "latest": {
+    "year": 2023,
+    "xUSD": 26.4,
+    "xEUR": 56.1,
+    "xCNY": 0.5,
+    "xHome": null,
+    "mUSD": 28.3,
+    "mEUR": 71.2,
+    "mCNY": 0.5,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 18.1,
+    "xEUR": 76.8,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 18.3,
+    "mEUR": 78.5,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "DNK": {
+   "name": "Denmark",
+   "latest": {
+    "year": 2022,
+    "xUSD": 21.2,
+    "xEUR": 42.9,
+    "xCNY": 0.8,
+    "xHome": null,
+    "mUSD": 30.8,
+    "mEUR": 43.8,
+    "mCNY": 1.5,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2010,
+    "xUSD": 24.1,
+    "xEUR": 44.2,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 33.3,
+    "mEUR": 44.7,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "FRA": {
+   "name": "France",
+   "latest": {
+    "year": 2023,
+    "xUSD": 18.1,
+    "xEUR": 74.3,
+    "xCNY": 1.2,
+    "xHome": null,
+    "mUSD": 20.5,
+    "mEUR": 78.8,
+    "mCNY": 0.7,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 18.8,
+    "xEUR": 74.8,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 19.9,
+    "mEUR": 76.8,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "DEU": {
+   "name": "Germany",
+   "latest": {
+    "year": 2023,
+    "xUSD": 16.1,
+    "xEUR": 75.1,
+    "xCNY": 1.9,
+    "xHome": null,
+    "mUSD": 20.1,
+    "mEUR": 74.3,
+    "mCNY": 1,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 13.2,
+    "xEUR": 78.5,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 19.9,
+    "mEUR": 76,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "ITA": {
+   "name": "Italy",
+   "latest": {
+    "year": 2023,
+    "xUSD": 14,
+    "xEUR": 79.4,
+    "xCNY": 0.6,
+    "xHome": null,
+    "mUSD": 23.3,
+    "mEUR": 76.1,
+    "mCNY": 0.6,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 19.2,
+    "xEUR": 77.9,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 29.4,
+    "mEUR": 68.9,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "LUX": {
+   "name": "Luxembourg",
+   "latest": {
+    "year": 2022,
+    "xUSD": 5.1,
+    "xEUR": 93.9,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 4.2,
+    "mEUR": 95.3,
+    "mCNY": 0,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 6.2,
+    "xEUR": 89.3,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 13.8,
+    "mEUR": 82.8,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "NLD": {
+   "name": "Netherlands",
+   "latest": {
+    "year": 2023,
+    "xUSD": 18.1,
+    "xEUR": 74.8,
+    "xCNY": 0.2,
+    "xHome": null,
+    "mUSD": 33.6,
+    "mEUR": 56.7,
+    "mCNY": 0.4,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2006,
+    "xUSD": 16.7,
+    "xEUR": 82.1,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 38.3,
+    "mEUR": 60.4,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "NOR": {
+   "name": "Norway",
+   "latest": {
+    "year": 2023,
+    "xUSD": 44.2,
+    "xEUR": 39.3,
+    "xCNY": 0,
+    "xHome": 5.7,
+    "mUSD": 27.2,
+    "mEUR": 35.3,
+    "mCNY": 0.3,
+    "mHome": 26.8
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 60.2,
+    "xEUR": 27.6,
+    "xCNY": 0,
+    "xHome": 8.1,
+    "mUSD": 20.1,
+    "mEUR": 33.4,
+    "mCNY": 0,
+    "mHome": 29.2
+   }
+  },
+  "SWE": {
+   "name": "Sweden",
+   "latest": {
+    "year": 2023,
+    "xUSD": 28.5,
+    "xEUR": 57.7,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 30.6,
+    "mEUR": 58.7,
+    "mCNY": 0.8,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2010,
+    "xUSD": 22,
+    "xEUR": 54.5,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 26.4,
+    "mEUR": 58.5,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "CHE": {
+   "name": "Switzerland",
+   "latest": {
+    "year": 2023,
+    "xUSD": 22,
+    "xEUR": 30.1,
+    "xCNY": null,
+    "xHome": 38.1,
+    "mUSD": 36.3,
+    "mEUR": 41.6,
+    "mCNY": null,
+    "mHome": 19.3
+   },
+   "earlier": {
+    "year": 2012,
+    "xUSD": 18,
+    "xEUR": 21.9,
+    "xCNY": null,
+    "xHome": 51.9,
+    "mUSD": 32.5,
+    "mEUR": 43.5,
+    "mCNY": null,
+    "mHome": 21.6
+   }
+  },
+  "CAN": {
+   "name": "Canada",
+   "latest": {
+    "year": 2001,
+    "xUSD": 70,
+    "xEUR": null,
+    "xCNY": null,
+    "xHome": 23,
+    "mUSD": null,
+    "mEUR": null,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "JPN": {
+   "name": "Japan",
+   "latest": {
+    "year": 2023,
+    "xUSD": 50.3,
+    "xEUR": 7.1,
+    "xCNY": 2.1,
+    "xHome": 34.8,
+    "mUSD": 69.4,
+    "mEUR": 3.3,
+    "mCNY": 1.7,
+    "mHome": 23.5
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 49.2,
+    "xEUR": 8.3,
+    "xCNY": null,
+    "xHome": 38.8,
+    "mUSD": 70.9,
+    "mEUR": 4.2,
+    "mCNY": null,
+    "mHome": 23.1
+   }
+  },
+  "AND": {
+   "name": "Andorra",
+   "latest": {
+    "year": 2023,
+    "xUSD": 2.1,
+    "xEUR": 97.8,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 0.2,
+    "mEUR": 99.7,
+    "mCNY": 0,
+    "mHome": null
+   }
+  },
+  "FIN": {
+   "name": "Finland",
+   "latest": {
+    "year": 2023,
+    "xUSD": 24.1,
+    "xEUR": 65.2,
+    "xCNY": 0.4,
+    "xHome": null,
+    "mUSD": 34.9,
+    "mEUR": 57.6,
+    "mCNY": 0.3,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2006,
+    "xUSD": 26.1,
+    "xEUR": 64.6,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 29,
+    "mEUR": 61.8,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "GRC": {
+   "name": "Greece",
+   "latest": {
+    "year": 2023,
+    "xUSD": 23.1,
+    "xEUR": 75.3,
+    "xCNY": 0.1,
+    "xHome": null,
+    "mUSD": 33.6,
+    "mEUR": 65.9,
+    "mCNY": 0,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 19.1,
+    "xEUR": 80.9,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 23.6,
+    "mEUR": 76.4,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "ISL": {
+   "name": "Iceland",
+   "latest": {
+    "year": 2023,
+    "xUSD": 58.8,
+    "xEUR": 28.8,
+    "xCNY": 0,
+    "xHome": 0.1,
+    "mUSD": 34.4,
+    "mEUR": 39.8,
+    "mCNY": 0,
+    "mHome": 5.5
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 35,
+    "xEUR": 32.4,
+    "xCNY": null,
+    "xHome": 4.9,
+    "mUSD": 26,
+    "mEUR": 42.8,
+    "mCNY": null,
+    "mHome": 6.7
+   }
+  },
+  "IRL": {
+   "name": "Ireland",
+   "latest": {
+    "year": 2023,
+    "xUSD": 41.8,
+    "xEUR": 43.3,
+    "xCNY": 0.6,
+    "xHome": null,
+    "mUSD": 38.5,
+    "mEUR": 43.4,
+    "mCNY": 0.1,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2006,
+    "xUSD": 42.3,
+    "xEUR": 47,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 38.2,
+    "mEUR": 56.5,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "MLT": {
+   "name": "Malta",
+   "latest": {
+    "year": 2023,
+    "xUSD": 22.2,
+    "xEUR": 68.4,
+    "xCNY": 0.3,
+    "xHome": null,
+    "mUSD": 14.7,
+    "mEUR": 80.9,
+    "mCNY": 0,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2010,
+    "xUSD": 40.4,
+    "xEUR": 56.1,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 18.8,
+    "mEUR": 78.9,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "PRT": {
+   "name": "Portugal",
+   "latest": {
+    "year": 2023,
+    "xUSD": 13.2,
+    "xEUR": 85.1,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 17.5,
+    "mEUR": 81.3,
+    "mCNY": 0.1,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 14.1,
+    "xEUR": 82.8,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 22.9,
+    "mEUR": 75.4,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "ESP": {
+   "name": "Spain",
+   "latest": {
+    "year": 2023,
+    "xUSD": 22.3,
+    "xEUR": 71.5,
+    "xCNY": 0.1,
+    "xHome": null,
+    "mUSD": 33.3,
+    "mEUR": 61.2,
+    "mCNY": 1,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 15.8,
+    "xEUR": 81,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 22.3,
+    "mEUR": 76.1,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "TUR": {
+   "name": "Türkiye, Republic of",
+   "latest": {
+    "year": 2024,
+    "xUSD": 46.2,
+    "xEUR": 46.9,
+    "xCNY": 0,
+    "xHome": 3.7,
+    "mUSD": 59.8,
+    "mEUR": 31,
+    "mCNY": 0.7,
+    "mHome": 6.9
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 43.6,
+    "xEUR": 48.3,
+    "xCNY": null,
+    "xHome": 1.5,
+    "mUSD": 57.4,
+    "mEUR": 38.5,
+    "mCNY": null,
+    "mHome": 0.4
+   }
+  },
+  "AUS": {
+   "name": "Australia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 89.4,
+    "xEUR": 0.9,
+    "xCNY": 0.2,
+    "xHome": 8.3,
+    "mUSD": 56.2,
+    "mEUR": 6.9,
+    "mCNY": 1.4,
+    "mHome": 31.4
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 72.6,
+    "xEUR": 1.1,
+    "xCNY": null,
+    "xHome": 23.5,
+    "mUSD": 51.6,
+    "mEUR": 8.9,
+    "mCNY": null,
+    "mHome": 31.7
+   }
+  },
+  "NZL": {
+   "name": "New Zealand",
+   "latest": {
+    "year": 2023,
+    "xUSD": 63.6,
+    "xEUR": 5,
+    "xCNY": 2.3,
+    "xHome": 19.1,
+    "mUSD": 52.7,
+    "mEUR": 8.5,
+    "mCNY": 1.1,
+    "mHome": 20.5
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 48.9,
+    "xEUR": 7.8,
+    "xCNY": 0,
+    "xHome": 26.5,
+    "mUSD": 45.8,
+    "mEUR": 8.1,
+    "mCNY": null,
+    "mHome": 17.9
+   }
+  },
+  "ZAF": {
+   "name": "South Africa",
+   "latest": {
+    "year": 2024,
+    "xUSD": 39.4,
+    "xEUR": 5.9,
+    "xCNY": 0.1,
+    "xHome": 53.7,
+    "mUSD": null,
+    "mEUR": null,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "ARG": {
+   "name": "Argentina",
+   "latest": {
+    "year": 2023,
+    "xUSD": 98,
+    "xEUR": 1.7,
+    "xCNY": 0,
+    "xHome": 0.1,
+    "mUSD": 82.6,
+    "mEUR": 6.6,
+    "mCNY": 6.6,
+    "mHome": 1.9
+   },
+   "earlier": {
+    "year": 2010,
+    "xUSD": 97.6,
+    "xEUR": 2.1,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 87.6,
+    "mEUR": 8.2,
+    "mCNY": 0,
+    "mHome": 2.2
+   }
+  },
+  "BRA": {
+   "name": "Brazil",
+   "latest": {
+    "year": 2023,
+    "xUSD": 95.8,
+    "xEUR": 2.5,
+    "xCNY": null,
+    "xHome": 1.3,
+    "mUSD": 80.3,
+    "mEUR": 9.7,
+    "mCNY": 0.4,
+    "mHome": 7.2
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 94.6,
+    "xEUR": 4,
+    "xCNY": null,
+    "xHome": 0.4,
+    "mUSD": 83.2,
+    "mEUR": 11.7,
+    "mCNY": 0,
+    "mHome": 0.1
+   }
+  },
+  "CHL": {
+   "name": "Chile",
+   "latest": {
+    "year": 2023,
+    "xUSD": 90.6,
+    "xEUR": 2.5,
+    "xCNY": 4.8,
+    "xHome": 1,
+    "mUSD": 83.3,
+    "mEUR": 8.3,
+    "mCNY": 0.7,
+    "mHome": 6.3
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 97.2,
+    "xEUR": 1.9,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 89.8,
+    "mEUR": 7.8,
+    "mCNY": 0,
+    "mHome": 0.2
+   }
+  },
+  "COL": {
+   "name": "Colombia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 96.5,
+    "xEUR": 0.6,
+    "xCNY": null,
+    "xHome": 2.7,
+    "mUSD": null,
+    "mEUR": null,
+    "mCNY": null,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2007,
+    "xUSD": 99.5,
+    "xEUR": 0.4,
+    "xCNY": 0,
+    "xHome": 0.1,
+    "mUSD": null,
+    "mEUR": null,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "CRI": {
+   "name": "Costa Rica",
+   "latest": {
+    "year": 2023,
+    "xUSD": 95.3,
+    "xEUR": 2.9,
+    "xCNY": 0.3,
+    "xHome": 0.4,
+    "mUSD": 96.5,
+    "mEUR": 2.5,
+    "mCNY": 0,
+    "mHome": 0.5
+   },
+   "earlier": {
+    "year": 2008,
+    "xUSD": 100,
+    "xEUR": 0,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 97.4,
+    "mEUR": 2.1,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "ECU": {
+   "name": "Ecuador",
+   "latest": {
+    "year": 2023,
+    "xUSD": 100,
+    "xEUR": 0,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 95,
+    "mEUR": 4.2,
+    "mCNY": 0.1,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2015,
+    "xUSD": 100,
+    "xEUR": 0,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 94.8,
+    "mEUR": 3.4,
+    "mCNY": 0.2,
+    "mHome": 0
+   }
+  },
+  "PRY": {
+   "name": "Paraguay",
+   "latest": {
+    "year": 2024,
+    "xUSD": 98,
+    "xEUR": 0.3,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 94.1,
+    "mEUR": 3.4,
+    "mCNY": 0,
+    "mHome": 0.1
+   },
+   "earlier": {
+    "year": 2014,
+    "xUSD": 99.5,
+    "xEUR": 0,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 95.2,
+    "mEUR": 3,
+    "mCNY": 0,
+    "mHome": 0
+   }
+  },
+  "PER": {
+   "name": "Peru",
+   "latest": {
+    "year": 2023,
+    "xUSD": 97.4,
+    "xEUR": 1.1,
+    "xCNY": 0,
+    "xHome": 0.1,
+    "mUSD": 91.5,
+    "mEUR": 4.5,
+    "mCNY": 0.3,
+    "mHome": 2.7
+   }
+  },
+  "URY": {
+   "name": "Uruguay",
+   "latest": {
+    "year": 2023,
+    "xUSD": 73,
+    "xEUR": 1.2,
+    "xCNY": 0.1,
+    "xHome": 20.1,
+    "mUSD": 48.6,
+    "mEUR": 3.2,
+    "mCNY": 0.8,
+    "mHome": 23.2
+   },
+   "earlier": {
+    "year": 2015,
+    "xUSD": 91.9,
+    "xEUR": 1.9,
+    "xCNY": 0,
+    "xHome": 1.2,
+    "mUSD": 75.5,
+    "mEUR": 3.5,
+    "mCNY": 0.6,
+    "mHome": 6.8
+   }
+  },
+  "BHS": {
+   "name": "Bahamas, The",
+   "latest": {
+    "year": 2023,
+    "xUSD": 88.8,
+    "xEUR": 2.1,
+    "xCNY": 0.2,
+    "xHome": 0,
+    "mUSD": 28.9,
+    "mEUR": 0.2,
+    "mCNY": 4.3,
+    "mHome": 0
+   },
+   "earlier": {
+    "year": 2009,
+    "xUSD": 73.6,
+    "xEUR": 6,
+    "xCNY": 3.1,
+    "xHome": 0,
+    "mUSD": 62,
+    "mEUR": 0.4,
+    "mCNY": 0,
+    "mHome": 0
+   }
+  },
+  "GUY": {
+   "name": "Guyana",
+   "latest": {
+    "year": 2019,
+    "xUSD": null,
+    "xEUR": null,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 88,
+    "mEUR": 0.6,
+    "mCNY": null,
+    "mHome": 10.4
+   }
+  },
+  "BLZ": {
+   "name": "Belize",
+   "latest": {
+    "year": 2023,
+    "xUSD": 99.5,
+    "xEUR": 0,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 99.3,
+    "mEUR": 0.5,
+    "mCNY": 0,
+    "mHome": 0
+   }
+  },
+  "CUW": {
+   "name": "Curacao",
+   "latest": {
+    "year": 2023,
+    "xUSD": 68.3,
+    "xEUR": 6,
+    "xCNY": null,
+    "xHome": 25.7,
+    "mUSD": 71.7,
+    "mEUR": 25.6,
+    "mCNY": null,
+    "mHome": 1.6
+   }
+  },
+  "SXM": {
+   "name": "Sint Maarten",
+   "latest": {
+    "year": 2023,
+    "xUSD": 92.4,
+    "xEUR": 7.3,
+    "xCNY": null,
+    "xHome": 0,
+    "mUSD": 82.2,
+    "mEUR": 7.5,
+    "mCNY": null,
+    "mHome": 10.1
+   }
+  },
+  "SUR": {
+   "name": "Suriname",
+   "latest": {
+    "year": 2023,
+    "xUSD": 99.3,
+    "xEUR": 0.7,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 85.4,
+    "mEUR": 13.8,
+    "mCNY": 0,
+    "mHome": 0
+   },
+   "earlier": {
+    "year": 2010,
+    "xUSD": 97.7,
+    "xEUR": 2.3,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 80.1,
+    "mEUR": 19,
+    "mCNY": 0.1,
+    "mHome": null
+   }
+  },
+  "BHR": {
+   "name": "Bahrain",
+   "latest": {
+    "year": 2023,
+    "xUSD": 76.4,
+    "xEUR": 7.4,
+    "xCNY": 0,
+    "xHome": 11.5,
+    "mUSD": 69.3,
+    "mEUR": 6.5,
+    "mCNY": 0,
+    "mHome": 2.2
+   }
+  },
+  "CYP": {
+   "name": "Cyprus",
+   "latest": {
+    "year": 2023,
+    "xUSD": 57.3,
+    "xEUR": 34.2,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 39.6,
+    "mEUR": 49.7,
+    "mCNY": 0.1,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 29,
+    "xEUR": 34.5,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 28.3,
+    "mEUR": 55,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "ISR": {
+   "name": "Israel",
+   "latest": {
+    "year": 2023,
+    "xUSD": 81,
+    "xEUR": 14,
+    "xCNY": 0,
+    "xHome": 1,
+    "mUSD": 67,
+    "mEUR": 24,
+    "mCNY": 1,
+    "mHome": 5
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 86.1,
+    "xEUR": 10.8,
+    "xCNY": 0,
+    "xHome": 0.1,
+    "mUSD": 78.1,
+    "mEUR": 16.4,
+    "mCNY": 0,
+    "mHome": 1
+   }
+  },
+  "JOR": {
+   "name": "Jordan",
+   "latest": {
+    "year": 2023,
+    "xUSD": 86.5,
+    "xEUR": 1.2,
+    "xCNY": 0,
+    "xHome": 3.7,
+    "mUSD": 50.1,
+    "mEUR": 6.1,
+    "mCNY": 0.1,
+    "mHome": 13.3
+   }
+  },
+  "KWT": {
+   "name": "Kuwait",
+   "latest": {
+    "year": 2023,
+    "xUSD": null,
+    "xEUR": null,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 84.9,
+    "mEUR": 4.4,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "SAU": {
+   "name": "Saudi Arabia",
+   "latest": {
+    "year": 2024,
+    "xUSD": null,
+    "xEUR": null,
+    "xCNY": null,
+    "xHome": 100,
+    "mUSD": 87.2,
+    "mEUR": 4.6,
+    "mCNY": 0.1,
+    "mHome": 4.4
+   }
+  },
+  "BGD": {
+   "name": "Bangladesh",
+   "latest": {
+    "year": 2023,
+    "xUSD": 97,
+    "xEUR": 0.6,
+    "xCNY": 0.1,
+    "xHome": null,
+    "mUSD": 83.1,
+    "mEUR": 3.9,
+    "mCNY": 0.4,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2014,
+    "xUSD": 97.4,
+    "xEUR": 1.2,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 81.5,
+    "mEUR": 3.4,
+    "mCNY": 0,
+    "mHome": null
+   }
+  },
+  "BRN": {
+   "name": "Brunei Darussalam",
+   "latest": {
+    "year": 2023,
+    "xUSD": 98.9,
+    "xEUR": 0.2,
+    "xCNY": 0,
+    "xHome": 0.6,
+    "mUSD": 79.2,
+    "mEUR": 1.6,
+    "mCNY": 1.1,
+    "mHome": 4.1
+   }
+  },
+  "KHM": {
+   "name": "Cambodia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 98.7,
+    "xEUR": 0.2,
+    "xCNY": 1.1,
+    "xHome": 0,
+    "mUSD": 88.6,
+    "mEUR": 1.8,
+    "mCNY": 1.7,
+    "mHome": 0
+   },
+   "earlier": {
+    "year": 2015,
+    "xUSD": 99.6,
+    "xEUR": 0.2,
+    "xCNY": 0.1,
+    "xHome": 0,
+    "mUSD": 95.5,
+    "mEUR": 1.1,
+    "mCNY": 0.2,
+    "mHome": 0
+   }
+  },
+  "TWN": {
+   "name": "Taiwan Province of China",
+   "latest": {
+    "year": 2023,
+    "xUSD": 92.3,
+    "xEUR": 2.2,
+    "xCNY": 1.6,
+    "xHome": 2,
+    "mUSD": 78.5,
+    "mEUR": 7.7,
+    "mCNY": 1.4,
+    "mHome": 5.4
+   }
+  },
+  "IND": {
+   "name": "India",
+   "latest": {
+    "year": 2014,
+    "xUSD": 86.8,
+    "xEUR": 7.7,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 89.4,
+    "mEUR": 7.2,
+    "mCNY": null,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 87.4,
+    "xEUR": 7.7,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 78.2,
+    "mEUR": 12.5,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "IDN": {
+   "name": "Indonesia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 93.7,
+    "xEUR": 0.8,
+    "xCNY": 2,
+    "xHome": 0.9,
+    "mUSD": 80.1,
+    "mEUR": 4.3,
+    "mCNY": 6.4,
+    "mHome": 3.2
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 93,
+    "xEUR": 1.4,
+    "xCNY": null,
+    "xHome": 0.5,
+    "mUSD": 86.2,
+    "mEUR": 3.3,
+    "mCNY": null,
+    "mHome": 0.6
+   }
+  },
+  "TLS": {
+   "name": "Timor-Leste",
+   "latest": {
+    "year": 2023,
+    "xUSD": 100,
+    "xEUR": 0,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 100,
+    "mEUR": 0,
+    "mCNY": 0,
+    "mHome": 0
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 100,
+    "xEUR": 0,
+    "xCNY": null,
+    "xHome": 0,
+    "mUSD": 100,
+    "mEUR": 0,
+    "mCNY": null,
+    "mHome": 0
+   }
+  },
+  "KOR": {
+   "name": "Korea, Republic of",
+   "latest": {
+    "year": 2023,
+    "xUSD": 83.1,
+    "xEUR": 6.8,
+    "xCNY": 1.7,
+    "xHome": 2.8,
+    "mUSD": 80.6,
+    "mEUR": 5.8,
+    "mCNY": 2.4,
+    "mHome": 6.7
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 82.9,
+    "xEUR": 8.5,
+    "xCNY": 0,
+    "xHome": 0.5,
+    "mUSD": 79.3,
+    "mEUR": 5.4,
+    "mCNY": 0,
+    "mHome": 1.6
+   }
+  },
+  "MAC": {
+   "name": "Macao SAR",
+   "latest": {
+    "year": 2023,
+    "xUSD": 27.1,
+    "xEUR": 0.6,
+    "xCNY": 1,
+    "xHome": 37.6,
+    "mUSD": 15.1,
+    "mEUR": 4.6,
+    "mCNY": 1.4,
+    "mHome": 29
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 69.3,
+    "xEUR": 2.9,
+    "xCNY": 0.2,
+    "xHome": 7.1,
+    "mUSD": 21.7,
+    "mEUR": 1.8,
+    "mCNY": 0.1,
+    "mHome": 20.9
+   }
+  },
+  "MYS": {
+   "name": "Malaysia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 85,
+    "xEUR": 4,
+    "xCNY": 2.3,
+    "xHome": 3.8,
+    "mUSD": 80.3,
+    "mEUR": 5,
+    "mCNY": 3.8,
+    "mHome": 3
+   },
+   "earlier": {
+    "year": 2013,
+    "xUSD": 88.1,
+    "xEUR": 2.5,
+    "xCNY": 0.2,
+    "xHome": 2.4,
+    "mUSD": 82.5,
+    "mEUR": 4.5,
+    "mCNY": 0.2,
+    "mHome": 2.5
+   }
+  },
+  "MDV": {
+   "name": "Maldives",
+   "latest": {
+    "year": 2024,
+    "xUSD": 100,
+    "xEUR": 0,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 90.7,
+    "mEUR": 4,
+    "mCNY": 0.4,
+    "mHome": 0
+   }
+  },
+  "NPL": {
+   "name": "Nepal",
+   "latest": {
+    "year": 2023,
+    "xUSD": 29,
+    "xEUR": 4,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 43.3,
+    "mEUR": 1.6,
+    "mCNY": 0.3,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2015,
+    "xUSD": 50.4,
+    "xEUR": 6.5,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 58.7,
+    "mEUR": 1.2,
+    "mCNY": 0.2,
+    "mHome": null
+   }
+  },
+  "PAK": {
+   "name": "Pakistan",
+   "latest": {
+    "year": 2003,
+    "xUSD": 89.4,
+    "xEUR": 6.9,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 82.8,
+    "mEUR": 9,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "PHL": {
+   "name": "Philippines",
+   "latest": {
+    "year": 2023,
+    "xUSD": 96.7,
+    "xEUR": 1.1,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 89.2,
+    "mEUR": 2.4,
+    "mCNY": 0.9,
+    "mHome": 1.6
+   },
+   "earlier": {
+    "year": 2014,
+    "xUSD": 97.4,
+    "xEUR": 1.5,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 92.8,
+    "mEUR": 2.5,
+    "mCNY": 0,
+    "mHome": 0.6
+   }
+  },
+  "THA": {
+   "name": "Thailand",
+   "latest": {
+    "year": 2023,
+    "xUSD": 76.1,
+    "xEUR": 2.3,
+    "xCNY": 0.9,
+    "xHome": 15.8,
+    "mUSD": 78.6,
+    "mEUR": 3.8,
+    "mCNY": 3.4,
+    "mHome": 8.3
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 81.7,
+    "xEUR": 2.6,
+    "xCNY": null,
+    "xHome": 6.8,
+    "mUSD": 78.2,
+    "mEUR": 3.7,
+    "mCNY": null,
+    "mHome": 4.5
+   }
+  },
+  "DZA": {
+   "name": "Algeria",
+   "latest": {
+    "year": 2010,
+    "xUSD": null,
+    "xEUR": null,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 49.1,
+    "mEUR": 44,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "AGO": {
+   "name": "Angola",
+   "latest": {
+    "year": 2024,
+    "xUSD": 95.8,
+    "xEUR": 0.2,
+    "xCNY": 0,
+    "xHome": 0.2,
+    "mUSD": 64.4,
+    "mEUR": 29.4,
+    "mCNY": 0.3,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2016,
+    "xUSD": 98.1,
+    "xEUR": 0.3,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 74.2,
+    "mEUR": 23.2,
+    "mCNY": 0,
+    "mHome": null
+   }
+  },
+  "BWA": {
+   "name": "Botswana",
+   "latest": {
+    "year": 2023,
+    "xUSD": 89.7,
+    "xEUR": 0.2,
+    "xCNY": 0,
+    "xHome": 4.4,
+    "mUSD": 31.1,
+    "mEUR": 2.5,
+    "mCNY": 0,
+    "mHome": 3.7
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 79.2,
+    "xEUR": 0.9,
+    "xCNY": 0,
+    "xHome": 12.5,
+    "mUSD": 9.2,
+    "mEUR": 3.4,
+    "mCNY": 0,
+    "mHome": 1.6
+   }
+  },
+  "BDI": {
+   "name": "Burundi",
+   "latest": {
+    "year": 2023,
+    "xUSD": 99.3,
+    "xEUR": 0.5,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 90.3,
+    "mEUR": 8.4,
+    "mCNY": 0,
+    "mHome": 0
+   }
+  },
+  "CMR": {
+   "name": "Cameroon",
+   "latest": {
+    "year": 2024,
+    "xUSD": 43.9,
+    "xEUR": 7.8,
+    "xCNY": 0,
+    "xHome": 48.3,
+    "mUSD": 12.6,
+    "mEUR": 49.4,
+    "mCNY": 0,
+    "mHome": 36.9
+   }
+  },
+  "COG": {
+   "name": "Congo, Republic of ",
+   "latest": {
+    "year": 2023,
+    "xUSD": 25.1,
+    "xEUR": 0.5,
+    "xCNY": null,
+    "xHome": 74.3,
+    "mUSD": 56,
+    "mEUR": 33,
+    "mCNY": null,
+    "mHome": 10.5
+   }
+  },
+  "COD": {
+   "name": "Congo, Dem. Rep. of the",
+   "latest": {
+    "year": 2019,
+    "xUSD": 97.3,
+    "xEUR": 0,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 51.8,
+    "mEUR": 0,
+    "mCNY": 0,
+    "mHome": null
+   }
+  },
+  "BEN": {
+   "name": "Benin",
+   "latest": {
+    "year": 2023,
+    "xUSD": 5.4,
+    "xEUR": 93.8,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 5.3,
+    "mEUR": 94.7,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "GMB": {
+   "name": "Gambia, The",
+   "latest": {
+    "year": 2016,
+    "xUSD": 79,
+    "xEUR": 1,
+    "xCNY": 0,
+    "xHome": 9.3,
+    "mUSD": null,
+    "mEUR": null,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "GHA": {
+   "name": "Ghana",
+   "latest": {
+    "year": 2019,
+    "xUSD": 93.2,
+    "xEUR": 5.5,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 89.5,
+    "mEUR": 7.9,
+    "mCNY": 0.1,
+    "mHome": 0
+   }
+  },
+  "GNB": {
+   "name": "Guinea-Bissau",
+   "latest": {
+    "year": 2023,
+    "xUSD": 21.9,
+    "xEUR": 78.1,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 19.8,
+    "mEUR": 80.2,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "CIV": {
+   "name": "Côte d'Ivoire",
+   "latest": {
+    "year": 2023,
+    "xUSD": 20.1,
+    "xEUR": 79.9,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 13,
+    "mEUR": 87,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "KEN": {
+   "name": "Kenya",
+   "latest": {
+    "year": 2023,
+    "xUSD": 82.8,
+    "xEUR": 3.6,
+    "xCNY": 0,
+    "xHome": 10.4,
+    "mUSD": 69.7,
+    "mEUR": 5.1,
+    "mCNY": 0.2,
+    "mHome": 21.9
+   },
+   "earlier": {
+    "year": 2013,
+    "xUSD": 70.5,
+    "xEUR": 9.1,
+    "xCNY": 0,
+    "xHome": 15.6,
+    "mUSD": 58.8,
+    "mEUR": 5.3,
+    "mCNY": 0,
+    "mHome": 3.5
+   }
+  },
+  "LBR": {
+   "name": "Liberia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 100,
+    "xEUR": 0,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 100,
+    "mEUR": 0,
+    "mCNY": 0,
+    "mHome": 0
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 100,
+    "xEUR": 0,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 100,
+    "mEUR": 0,
+    "mCNY": 0,
+    "mHome": 0
+   }
+  },
+  "MDG": {
+   "name": "Madagascar",
+   "latest": {
+    "year": 2023,
+    "xUSD": 74.2,
+    "xEUR": 25.6,
+    "xCNY": 0,
+    "xHome": 0.2,
+    "mUSD": 78.4,
+    "mEUR": 20.6,
+    "mCNY": 0,
+    "mHome": 0
+   },
+   "earlier": {
+    "year": 2015,
+    "xUSD": 74.7,
+    "xEUR": 25.3,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": null,
+    "mEUR": null,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "MWI": {
+   "name": "Malawi",
+   "latest": {
+    "year": 2019,
+    "xUSD": 80.6,
+    "xEUR": 18.8,
+    "xCNY": null,
+    "xHome": 0,
+    "mUSD": 93.3,
+    "mEUR": 1.1,
+    "mCNY": null,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2008,
+    "xUSD": 94.5,
+    "xEUR": 1.7,
+    "xCNY": null,
+    "xHome": 0,
+    "mUSD": 34.2,
+    "mEUR": 2.9,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "MLI": {
+   "name": "Mali",
+   "latest": {
+    "year": 2023,
+    "xUSD": 2.8,
+    "xEUR": 97.2,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 12.3,
+    "mEUR": 87.7,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "MUS": {
+   "name": "Mauritius",
+   "latest": {
+    "year": 2023,
+    "xUSD": 56.5,
+    "xEUR": 37.6,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 68.3,
+    "mEUR": 22.5,
+    "mCNY": 0.2,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2009,
+    "xUSD": 37.9,
+    "xEUR": 42.4,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 67.1,
+    "mEUR": 21.3,
+    "mCNY": 0.1,
+    "mHome": null
+   }
+  },
+  "MAR": {
+   "name": "Morocco",
+   "latest": {
+    "year": 2023,
+    "xUSD": 26.5,
+    "xEUR": 57.8,
+    "xCNY": 0,
+    "xHome": 3.3,
+    "mUSD": 44.1,
+    "mEUR": 52.9,
+    "mCNY": 0.1,
+    "mHome": 1.8
+   },
+   "earlier": {
+    "year": 2006,
+    "xUSD": 37,
+    "xEUR": 50.2,
+    "xCNY": null,
+    "xHome": 8.3,
+    "mUSD": 52.2,
+    "mEUR": 43,
+    "mCNY": null,
+    "mHome": 1
+   }
+  },
+  "MOZ": {
+   "name": "Mozambique",
+   "latest": {
+    "year": 2023,
+    "xUSD": 97.5,
+    "xEUR": 0.8,
+    "xCNY": 0.1,
+    "xHome": 0.1,
+    "mUSD": 77.9,
+    "mEUR": 5.9,
+    "mCNY": 0.1,
+    "mHome": 0.2
+   },
+   "earlier": {
+    "year": 2011,
+    "xUSD": 95.5,
+    "xEUR": 1.4,
+    "xCNY": 0,
+    "xHome": 0.4,
+    "mUSD": 75.6,
+    "mEUR": 6.6,
+    "mCNY": 0,
+    "mHome": 0
+   }
+  },
+  "NER": {
+   "name": "Niger",
+   "latest": {
+    "year": 2023,
+    "xUSD": 43.8,
+    "xEUR": 54.9,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 21.6,
+    "mEUR": 78.4,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "ZWE": {
+   "name": "Zimbabwe",
+   "latest": {
+    "year": 2023,
+    "xUSD": 99.1,
+    "xEUR": 0.1,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 64,
+    "mEUR": 6.6,
+    "mCNY": 1.4,
+    "mHome": 1.1
+   },
+   "earlier": {
+    "year": 2009,
+    "xUSD": 71.6,
+    "xEUR": 0.6,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 76.7,
+    "mEUR": 1.4,
+    "mCNY": 0.3,
+    "mHome": 0
+   }
+  },
+  "RWA": {
+   "name": "Rwanda",
+   "latest": {
+    "year": 2023,
+    "xUSD": 87.3,
+    "xEUR": 0.2,
+    "xCNY": 0,
+    "xHome": 12.3,
+    "mUSD": 83.3,
+    "mEUR": 8.1,
+    "mCNY": 0.6,
+    "mHome": 0.6
+   }
+  },
+  "STP": {
+   "name": "São Tomé and Príncipe",
+   "latest": {
+    "year": 2023,
+    "xUSD": 3.3,
+    "xEUR": 95.8,
+    "xCNY": 0,
+    "xHome": 0.8,
+    "mUSD": 45.8,
+    "mEUR": 48,
+    "mCNY": 3.3,
+    "mHome": 1
+   }
+  },
+  "SYC": {
+   "name": "Seychelles",
+   "latest": {
+    "year": 2023,
+    "xUSD": 42,
+    "xEUR": 56.5,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 76.3,
+    "mEUR": 13.5,
+    "mCNY": 0,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2015,
+    "xUSD": 39,
+    "xEUR": 60.9,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 67.1,
+    "mEUR": 18.1,
+    "mCNY": 0,
+    "mHome": null
+   }
+  },
+  "SEN": {
+   "name": "Senegal",
+   "latest": {
+    "year": 2023,
+    "xUSD": 44.3,
+    "xEUR": 54.8,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 21.6,
+    "mEUR": 78.4,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "SLE": {
+   "name": "Sierra Leone",
+   "latest": {
+    "year": 2023,
+    "xUSD": 41.7,
+    "xEUR": 0.5,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 91.9,
+    "mEUR": 2.1,
+    "mCNY": 0,
+    "mHome": 0
+   }
+  },
+  "NAM": {
+   "name": "Namibia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 76.5,
+    "xEUR": 11.7,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 29.9,
+    "mEUR": 6,
+    "mCNY": 2.8,
+    "mHome": null
+   }
+  },
+  "SWZ": {
+   "name": "Eswatini",
+   "latest": {
+    "year": 2023,
+    "xUSD": 48.4,
+    "xEUR": 9.5,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 8.2,
+    "mEUR": 0.6,
+    "mCNY": 0,
+    "mHome": 0
+   }
+  },
+  "TZA": {
+   "name": "Tanzania",
+   "latest": {
+    "year": 2019,
+    "xUSD": 88.3,
+    "xEUR": 1.2,
+    "xCNY": 0,
+    "xHome": 10.1,
+    "mUSD": 88.9,
+    "mEUR": 5.8,
+    "mCNY": 0.3,
+    "mHome": 0.3
+   }
+  },
+  "TGO": {
+   "name": "Togo",
+   "latest": {
+    "year": 2023,
+    "xUSD": 33.2,
+    "xEUR": 66.8,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 57.8,
+    "mEUR": 42,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "TUN": {
+   "name": "Tunisia",
+   "latest": {
+    "year": 2024,
+    "xUSD": 17.7,
+    "xEUR": 79.9,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 41.6,
+    "mEUR": 52.1,
+    "mCNY": null,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2010,
+    "xUSD": 27.8,
+    "xEUR": 67.6,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 38.1,
+    "mEUR": 59.4,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "UGA": {
+   "name": "Uganda",
+   "latest": {
+    "year": 2024,
+    "xUSD": null,
+    "xEUR": null,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 68.7,
+    "mEUR": 3.9,
+    "mCNY": 0,
+    "mHome": 0.3
+   }
+  },
+  "BFA": {
+   "name": "Burkina Faso",
+   "latest": {
+    "year": 2023,
+    "xUSD": 14.7,
+    "xEUR": 85.2,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 53.5,
+    "mEUR": 45.6,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "ZMB": {
+   "name": "Zambia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 89.1,
+    "xEUR": 0.4,
+    "xCNY": 0,
+    "xHome": 10.2,
+    "mUSD": 69,
+    "mEUR": 1.9,
+    "mCNY": 0.1,
+    "mHome": 13.2
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 91.2,
+    "xEUR": 2.1,
+    "xCNY": 0,
+    "xHome": 1,
+    "mUSD": 56.6,
+    "mEUR": 2.7,
+    "mCNY": 0,
+    "mHome": 19
+   }
+  },
+  "SLB": {
+   "name": "Solomon Islands",
+   "latest": {
+    "year": 2023,
+    "xUSD": 67.3,
+    "xEUR": null,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 66,
+    "mEUR": null,
+    "mCNY": null,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2015,
+    "xUSD": 79,
+    "xEUR": null,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 56,
+    "mEUR": null,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "FJI": {
+   "name": "Fiji",
+   "latest": {
+    "year": 2023,
+    "xUSD": 46.6,
+    "xEUR": 2.8,
+    "xCNY": 0.5,
+    "xHome": 23.6,
+    "mUSD": 3.4,
+    "mEUR": 0.4,
+    "mCNY": 0,
+    "mHome": 95.6
+   }
+  },
+  "PNG": {
+   "name": "Papua New Guinea",
+   "latest": {
+    "year": 2024,
+    "xUSD": 53.9,
+    "xEUR": 0.3,
+    "xCNY": 0,
+    "xHome": 27.2,
+    "mUSD": 49.3,
+    "mEUR": 2,
+    "mCNY": 0.5,
+    "mHome": 2.1
+   }
+  },
+  "WSM": {
+   "name": "Samoa",
+   "latest": {
+    "year": 2023,
+    "xUSD": 34.5,
+    "xEUR": 0.3,
+    "xCNY": 0,
+    "xHome": 57.1,
+    "mUSD": 41.7,
+    "mEUR": 0.5,
+    "mCNY": 0.3,
+    "mHome": 22.2
+   }
+  },
+  "TON": {
+   "name": "Tonga",
+   "latest": {
+    "year": 2024,
+    "xUSD": 59.8,
+    "xEUR": 0,
+    "xCNY": null,
+    "xHome": 13.7,
+    "mUSD": 51.1,
+    "mEUR": 0.2,
+    "mCNY": null,
+    "mHome": 0
+   },
+   "earlier": {
+    "year": 2016,
+    "xUSD": 52.7,
+    "xEUR": 0,
+    "xCNY": null,
+    "xHome": 4.8,
+    "mUSD": 50.7,
+    "mEUR": 0.6,
+    "mCNY": null,
+    "mHome": 1.1
+   }
+  },
+  "ARM": {
+   "name": "Armenia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 61.3,
+    "xEUR": 6.6,
+    "xCNY": 0,
+    "xHome": 4.9,
+    "mUSD": 53.3,
+    "mEUR": 16.9,
+    "mCNY": 0.2,
+    "mHome": 0.6
+   },
+   "earlier": {
+    "year": 2015,
+    "xUSD": 82.7,
+    "xEUR": 5.2,
+    "xCNY": null,
+    "xHome": 1.1,
+    "mUSD": 72.8,
+    "mEUR": 18.8,
+    "mCNY": 0.7,
+    "mHome": 0.7
+   }
+  },
+  "AZE": {
+   "name": "Azerbaijan",
+   "latest": {
+    "year": 2023,
+    "xUSD": 95.4,
+    "xEUR": 3.6,
+    "xCNY": 0,
+    "xHome": 0.5,
+    "mUSD": 74.4,
+    "mEUR": 15.8,
+    "mCNY": 0.1,
+    "mHome": 0
+   },
+   "earlier": {
+    "year": 2012,
+    "xUSD": 97.7,
+    "xEUR": 0.1,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 66.3,
+    "mEUR": 26.9,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "BLR": {
+   "name": "Belarus",
+   "latest": {
+    "year": 2023,
+    "xUSD": 5.9,
+    "xEUR": 6.3,
+    "xCNY": null,
+    "xHome": 0.4,
+    "mUSD": 17.2,
+    "mEUR": 17.2,
+    "mCNY": 0.4,
+    "mHome": 0.9
+   },
+   "earlier": {
+    "year": 2015,
+    "xUSD": 28,
+    "xEUR": 36.8,
+    "xCNY": null,
+    "xHome": 0.4,
+    "mUSD": 52.1,
+    "mEUR": 22.1,
+    "mCNY": 0,
+    "mHome": 0.2
+   }
+  },
+  "ALB": {
+   "name": "Albania",
+   "latest": {
+    "year": 2023,
+    "xUSD": 16.6,
+    "xEUR": 83,
+    "xCNY": 0,
+    "xHome": 0.3,
+    "mUSD": 23.5,
+    "mEUR": 74.8,
+    "mCNY": 0,
+    "mHome": 0.3
+   },
+   "earlier": {
+    "year": 2010,
+    "xUSD": 23.1,
+    "xEUR": 75.3,
+    "xCNY": 0,
+    "xHome": 1.6,
+    "mUSD": 24,
+    "mEUR": 74.3,
+    "mCNY": 0,
+    "mHome": 0.8
+   }
+  },
+  "GEO": {
+   "name": "Georgia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 89.7,
+    "xEUR": 9,
+    "xCNY": 0,
+    "xHome": 0.5,
+    "mUSD": 72.3,
+    "mEUR": 21.1,
+    "mCNY": 1,
+    "mHome": 0.7
+   },
+   "earlier": {
+    "year": 2010,
+    "xUSD": 88.4,
+    "xEUR": 7.2,
+    "xCNY": 0,
+    "xHome": 3.3,
+    "mUSD": 76.2,
+    "mEUR": 20.1,
+    "mCNY": 0.3,
+    "mHome": 1.1
+   }
+  },
+  "KAZ": {
+   "name": "Kazakhstan",
+   "latest": {
+    "year": 2023,
+    "xUSD": 79.9,
+    "xEUR": 4.7,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 51,
+    "mEUR": 19.2,
+    "mCNY": 0,
+    "mHome": 0
+   },
+   "earlier": {
+    "year": 2013,
+    "xUSD": 90.5,
+    "xEUR": 1.1,
+    "xCNY": 0,
+    "xHome": 3.1,
+    "mUSD": 61.1,
+    "mEUR": 14.2,
+    "mCNY": 0,
+    "mHome": 1.3
+   }
+  },
+  "KGZ": {
+   "name": "Kyrgyz Republic",
+   "latest": {
+    "year": 2023,
+    "xUSD": 29.5,
+    "xEUR": 5.6,
+    "xCNY": 1.7,
+    "xHome": 0,
+    "mUSD": 65.2,
+    "mEUR": 8.9,
+    "mCNY": 6.6,
+    "mHome": 0
+   },
+   "earlier": {
+    "year": 2013,
+    "xUSD": 77.8,
+    "xEUR": 2.3,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 81.2,
+    "mEUR": 6.8,
+    "mCNY": 0,
+    "mHome": 0
+   }
+  },
+  "BGR": {
+   "name": "Bulgaria",
+   "latest": {
+    "year": 2023,
+    "xUSD": 30,
+    "xEUR": 70,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 16.8,
+    "mEUR": 83.1,
+    "mCNY": 0.1,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 37.3,
+    "xEUR": 60.4,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 37.5,
+    "mEUR": 60.4,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "MDA": {
+   "name": "Moldova",
+   "latest": {
+    "year": 2023,
+    "xUSD": 45,
+    "xEUR": 53,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 42,
+    "mEUR": 53,
+    "mCNY": 0,
+    "mHome": 2
+   }
+  },
+  "RUS": {
+   "name": "Russian Federation",
+   "latest": {
+    "year": 2023,
+    "xUSD": 22.9,
+    "xEUR": 8.6,
+    "xCNY": 26.3,
+    "xHome": 38.8,
+    "mUSD": 16.8,
+    "mEUR": 16.2,
+    "mCNY": 32.4,
+    "mHome": 29.9
+   },
+   "earlier": {
+    "year": 2008,
+    "xUSD": 83.1,
+    "xEUR": 10.7,
+    "xCNY": null,
+    "xHome": 5.6,
+    "mUSD": 51,
+    "mEUR": 30.2,
+    "mCNY": null,
+    "mHome": 17.1
+   }
+  },
+  "UKR": {
+   "name": "Ukraine",
+   "latest": {
+    "year": 2023,
+    "xUSD": 58.6,
+    "xEUR": 37.6,
+    "xCNY": 0,
+    "xHome": 3.1,
+    "mUSD": 49.9,
+    "mEUR": 47.9,
+    "mCNY": 0.1,
+    "mHome": 0.4
+   },
+   "earlier": {
+    "year": 2006,
+    "xUSD": 77.5,
+    "xEUR": 8.9,
+    "xCNY": 0,
+    "xHome": 0.5,
+    "mUSD": 71.1,
+    "mEUR": 20.2,
+    "mCNY": 0,
+    "mHome": 0.5
+   }
+  },
+  "UZB": {
+   "name": "Uzbekistan",
+   "latest": {
+    "year": 2023,
+    "xUSD": 78.3,
+    "xEUR": 5.2,
+    "xCNY": 1.8,
+    "xHome": 0.3,
+    "mUSD": 74,
+    "mEUR": 10.7,
+    "mCNY": 1.5,
+    "mHome": 0.2
+   }
+  },
+  "CZE": {
+   "name": "Czech Republic",
+   "latest": {
+    "year": 2023,
+    "xUSD": 8.4,
+    "xEUR": 78.8,
+    "xCNY": 0.2,
+    "xHome": null,
+    "mUSD": 15.6,
+    "mEUR": 66.8,
+    "mCNY": 0.2,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 12.3,
+    "xEUR": 71.9,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 17.2,
+    "mEUR": 70.6,
+    "mCNY": 0,
+    "mHome": null
+   }
+  },
+  "SVK": {
+   "name": "Slovak Republic",
+   "latest": {
+    "year": 2023,
+    "xUSD": 4.4,
+    "xEUR": 90.4,
+    "xCNY": 1.3,
+    "xHome": null,
+    "mUSD": 6,
+    "mEUR": 91.9,
+    "mCNY": 1,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 4.1,
+    "xEUR": 95.1,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 15.8,
+    "mEUR": 75.8,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "EST": {
+   "name": "Estonia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 6.5,
+    "xEUR": 91.7,
+    "xCNY": 0.2,
+    "xHome": null,
+    "mUSD": 6.5,
+    "mEUR": 92.3,
+    "mCNY": 0.1,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 14.7,
+    "xEUR": 60.3,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 17.3,
+    "mEUR": 59,
+    "mCNY": 0,
+    "mHome": null
+   }
+  },
+  "LVA": {
+   "name": "Latvia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 5.9,
+    "xEUR": 94.1,
+    "xCNY": 0.1,
+    "xHome": null,
+    "mUSD": 6.2,
+    "mEUR": 92.2,
+    "mCNY": 0,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 6.4,
+    "xEUR": 86.8,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 8.2,
+    "mEUR": 89.1,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "MNE": {
+   "name": "Montenegro",
+   "latest": {
+    "year": 2023,
+    "xUSD": 17.6,
+    "xEUR": 82.2,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 6.3,
+    "mEUR": 92.8,
+    "mCNY": 0,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2010,
+    "xUSD": 18.5,
+    "xEUR": 81.5,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 9.3,
+    "mEUR": 90.3,
+    "mCNY": 0,
+    "mHome": 0
+   }
+  },
+  "HUN": {
+   "name": "Hungary",
+   "latest": {
+    "year": 2023,
+    "xUSD": 10.6,
+    "xEUR": 81,
+    "xCNY": 0.3,
+    "xHome": null,
+    "mUSD": 17.2,
+    "mEUR": 74.2,
+    "mCNY": 0.8,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 10.1,
+    "xEUR": 84.3,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 21.2,
+    "mEUR": 69.4,
+    "mCNY": 0,
+    "mHome": null
+   }
+  },
+  "LTU": {
+   "name": "Lithuania",
+   "latest": {
+    "year": 2023,
+    "xUSD": 23,
+    "xEUR": 75.6,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 35.1,
+    "mEUR": 64,
+    "mCNY": 0.1,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 37,
+    "xEUR": 51.3,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 44.8,
+    "mEUR": 51.3,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "MNG": {
+   "name": "Mongolia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 68.1,
+    "xEUR": 0.4,
+    "xCNY": 31.2,
+    "xHome": 0.1,
+    "mUSD": 56.7,
+    "mEUR": 7.4,
+    "mCNY": 22.2,
+    "mHome": 0.1
+   },
+   "earlier": {
+    "year": 2006,
+    "xUSD": 98.4,
+    "xEUR": 0.1,
+    "xCNY": 1.3,
+    "xHome": 0,
+    "mUSD": 82.7,
+    "mEUR": 5.3,
+    "mCNY": 4.9,
+    "mHome": 0
+   }
+  },
+  "HRV": {
+   "name": "Croatia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 10.9,
+    "xEUR": 89.1,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 9.1,
+    "mEUR": 90.5,
+    "mCNY": 0.4,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 29.2,
+    "xEUR": 70.8,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 22,
+    "mEUR": 73.7,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "SVN": {
+   "name": "Slovenia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 2.1,
+    "xEUR": 96.1,
+    "xCNY": 0.1,
+    "xHome": null,
+    "mUSD": 8.2,
+    "mEUR": 88.2,
+    "mCNY": 1.5,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 7.9,
+    "xEUR": 88.2,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 14.8,
+    "mEUR": 81.7,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "MKD": {
+   "name": "North Macedonia ",
+   "latest": {
+    "year": 2023,
+    "xUSD": 4.7,
+    "xEUR": 95,
+    "xCNY": 0,
+    "xHome": 0,
+    "mUSD": 9.5,
+    "mEUR": 89.6,
+    "mCNY": 0,
+    "mHome": 0
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 23.9,
+    "xEUR": 74.9,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 28.2,
+    "mEUR": 70.6,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "BIH": {
+   "name": "Bosnia and Herzegovina",
+   "latest": {
+    "year": 2023,
+    "xUSD": 4.4,
+    "xEUR": 84.6,
+    "xCNY": 0,
+    "xHome": 10.3,
+    "mUSD": 7.3,
+    "mEUR": 89.7,
+    "mCNY": 0,
+    "mHome": 2.2
+   },
+   "earlier": {
+    "year": 2010,
+    "xUSD": 11.2,
+    "xEUR": 83.6,
+    "xCNY": null,
+    "xHome": 5,
+    "mUSD": 17.6,
+    "mEUR": 80.8,
+    "mCNY": null,
+    "mHome": 0.7
+   }
+  },
+  "POL": {
+   "name": "Poland",
+   "latest": {
+    "year": 2023,
+    "xUSD": 17.3,
+    "xEUR": 63.9,
+    "xCNY": 0.1,
+    "xHome": null,
+    "mUSD": 29.2,
+    "mEUR": 54.7,
+    "mCNY": 0.6,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 19,
+    "xEUR": 70.1,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 26.4,
+    "mEUR": 60.5,
+    "mCNY": null,
+    "mHome": null
+   }
+  },
+  "SRB": {
+   "name": "Serbia",
+   "latest": {
+    "year": 2023,
+    "xUSD": 11,
+    "xEUR": 87.6,
+    "xCNY": 0,
+    "xHome": 0.4,
+    "mUSD": 10.9,
+    "mEUR": 84.1,
+    "mCNY": 0.5,
+    "mHome": 3.6
+   },
+   "earlier": {
+    "year": 2007,
+    "xUSD": 9.8,
+    "xEUR": 88.8,
+    "xCNY": 0,
+    "xHome": 0.3,
+    "mUSD": 25.5,
+    "mEUR": 73.4,
+    "mCNY": 0,
+    "mHome": 0.1
+   }
+  },
+  "UVK": {
+   "name": "Kosovo",
+   "latest": {
+    "year": 2023,
+    "xUSD": 13.3,
+    "xEUR": 86.1,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 16.4,
+    "mEUR": 82.8,
+    "mCNY": 0,
+    "mHome": null
+   },
+   "earlier": {
+    "year": 2013,
+    "xUSD": 41.3,
+    "xEUR": 58,
+    "xCNY": 0,
+    "xHome": null,
+    "mUSD": 19.5,
+    "mEUR": 79.3,
+    "mCNY": 0,
+    "mHome": null
+   }
+  },
+  "ROU": {
+   "name": "Romania",
+   "latest": {
+    "year": 2023,
+    "xUSD": 20.7,
+    "xEUR": 67.8,
+    "xCNY": 0.2,
+    "xHome": 7.6,
+    "mUSD": 23.3,
+    "mEUR": 66.9,
+    "mCNY": 0.6,
+    "mHome": 7.3
+   },
+   "earlier": {
+    "year": 2005,
+    "xUSD": 31.5,
+    "xEUR": 64.3,
+    "xCNY": null,
+    "xHome": null,
+    "mUSD": 25.7,
+    "mEUR": 71.1,
+    "mCNY": null,
+    "mHome": null
+   }
+  }
+ }
+}

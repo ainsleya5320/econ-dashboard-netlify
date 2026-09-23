@@ -3,6 +3,8 @@ import { ResponsiveContainer, ScatterChart, Scatter, XAxis, YAxis, ZAxis, Toolti
 import { fonts, cardBg, cardBorder } from "../../lib/styles.js";
 import { InfoBox } from "../../components/shared.jsx";
 import SubViews from "../../components/SubViews.jsx";
+import TradeFlows from "./TradeFlows.jsx";
+import GlobalImbalances from "./GlobalImbalances.jsx";
 
 // ============================================================================
 // FOREX — Donnelly's fundamentals chapter as four views.
@@ -16,6 +18,9 @@ import SubViews from "../../components/SubViews.jsx";
 //                  monetary policy split four ways, capital flows, trade —
 //                  next to the long-term number, so the two horizons never get
 //                  confused for each other.
+//   Trade          Gopinath's tests: tariff vs exchange-rate pass-through, who
+//                  prices in dollars, and whether a cheaper currency actually
+//                  shrinks the deficit (TradeFlows.jsx, /api/trade-flows).
 //   Prices         the page as it was: trade-weighted dollar, pairs, YTD, table.
 // Data: /api/fx-fundamentals (server/fxFundamentals.js).
 // ============================================================================
@@ -229,6 +234,7 @@ export default function ForexFundamentals({ prices }) {
           ))}
         </Board>
       </div>
+      <GlobalImbalances />
     </>);
   };
 
@@ -270,14 +276,15 @@ export default function ForexFundamentals({ prices }) {
     { id: "valuation", label: "Valuation · long term", render: valuation },
     { id: "global", label: "Global drivers", render: globalView },
     { id: "scorecard", label: "Domestic scorecard · short term", render: scorecard },
+    { id: "trade", label: "Trade & pass-through", render: () => <TradeFlows /> },
     pricesView,
   ];
-  const accent = { valuation: GREEN, global: CYAN, scorecard: AMBER, prices: INDIGO }[view] || INDIGO;
+  const accent = { valuation: GREEN, global: CYAN, scorecard: AMBER, trade: VIOLET, prices: INDIGO }[view] || INDIGO;
 
   return (<>
     {header}
     <SubViews views={views} view={view} onChange={setView} accent={accent} />
-    {view !== "prices" && (
+    {["valuation", "global", "scorecard"].includes(view) && (
       <div style={{ marginTop: 14 }}>
         <InfoBox color={INDIGO}>
           <b>How to read this.</b> Donnelly separates what a currency is worth (years) from what moves it (months). The valuation view is the first; the global drivers and the domestic scorecard are the second. A currency can be badly undervalued and still fall for a year because its central bank is cutting into a risk-off tape — the point of showing both is to keep that straight. {d.source}

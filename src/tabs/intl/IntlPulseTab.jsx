@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ReferenceLine } from "recharts";
 import { fonts, cardBg, cardBorder } from "../../lib/styles.js";
 import { SH, InfoBox } from "../../components/shared.jsx";
+import LastMile from "./LastMile.jsx";
 
 // ============================================================================
 // INTERNATIONAL PULSE — the International tab's landing, cockpit-style
@@ -219,6 +220,8 @@ function IntlPulseTab({ go }) {
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 14 }}><VerdictCard s={s.dollar} /><VerdictCard s={s.risk} /><VerdictCard s={s.growth} /></div>
 
     <BigMacPanel bm={d.bigmac} s={d.bigmacSummary} />
+
+    <LastMile />
 
     <InfoBox color={INDIGO}>
       <strong style={{ color: "#cbd5e1" }}>How to read it.</strong> For a dollar-based investor three things decide foreign returns: the dollar (a strong dollar subtracts from everything abroad and tightens conditions for anyone who borrowed in it), risk appetite (EM spreads and EM equity momentum say whether the world is paying for risk), and growth breadth (how many economies are actually expanding). The board&apos;s valuation cluster — real exchange rate vs its own history and the Big Mac read — is where mean reversion lives: a currency that is cheap on both, in an economy that is growing, with a positive real yield, is the classic setup. Real yields appear only where inflation data is fresh; the OECD inflation series on FRED stopped updating in 2024 and are deliberately excluded rather than shown stale.

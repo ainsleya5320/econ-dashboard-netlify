@@ -77,3 +77,5 @@ public/api/
 data/ai/silicon-data-marks.json
 # Tightening monitor: 6h feed cache (re-derivable from FRED + Treasury FiscalData)
 tightening.json
+# Trade flows: 12h feed cache (re-derivable; data/fx/invoicing.json is the tracked reference table)
+trade-flows.json
