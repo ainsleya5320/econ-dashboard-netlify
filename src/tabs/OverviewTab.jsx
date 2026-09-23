@@ -382,7 +382,9 @@ function YieldCurve({ rates }) {
   ].filter(p => p.val != null);
   const spread = rates.find(r => r.id === "spread2s10s")?.value;
   if (pts.length < 2) return null;
-  const W = 220, H = 70, padX = 24, padT = 10, padB = 20;
+  // padT leaves room for the value label above the highest point — usually the
+  // 30Y, whose label otherwise ran off the top of the viewBox and got clipped.
+  const W = 220, H = 80, padX = 24, padT = 20, padB = 20;
   const vals = pts.map(p => p.val);
   const lo = Math.min(...vals), hi = Math.max(...vals), range = (hi - lo) || 1;
   const x = i => padX + (i / (pts.length - 1)) * (W - padX * 2);
@@ -398,7 +400,7 @@ function YieldCurve({ rates }) {
           <g key={p.label}>
             <circle cx={x(i)} cy={y(p.val)} r="2.6" fill={INDIGO} />
             <text x={x(i)} y={H - 6} fontSize="8" fill="#64748b" textAnchor="middle" fontFamily="monospace">{p.label}</text>
-            <text x={x(i)} y={y(p.val) - 6} fontSize="8" fill="#94a3b8" textAnchor="middle" fontFamily="monospace">{p.val != null ? p.val.toFixed(2) : ""}</text>
+            <text x={x(i)} y={y(p.val) - 7} fontSize="9.5" fontWeight="600" style={{ fill: "var(--text-primary)" }} textAnchor="middle" fontFamily="monospace">{p.val != null ? p.val.toFixed(2) : ""}</text>
           </g>
         ))}
       </svg>
