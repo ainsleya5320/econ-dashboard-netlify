@@ -7,9 +7,8 @@
 //             percentile, a tone (green/amber/red from explicit thresholds),
 //             and which detail sub-tab it drills into
 //   charts    leading-diffusion history (share of leading indicators improving
-//             over six months, LEI-style), the consumer engine (real income vs
-//             real spending vs saving rate), debt-to-GDP by sector, and the
-//             federal interest burden
+//             over six months, LEI-style) — the one chart that exists only
+//             here. Everything else is charted on the page a row drills into.
 //   scores    one 0–100 health score per lens + rule-based verdicts
 // Cached 3 hours in memory and on disk (us-pulse.json); only complete builds
 // are cached. All series verified on FRED 2026-09.
@@ -43,9 +42,9 @@ const SERIES = [
   { id: 'AWHMAN', group: 'lead', label: 'Mfg weekly hours', unit: 'hrs', freq: 'M', kind: 'level', good: 1, tone: [41.2, 40.6], drill: 'labor', note: 'hours are cut before people are' },
   { id: 'REGMFG', group: 'lead', label: 'Regional Fed mfg (NY + Philly)', unit: 'idx', freq: 'M', kind: 'level', good: 1, tone: [5, -5], drill: 'gdp', derived: true, note: 'the two earliest manufacturing surveys each month' },
   { id: 'ISRATIO', group: 'lead', label: 'Inventory / sales ratio', unit: 'x', freq: 'M', kind: 'level', good: -1, tone: [1.35, 1.42], drill: 'gdp', note: 'rising = goods piling up, production cuts follow' },
-  { id: 'SP500', group: 'lead', label: 'S&P 500', unit: 'idx', freq: 'D', kind: 'yoy', good: 1, tone: [0, -5], drill: 'rates', note: 'an LEI component: the market discounts the next two quarters' },
+  { id: 'SP500', group: 'lead', label: 'S&P 500', unit: 'idx', freq: 'D', kind: 'yoy', good: 1, tone: [0, -5], drill: 'tightening', note: 'an LEI component: the market discounts the next two quarters' },
   { id: 'BAMLH0A0HYM2', group: 'lead', label: 'High-yield spread', unit: '%', freq: 'D', kind: 'level', good: -1, tone: [3.5, 5], drill: 'debt', note: 'credit sniffs out trouble before equities' },
-  { id: 'NFCI', group: 'lead', label: 'Financial conditions (NFCI)', unit: 'idx', freq: 'W', kind: 'level', good: -1, tone: [-0.3, 0.3], drill: 'debt', note: 'below zero = looser than average' },
+  { id: 'NFCI', group: 'lead', label: 'Financial conditions (NFCI)', unit: 'idx', freq: 'W', kind: 'level', good: -1, tone: [-0.3, 0.3], drill: 'tightening', note: 'below zero = looser than average' },
   { id: 'UMCSENT', group: 'lead', label: 'Consumer sentiment', unit: 'idx', freq: 'M', kind: 'level', good: 1, tone: [75, 60], drill: 'consumer', note: 'Michigan; expectations lead spending' },
   { id: 'SAHMREALTIME', group: 'lead', label: 'Sahm rule', unit: 'pp', freq: 'M', kind: 'level', good: -1, tone: [0.3, 0.5], drill: 'labor', note: 'triggers at 0.50; no false positives since 1970' },
   { id: 'CFNAI', group: 'lead', label: 'Chicago Fed activity index', unit: 'idx', freq: 'M', kind: 'level', good: 1, tone: [-0.3, -0.7], drill: 'gdp', note: 'coincident check: 3-month average below −0.7 = recession underway' },
@@ -61,7 +60,7 @@ const SERIES = [
   { id: 'REVOLSL', group: 'consumer', label: 'Credit-card balances', unit: '$B', scale: 1e-3, freq: 'M', kind: 'yoy', good: -1, tone: [5, 8], drill: 'consumer', note: 'fast growth = spending funded on plastic' },
   { id: 'TERMCBCCALLNS', group: 'consumer', label: 'Credit-card APR', unit: '%', freq: 'M', kind: 'level', good: -1, tone: [18, 21], drill: 'consumer', note: 'the price of carrying a balance' },
   { id: 'DRCCLACBS', group: 'consumer', label: 'Card delinquency', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [3, 4], drill: 'consumer', note: 'the first place consumer stress shows up' },
-  { id: 'DRCLACBS', group: 'consumer', label: 'Consumer-loan delinquency', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [2.5, 3.5], drill: 'consumer', note: 'auto and personal loans' },
+  { id: 'DRCLACBS', group: 'consumer', label: 'Consumer-loan delinquency', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [2.5, 3.5], drill: 'banks', note: 'auto and personal loans' },
   { id: 'TDSP', group: 'consumer', label: 'Debt service ratio', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [11.5, 13], drill: 'consumer', note: 'debt payments as a share of disposable income' },
   { id: 'GASREGW', group: 'consumer', label: 'Gasoline', unit: '$', freq: 'W', kind: 'level', good: -1, tone: [3.25, 4], drill: 'consumer', note: 'the most visible price in America' },
   // ── Debt picture ───────────────────────────────────────────────────────
@@ -70,14 +69,14 @@ const SERIES = [
   { id: 'INTREC', group: 'debt', sub: 'burden', label: 'Interest / federal receipts', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [12, 16], drill: 'budget', derived: true, note: 'the fiscal squeeze in one number' },
   { id: 'EFFRATE', group: 'debt', sub: 'burden', label: 'Effective rate on federal debt', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [3, 3.6], drill: 'budget', derived: true, note: 'interest paid ÷ debt; climbs as old debt rolls into new rates' },
   { id: 'THREEFYTP10', group: 'debt', sub: 'burden', label: '10y term premium', unit: '%', freq: 'D', kind: 'level', good: -1, tone: [0.5, 1.0], drill: 'rates', note: 'what bond investors charge to hold duration; rises when supply worries them' },
-  { id: 'FOREIGN', group: 'debt', sub: 'burden', label: 'Foreign share of federal debt', unit: '%', freq: 'Q', kind: 'level', good: 1, tone: null, drill: 'budget', derived: true, note: 'who funds it; a falling share means domestic savers must' },
-  { id: 'HHDEBT', group: 'debt', sub: 'private', label: 'Household debt / GDP', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [75, 90], drill: 'consumer', derived: true, note: 'households deleveraged after 2008 and stayed there' },
-  { id: 'CORPDEBT', group: 'debt', sub: 'private', label: 'Corporate debt / GDP', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [45, 52], drill: 'debt', derived: true, note: 'non-financial corporate debt securities and loans' },
+  { id: 'FOREIGN', group: 'debt', sub: 'burden', label: 'Foreign share of federal debt', unit: '%', freq: 'Q', kind: 'level', good: 1, tone: null, drill: 'tightening', derived: true, note: 'who funds it; a falling share means domestic savers must' },
+  { id: 'HHDEBT', group: 'debt', sub: 'private', label: 'Household debt / GDP', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [75, 90], drill: 'model', derived: true, note: 'households deleveraged after 2008 and stayed there' },
+  { id: 'CORPDEBT', group: 'debt', sub: 'private', label: 'Corporate debt / GDP', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [45, 52], drill: 'model', derived: true, note: 'non-financial corporate debt securities and loans' },
   { id: 'BAMLC0A0CM', group: 'debt', sub: 'stress', label: 'Investment-grade spread', unit: '%', freq: 'D', kind: 'level', good: -1, tone: [1.2, 1.8], drill: 'debt', note: 'the market price of corporate credit risk' },
-  { id: 'STLFSI4', group: 'debt', sub: 'stress', label: 'Financial stress index', unit: 'idx', freq: 'W', kind: 'level', good: -1, tone: [0, 1], drill: 'debt', note: 'St. Louis Fed; zero = average stress' },
+  { id: 'STLFSI4', group: 'debt', sub: 'stress', label: 'Financial stress index', unit: 'idx', freq: 'W', kind: 'level', good: -1, tone: [0, 1], drill: 'tightening', note: 'St. Louis Fed; zero = average stress' },
   { id: 'DRTSCILM', group: 'debt', sub: 'stress', label: 'Banks tightening C&I standards', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [5, 20], drill: 'banks', note: 'net share of banks tightening; credit availability leads defaults' },
   { id: 'DRTSCLCC', group: 'debt', sub: 'stress', label: 'Banks tightening card standards', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [5, 20], drill: 'banks', note: 'consumer credit availability' },
-  { id: 'TOTBKCR', group: 'debt', sub: 'stress', label: 'Bank credit growth', unit: '$B', freq: 'W', kind: 'yoy', good: 1, tone: [3, 0], drill: 'banks', note: 'loans and securities at all commercial banks' },
+  { id: 'TOTLL', group: 'debt', sub: 'stress', label: 'Bank loan growth', unit: '$B', freq: 'W', kind: 'yoy', good: 1, tone: [3, 0], drill: 'banks', note: 'loans and leases at all commercial banks — the series the Banks view charts' },
   { id: 'DRBLACBS', group: 'debt', sub: 'stress', label: 'Business-loan delinquency', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [2, 3], drill: 'banks', note: 'C&I loans' },
   { id: 'DRCRELEXFACBS', group: 'debt', sub: 'stress', label: 'CRE-loan delinquency', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [2, 3], drill: 'banks', note: 'commercial real estate' },
   { id: 'DRSFRMACBS', group: 'debt', sub: 'stress', label: 'Mortgage delinquency', unit: '%', freq: 'Q', kind: 'level', good: -1, tone: [3, 5], drill: 'banks', note: 'single-family' },
@@ -163,12 +162,9 @@ export function createUsPulse({ fetchFredSeries, dir }) {
       return n >= 8 ? { d, v: Math.round((up / n) * 100) } : null
     }).filter(Boolean)
 
-    // ── charts ──
-    const inc = yoyArr(M('DSPIC96'), 12), spd = yoyArr(M('PCEC96'), 12), sav = M('PSAVERT')
-    const consumerChart = inc.slice(-120).map(p => ({ d: p.d, income: r1(p.v), spending: r1(spd.find(x => x.d === p.d)?.v), saving: r1(at(sav, p.d)) }))
-    const fed = M('GFDEGDQ188S')
-    const debtChart = fed.slice(-100).map(p => ({ d: p.d, federal: r1(p.v), household: r1(derived.HHDEBT.find(x => x.d === p.d)?.v), corporate: r1(derived.CORPDEBT.find(x => x.d === p.d)?.v) }))
-    const interestChart = derived.INTREC.slice(-100).map(p => ({ d: p.d, interestToReceipts: r1(p.v), effRate: r2(derived.EFFRATE.find(x => x.d === p.d)?.v) }))
+    // Charts beyond the diffusion live on their home pages: income vs spending
+    // vs saving on Consumer, debt by sector on Machine → Stock-flow model, the
+    // interest squeeze on Fiscal. This page is the index that routes to them.
 
     // ── scores + verdicts ──
     const pts = list => mean(list.filter(r => r.tone).map(r => TONE_PTS[r.tone]))
@@ -207,7 +203,7 @@ export function createUsPulse({ fetchFredSeries, dir }) {
       sentence: `${leadVerdict.label}; ${consVerdict.label.toLowerCase()}; ${debtVerdict.label.toLowerCase()}.`,
     }
     return {
-      rows, charts: { diffusion, consumer: consumerChart, debt: debtChart, interest: interestChart },
+      rows, charts: { diffusion },
       scores: { lead: { score: leadScore, tone: leadTone, ...leadVerdict }, consumer: { score: consScore, tone: consTone, ...consVerdict }, debt: { score: debtScore, tone: debtTone, ...debtVerdict } },
       overall, coverage: `${rows.length}/${SERIES.length}`, updated: new Date().toISOString(),
     }

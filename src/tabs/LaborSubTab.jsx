@@ -44,7 +44,9 @@ const LADDER = [
 // series that historically turn before the headline does
 const LEADING = [
   { id: "TEMPHELPS", label: "Temporary help employment", unit: "k", invert: false, note: "firms shed temps before staff" },
-  { id: "AWHAETP", label: "Average weekly hours, private", unit: "hr", invert: false, note: "hours get cut before heads" },
+  // manufacturing rather than all-private hours: it is the Conference Board
+  // leading-index component, and the series the Pulse page's hours row drills to
+  { id: "AWHMAN", label: "Average weekly hours, manufacturing", unit: "hr", invert: false, note: "hours get cut before heads" },
   { id: "JTSQUR", label: "Quits rate", unit: "%", invert: false, note: "confidence to walk out" },
   { id: "JTSHIR", label: "Hires rate", unit: "%", invert: false, note: "gross hiring, not net" },
   { id: "JTSLDR", label: "Layoffs & discharges rate", unit: "%", invert: true, note: "still historically low is the point" },
@@ -68,8 +70,9 @@ const INDUSTRY = [
 
 const OTHER = [
   ["U6RATE", 400], ["ICSA", 300], ["CCSA", 300], ["JTSJOL", 400], ["JTSQUR", 400],
-  ["JTSHIR", 400], ["JTSLDR", 400], ["IC4WSA", 300], ["TEMPHELPS", 720], ["AWHAETP", 720],
-  ["U1RATE", 400], ["U2RATE", 400], ["U4RATE", 400], ["U5RATE", 400], ["USPRIV", 720],
+  ["JTSHIR", 400], ["JTSLDR", 400], ["IC4WSA", 300], ["TEMPHELPS", 720], ["AWHMAN", 720],
+  ["U1RATE", 400], ["U2RATE", 400], ["U4RATE", 400], ["U5RATE", 400],
+  ["CPIAUCSL", 400],   // deflates average hourly earnings into real wage growth
 ];
 
 const IDS = [
@@ -132,6 +135,20 @@ function LaborSubTab({ fredKey }) {
     return out.filter(p => p.d >= cutoff);
   }, [f, cutoff]);
 
+  // real wage growth: earnings year over year less CPI year over year for the
+  // same month. CPI is joined on dates rather than array position because it
+  // has a hole (no October 2025 print), which would shift an index lookback.
+  const realWage = useMemo(() => {
+    const cpi = new Map((f?.CPIAUCSL || []).map(o => [o.d, o.v]));
+    const out = new Map();
+    for (const p of earningsYoY) {
+      const [y, m, dd] = p.d.split("-");
+      const now = cpi.get(p.d), prior = cpi.get(`${+y - 1}-${m}-${dd}`);
+      if (fin(now) && fin(prior) && prior > 0) out.set(p.d, p.v - ((now - prior) / prior) * 100);
+    }
+    return out;
+  }, [f, earningsYoY]);
+
   // openings per unemployed person — the ratio the Fed actually cites
   const vu = useMemo(() => {
     if (!f?.JTSJOL?.length || !f?.UNEMPLOY?.length) return [];
@@ -160,6 +177,8 @@ function LaborSubTab({ fredKey }) {
   const quits = V("JTSQUR");
   const primeEpop = V("LNS12300060");
   const wage = earningsYoY.length ? earningsYoY[earningsYoY.length - 1].v : null;
+  // latest month both earnings and CPI cover — CPI lands a week or so after the jobs report
+  const [realD, realNow] = [...realWage].pop() || [null, null];
   const asOf = D("PAYEMS");
 
   const hiring = !fin(payroll3) ? "unclear" : payroll3 > 150 ? "solid" : payroll3 > 75 ? "slowing but positive" : payroll3 > 0 ? "close to stall speed" : "shrinking";
@@ -416,9 +435,9 @@ function LaborSubTab({ fredKey }) {
         <Note>The all-ages rate is dragged down by retirements and tells you little about demand. Prime-age is the clean read, and the employment-to-population version of it removes the judgement call about who counts as looking.</Note>
       </Panel>
 
-      <Panel title="Wage growth and the Sahm rule" style={{ marginBottom: 0 }}>
+      <Panel title="Wage growth — nominal and real (after CPI) — and the Sahm rule" style={{ marginBottom: 0 }}>
         <ResponsiveContainer width="100%" height={196}>
-          <ComposedChart data={earningsYoY.map(p => ({ d: p.d, wage: p.v, sahm: (f.SAHMREALTIME || []).find(x => x.d === p.d)?.v ?? null }))} margin={{ top: 6, right: 16, left: -12, bottom: 0 }}>
+          <ComposedChart data={earningsYoY.map(p => ({ d: p.d, wage: p.v, real: realWage.get(p.d) ?? null, sahm: (f.SAHMREALTIME || []).find(x => x.d === p.d)?.v ?? null }))} margin={{ top: 6, right: 16, left: -12, bottom: 0 }}>
             <defs>
               <linearGradient id="l-sahm" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={RED} stopOpacity={0.3} /><stop offset="95%" stopColor={RED} stopOpacity={0} /></linearGradient>
             </defs>
@@ -426,15 +445,17 @@ function LaborSubTab({ fredKey }) {
             <XAxis dataKey="d" tick={axis} axisLine={{ stroke: "var(--border-subtle)" }} tickLine={false} tickFormatter={d => d.slice(0, 7)} minTickGap={40} />
             <YAxis yAxisId="l" tick={axis} axisLine={false} tickLine={false} tickFormatter={v => `${v.toFixed(0)}%`} />
             <YAxis yAxisId="r" orientation="right" tick={axis} axisLine={false} tickLine={false} tickFormatter={v => v.toFixed(1)} />
-            <Tooltip contentStyle={tip} labelStyle={{ color: "var(--text-primary)", fontFamily: fonts.mono }} itemStyle={{ fontFamily: fonts.mono }} labelFormatter={fmtMon} formatter={(v, n) => [n === "wage" ? pc(v, 1) : v.toFixed(2), n === "wage" ? "wage growth, year over year" : "Sahm rule"]} />
-            <Legend wrapperStyle={{ fontSize: 9.5, fontFamily: fonts.mono, paddingTop: 2 }} iconType="circle" iconSize={6} formatter={v => (v === "wage" ? "wage growth (left)" : "Sahm rule (right)")} />
+            <Tooltip contentStyle={tip} labelStyle={{ color: "var(--text-primary)", fontFamily: fonts.mono }} itemStyle={{ fontFamily: fonts.mono }} labelFormatter={fmtMon} formatter={(v, n) => [n === "sahm" ? v.toFixed(2) : pc(v, 1), n === "wage" ? "wage growth, year over year" : n === "real" ? "real wage growth, after CPI" : "Sahm rule"]} />
+            <Legend wrapperStyle={{ fontSize: 9.5, fontFamily: fonts.mono, paddingTop: 2 }} iconType="circle" iconSize={6} formatter={v => (v === "wage" ? "wage growth (left)" : v === "real" ? "real wage growth, after CPI (left)" : "Sahm rule (right)")} />
+            <ReferenceLine yAxisId="l" y={0} stroke="var(--text-muted)" strokeOpacity={0.5} />
             <ReferenceLine yAxisId="r" y={0.5} stroke={RED} strokeDasharray="4 4" label={{ value: "0.50", fill: RED, fontSize: 8.5, position: "insideTopRight", fontFamily: fonts.mono }} />
             <Area yAxisId="r" type="monotone" dataKey="sahm" name="sahm" stroke={RED} fill="url(#l-sahm)" strokeWidth={1.4} dot={false} />
             <Line yAxisId="l" type="monotone" dataKey="wage" name="wage" stroke={VIOLET} strokeWidth={2} dot={false} />
+            <Line yAxisId="l" type="monotone" dataKey="real" name="real" stroke={TEAL} strokeWidth={1.6} dot={false} />
           </ComposedChart>
         </ResponsiveContainer>
         <Note>
-          Wage growth around 3.5% is consistent with 2% inflation given trend productivity; it is currently {pc(wage, 1)}. The Sahm rule fires when the three-month average unemployment rate runs 0.50pp above its prior twelve-month low — it is at {fin(sahm) ? sahm.toFixed(2) : "—"}. Claudia Sahm has said herself it was built as a trigger for sending cheques, not as a forecast.
+          Wage growth around 3.5% is consistent with 2% inflation given trend productivity; it is currently {pc(wage, 1)}. Real wage growth — average hourly earnings less CPI inflation, year over year — is {fin(realNow) ? `${pp(realNow, 1)}%` : "—"}{realD ? ` as of ${fmtMon(realD)}` : ""}; below zero, paychecks are losing ground to prices. The Sahm rule fires when the three-month average unemployment rate runs 0.50pp above its prior twelve-month low — it is at {fin(sahm) ? sahm.toFixed(2) : "—"}. Claudia Sahm has said herself it was built as a trigger for sending cheques, not as a forecast.
         </Note>
       </Panel>
     </div>

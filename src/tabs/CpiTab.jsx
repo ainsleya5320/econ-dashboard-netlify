@@ -306,7 +306,7 @@ function CpiTab({ cd }) {
       </Note>
     </Panel>
 
-    <Panel title="Component detail" right="click a group to expand the full FRED component list">
+    <Panel title="Component detail" right="click a group to expand the finer FRED components — categories already in the bars above, and core PCE, are not repeated">
       <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         <button onClick={() => setExpandCPI(v => !v)} style={{
           padding: "5px 12px", borderRadius: 7, cursor: "pointer", fontSize: 10, fontFamily: fonts.mono,

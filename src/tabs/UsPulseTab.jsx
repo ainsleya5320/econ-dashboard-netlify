@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ResponsiveContainer, ComposedChart, LineChart, Line, Area, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ReferenceLine } from "recharts";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine } from "recharts";
 import { fonts, cardBg, cardBorder } from "../lib/styles.js";
 import { SH, InfoBox } from "../components/shared.jsx";
 
@@ -7,11 +7,13 @@ import { SH, InfoBox } from "../components/shared.jsx";
 // U.S. PULSE — the U.S. Economy landing, cockpit-style
 // Three lenses an investor actually trades on — leading indicators, consumer
 // health, the debt picture — each as a dense signal board (latest · change ·
-// sparkline · 10-year percentile · tone) beside one synthesis chart and a
-// verdict. The header carries the regime, three 0–100 health scores, the
-// growth/inflation quadrant and the real-rate read. Every row drills into the
-// detail sub-tab that owns it. Data: /api/us-pulse (50 FRED series, cached
-// 3h) and /api/macro-dashboard (regime path, real rates).
+// sparkline · 10-year percentile · tone) beside a verdict. This page is the
+// index, not the detail: the only chart it keeps is leading-indicator
+// diffusion, which exists nowhere else; every other series is charted on the
+// sub-tab its row drills into. The header carries the regime, three 0–100
+// health scores, the growth/inflation quadrant and the real policy rate.
+// Data: /api/us-pulse (50 FRED series, cached 3h) and /api/macro-dashboard
+// (regime path, real policy rate).
 // ============================================================================
 
 const GREEN = "#4ade80", AMBER = "#fbbf24", RED = "#f87171", INDIGO = "#818cf8", SLATE = "#94a3b8", DIM = "#475569", CYAN = "#22d3ee";
@@ -162,6 +164,10 @@ function Quadrant({ path }) {
   );
 }
 
+const goLink = (go, id, text) => (
+  <button onClick={() => go?.(id)} style={{ background: "none", border: "none", padding: 0, color: "#a5b4fc", cursor: go ? "pointer" : "default", fontFamily: "inherit", fontSize: "inherit" }}>{text}</button>
+);
+
 const chartBox = (title, children, foot) => (
   <div style={{ ...card, padding: "10px 10px 4px" }}>
     <div style={{ ...label, paddingLeft: 4 }}>{title}</div>
@@ -201,7 +207,7 @@ function UsPulseTab({ go }) {
         <div style={label}>U.S. economy · pulse</div>
         <div style={{ fontSize: 24, fontWeight: 800, color: oc, fontFamily: fonts.heading, letterSpacing: -0.7, lineHeight: 1.1, marginTop: 4 }}>{d.overall.label}</div>
         <div style={{ fontSize: 11, color: SLATE, fontFamily: fonts.mono, marginTop: 6, lineHeight: 1.5 }}>{d.overall.sentence}</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 10 }}>{realChip("real policy rate", c.realFFR)}{realChip("real 10Y", c.real10Y)}{realChip("real wages", c.realWages)}</div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 10 }}>{realChip("real policy rate", c.realFFR)}</div>
         <div style={{ ...note, marginTop: 8 }}>{d.coverage} indicators · FRED · refreshed {new Date(d.updated).toLocaleString()} · click any row to drill in</div>
       </div>
       <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
@@ -226,37 +232,17 @@ function UsPulseTab({ go }) {
     <Section title="Consumer Health — Can the Household Keep Carrying the Economy?" sub="Income, spending, saving and the cost of credit; delinquencies and the debt-service ratio are the stress gauges."
       board={<SignalBoard rows={rows("consumer")} go={go} />}
       right={<>
-        {chartBox("The consumer engine — real income vs real spending (YoY %) and the saving rate",
-          <ResponsiveContainer width="100%" height={190}><ComposedChart data={d.charts.consumer} margin={{ top: 8, right: 4, bottom: 0, left: -14 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" /><XAxis dataKey="d" tick={axis} tickFormatter={x => x.slice(0, 4)} minTickGap={36} axisLine={false} tickLine={false} />
-            <YAxis yAxisId="l" tick={axis} axisLine={false} tickLine={false} domain={[-8, 16]} allowDataOverflow tickFormatter={v => `${v}%`} /><YAxis yAxisId="r" orientation="right" tick={axis} axisLine={false} tickLine={false} width={34} tickFormatter={v => `${v}%`} />
-            <Tooltip contentStyle={tip} formatter={(v, n) => [`${Number(v).toFixed(1)}%`, n]} /><Legend wrapperStyle={{ fontSize: 9.5, fontFamily: fonts.mono }} iconType="plainline" /><ReferenceLine yAxisId="l" y={0} stroke="#94a3b8" strokeOpacity={0.5} />
-            <Area yAxisId="r" type="monotone" dataKey="saving" name="Saving rate (right)" stroke={CYAN} fill={CYAN} fillOpacity={0.08} strokeWidth={1} dot={false} isAnimationActive={false} />
-            <Line yAxisId="l" type="monotone" dataKey="income" name="Real income YoY" stroke={GREEN} strokeWidth={1.8} dot={false} isAnimationActive={false} /><Line yAxisId="l" type="monotone" dataKey="spending" name="Real spending YoY" stroke={INDIGO} strokeWidth={1.8} dot={false} isAnimationActive={false} />
-          </ComposedChart></ResponsiveContainer>,
-          "Spending above income is borrowed time: it runs on a falling saving rate and rising card balances. The 2020–21 spike is the stimulus; the axis is clipped to keep the rest readable.")}
-        <VerdictCard s={d.scores.consumer} />
+        <VerdictCard s={d.scores.consumer} extra={<div style={{ ...note, marginTop: 6 }}>Income vs spending vs saving is charted on the {goLink(go, "consumer", "Consumer")} tab.</div>} />
       </>} />
 
     <Section title="Debt Picture — Who Owes What, and Is Credit Still Flowing?" sub="Burden (sovereign, household, corporate leverage and the interest squeeze) and stress (what markets and banks are charging and tolerating)."
       board={<SignalBoard rows={rows("debt")} go={go} />}
       right={<>
-        {chartBox("Debt as % of GDP — federal, household, corporate",
-          <ResponsiveContainer width="100%" height={160}><LineChart data={d.charts.debt} margin={{ top: 8, right: 8, bottom: 0, left: -14 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" /><XAxis dataKey="d" tick={axis} tickFormatter={x => x.slice(0, 4)} minTickGap={36} axisLine={false} tickLine={false} /><YAxis tick={axis} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} domain={["auto", "auto"]} />
-            <Tooltip contentStyle={tip} formatter={(v, n) => [`${Number(v).toFixed(1)}%`, n]} /><Legend wrapperStyle={{ fontSize: 9.5, fontFamily: fonts.mono }} iconType="plainline" />
-            <Line type="monotone" dataKey="federal" name="Federal" stroke={RED} strokeWidth={2} dot={false} connectNulls isAnimationActive={false} /><Line type="monotone" dataKey="household" name="Household" stroke={GREEN} strokeWidth={1.6} dot={false} connectNulls isAnimationActive={false} /><Line type="monotone" dataKey="corporate" name="Corporate" stroke={AMBER} strokeWidth={1.6} dot={false} connectNulls isAnimationActive={false} />
-          </LineChart></ResponsiveContainer>,
-          "The leverage migrated: households and companies deleveraged after 2008 while the sovereign absorbed it. That is why credit spreads can be calm while the fiscal numbers are not.")}
-        {chartBox("Federal interest squeeze — interest as % of receipts and the effective rate on the debt",
-          <ResponsiveContainer width="100%" height={140}><ComposedChart data={d.charts.interest} margin={{ top: 8, right: 4, bottom: 0, left: -14 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" /><XAxis dataKey="d" tick={axis} tickFormatter={x => x.slice(0, 4)} minTickGap={36} axisLine={false} tickLine={false} />
-            <YAxis yAxisId="l" tick={axis} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} /><YAxis yAxisId="r" orientation="right" tick={axis} axisLine={false} tickLine={false} width={34} tickFormatter={v => `${v}%`} />
-            <Tooltip contentStyle={tip} formatter={(v, n) => [`${Number(v).toFixed(2)}%`, n]} /><Legend wrapperStyle={{ fontSize: 9.5, fontFamily: fonts.mono }} iconType="plainline" />
-            <Line yAxisId="l" type="monotone" dataKey="interestToReceipts" name="Interest / receipts" stroke={RED} strokeWidth={2} dot={false} isAnimationActive={false} /><Line yAxisId="r" type="monotone" dataKey="effRate" name="Effective rate (right)" stroke={AMBER} strokeWidth={1.4} dot={false} isAnimationActive={false} />
-          </ComposedChart></ResponsiveContainer>,
-          "The effective rate keeps rising as 1–2% debt matures into 4% debt, so the interest share climbs even if yields go nowhere.")}
-        <VerdictCard s={d.scores.debt} extra={fin(d.scores.debt.burden) && <div style={{ ...note, marginTop: 6 }}>burden score {d.scores.debt.burden} · stress score {d.scores.debt.stress} (100 = healthiest)</div>} />
+        <VerdictCard s={d.scores.debt} extra={<div style={{ ...note, marginTop: 6 }}>
+          {fin(d.scores.debt.burden) && <>burden score {d.scores.debt.burden} · stress score {d.scores.debt.stress} (100 = healthiest). </>}
+          Debt by sector is charted on {goLink(go, "model", "Machine → Stock-flow model")}, the interest squeeze on {goLink(go, "fiscal", "Fiscal")},
+          and financial conditions on {goLink(go, "tightening", "Rates & Fed → Tightening monitor")}.
+        </div>} />
       </>} />
 
     <InfoBox color={INDIGO}>

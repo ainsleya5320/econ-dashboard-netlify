@@ -15,6 +15,7 @@ import BankCreditTab from "./BankCreditTab.jsx";
 import BankruptcyTab from "./BankruptcyTab.jsx";
 import RatesTab from "./RatesTab.jsx";
 import FedSubTab from "./FedSubTab.jsx";
+import TighteningTab from "./TighteningTab.jsx";
 import BudgetSubTab from "./BudgetSubTab.jsx";
 import MachineTab from "./MachineTab.jsx";
 import SfcModelTab from "./SfcModelTab.jsx";
@@ -25,7 +26,8 @@ import SfcModelTab from "./SfcModelTab.jsx";
 //   Rates & Fed · Fiscal · Machine
 // Five of them fold former pages into views (SubViews): Regional = metros /
 // states map; Growth = activity / profits engine; Credit = corporate / banks /
-// defaults; Rates & Fed = treasuries / Fed balance sheet; Machine = Dalio /
+// defaults; Rates & Fed = treasuries / Fed balance sheet / tightening
+// monitor; Machine = Dalio /
 // stock-flow model. Pulse rows and cross-links still use the old drill ids,
 // which DRILL maps onto a tab and a view.
 // ============================================================================
@@ -47,7 +49,7 @@ const ECON_SUB_TABS = [
 const DRILL = {
   gdp: ["growth", "activity"], profits: ["growth", "profits"],
   debt: ["credit", "corporate"], banks: ["credit", "banks"], bankruptcy: ["credit", "defaults"],
-  fed: ["rates", "fed"], budget: ["fiscal"], cpi: ["inflation"],
+  fed: ["rates", "fed"], tightening: ["rates", "tightening"], budget: ["fiscal"], cpi: ["inflation"],
   model: ["machine", "sfc"], stateLevel: ["regional", "states"], municipal: ["regional", "metros"],
 };
 const DEFAULT_VIEW = { regional: "metros", growth: "activity", credit: "corporate", rates: "treasuries", machine: "dalio" };
@@ -114,16 +116,18 @@ function USEconomyTab({ md, td, gd, cd, csm, hd, zillowData, fredKey, fmpKey, ch
     {econSubTab === "credit" && (
       <SubViews view={views.credit} onChange={setView("credit")} views={[
         { id: "corporate", label: "Corporate", hint: "spreads, the refi squeeze, balance sheets", render: () => <DebtMarketTab /> },
-        { id: "banks", label: "Banks", hint: "loan growth, charge-offs, provisions", render: () => <BankCreditTab /> },
+        { id: "banks", label: "Banks", hint: "loan growth, delinquencies, lending standards, charge-offs", render: () => <BankCreditTab /> },
         { id: "defaults", label: "Defaults", hint: "bankruptcies, Seattle first", render: () => <BankruptcyTab /> },
       ]} />
     )}
 
-    {/* Rates & Fed — the price of money and the balance sheet behind it */}
+    {/* Rates & Fed — the price of money, the balance sheet behind it, and the
+        leading-indicator board for tightening that starts in the bond market */}
     {econSubTab === "rates" && (
       <SubViews view={views.rates} onChange={setView("rates")} views={[
         { id: "treasuries", label: "Treasuries & mortgages", render: () => <RatesTab md={md} td={td} fmpKey={fmpKey} fredKey={fredKey} /> },
         { id: "fed", label: "Fed balance sheet", render: () => <FedSubTab fredKey={fredKey} /> },
+        { id: "tightening", label: "Tightening monitor", hint: "does the AI boom tighten through bonds before stocks?", render: () => <TighteningTab go={go} /> },
       ]} />
     )}
 

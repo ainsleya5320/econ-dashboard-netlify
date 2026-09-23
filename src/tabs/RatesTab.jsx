@@ -212,7 +212,7 @@ function RatesTab({ md, td: tdata, fmpKey, fredKey }) {
         chip("30-year", pc(y30, 2), INDIGO, `${bp(chg("DGS30", 30))} in a month`),
         chip("10Y real", pc(real10, 2), real10 > 2 ? AMBER : CYAN, `breakeven ${pc(be10, 2)}`),
         chip("2s10s", `${pp(s210)}pp`, s210 < 0 ? RED : GREEN, `10Y−3M ${pp(s310)}pp`),
-        chip("term premium", `${pp(tp)}pp`, tp > 0.5 ? AMBER : VIOLET, "10Y zero-coupon, ACM"),
+        chip("term premium", `${pp(tp)}pp`, tp > 0.5 ? AMBER : VIOLET, "10Y zero-coupon, Kim-Wright (Fed Board)"),
         chip("30Y mortgage", pc(mort, 2), ORANGE, fin(mortSpread) ? `${pp(mortSpread)}pp over the 10Y` : null),
       ]}
     />

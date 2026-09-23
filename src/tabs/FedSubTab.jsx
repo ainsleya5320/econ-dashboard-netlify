@@ -33,8 +33,6 @@ const MIL = 1 / 1000; // millions → billions
 const SERIES = {
   // ── assets ──
   WALCL:    { side: "t", label: "Total assets",            scale: MIL, limit: 800, color: INDIGO },
-  WSHOSHO:  { side: "x", label: "Securities held outright", scale: MIL, limit: 800, color: INDIGO },
-  TREAST:   { side: "x", label: "  of which Treasuries",   scale: MIL, limit: 800, color: BLUE },
   WSHOBL:   { side: "a", label: "Treasury bills",          scale: MIL, limit: 800, color: TEAL,   group: "Securities held outright" },
   WSHONBNL: { side: "a", label: "Treasury notes & bonds",  scale: MIL, limit: 800, color: BLUE,   group: "Securities held outright" },
   WSHOICL:  { side: "a", label: "TIPS + inflation comp.",  scale: MIL, limit: 800, color: VIOLET, group: "Securities held outright" },

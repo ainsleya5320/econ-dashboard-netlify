@@ -11,7 +11,7 @@ import HouseholdWealthPanel from "./consumer/HouseholdWealth.jsx";
  * Data: /api/consumer-health (batched FRED, precomputed composites).
  */
 
-const GREEN = "#4ade80", AMBER = "#fbbf24", RED = "#f87171", INDIGO = "#818cf8";
+const GREEN = "#4ade80", AMBER = "#fbbf24", RED = "#f87171", INDIGO = "#818cf8", CYAN = "#22d3ee";
 const TONE_C = { green: GREEN, amber: AMBER, red: RED };
 const pctS = (v, dp = 1) => v == null ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(dp)}%`;
 
@@ -115,6 +115,10 @@ function ConsumerTab() {
     : gap < -0.5 ? `Income is outpacing spending by ${Math.abs(gap).toFixed(1)}pp — households have room and are building buffers.`
     : "Spending and income are growing in step.";
 
+  // The saving rate rides on the mechanism chart — the same PSAVERT the stress
+  // dial reads, sent per month on each mechanism row by /api/consumer-health.
+  const mechanism = c.mechanism || [];
+
   return (<>
     <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 4 }}>
       <button onClick={() => load(true)} style={{ fontSize: 10, padding: "4px 10px", borderRadius: 6, border: "1px solid var(--border-subtle)", background: "transparent", color: "var(--text-secondary)", cursor: "pointer", fontFamily: fonts.mono }}>↻ Refresh</button>
@@ -148,12 +152,12 @@ function ConsumerTab() {
     </div>
 
     {/* Mechanism chart — the whole story */}
-    <SH>The Mechanism — Income vs Spending vs Borrowing (YoY %)</SH>
+    <SH>The Mechanism — Income vs Spending vs Borrowing (YoY %), and the Saving Rate</SH>
     <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "16px 16px 8px 6px", marginBottom: 18 }}>
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={c.mechanism} margin={{ top: 8, right: 12, left: -8, bottom: 0 }}>
+        <LineChart data={mechanism} margin={{ top: 8, right: 12, left: -8, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-          <XAxis dataKey="d" tick={{ fill: "#475569", fontSize: 9, fontFamily: fonts.mono }} axisLine={{ stroke: "rgba(255,255,255,0.06)" }} tickLine={false} interval={Math.max(0, Math.floor((c.mechanism?.length || 0) / 9) - 1)} tickFormatter={d => d.slice(0, 7)} />
+          <XAxis dataKey="d" tick={{ fill: "#475569", fontSize: 9, fontFamily: fonts.mono }} axisLine={{ stroke: "rgba(255,255,255,0.06)" }} tickLine={false} interval={Math.max(0, Math.floor((mechanism.length || 0) / 9) - 1)} tickFormatter={d => d.slice(0, 7)} />
           <YAxis tick={{ fill: "#475569", fontSize: 9, fontFamily: fonts.mono }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
           <Tooltip contentStyle={{ background: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 11 }} formatter={(v, n) => [`${v}%`, n]} labelFormatter={d => d.slice(0, 7)} />
           <Legend wrapperStyle={{ fontSize: 10, fontFamily: fonts.mono, paddingTop: 6 }} iconType="circle" iconSize={7} />
@@ -161,56 +165,35 @@ function ConsumerTab() {
           <Line type="monotone" dataKey="income" name="Real disposable income" stroke={GREEN} strokeWidth={2.2} dot={false} connectNulls />
           <Line type="monotone" dataKey="spend" name="Real consumer spending" stroke={INDIGO} strokeWidth={2} dot={false} connectNulls />
           <Line type="monotone" dataKey="revolving" name="Revolving credit (cards)" stroke={RED} strokeWidth={1.6} dot={false} connectNulls />
+          <Line type="monotone" dataKey="saving" name="Saving rate (level, % of income)" stroke={CYAN} strokeWidth={1.6} strokeDasharray="5 3" dot={false} connectNulls />
         </LineChart>
       </ResponsiveContainer>
       <div style={{ fontSize: 9.5, color: "#64748b", fontFamily: fonts.mono, paddingLeft: 12, paddingBottom: 6, lineHeight: 1.5 }}>
-        When the indigo spending line runs above the green income line — and the red credit line accelerates — households are spending money they aren&apos;t earning. That gap, funded by savings drawdown and card balances, is the earliest sign of consumer stress.
+        When the indigo spending line runs above the green income line, the gap has to be paid for somehow: either the dashed cyan saving rate falls — households drawing down their cushion — or the red credit line accelerates as card balances take up the slack. Spending outrunning income with saving falling and credit accelerating is the earliest sign of consumer stress. The saving rate is a level (share of disposable income), not a growth rate; it shares the axis because both read in %.
       </div>
     </div>
 
-    {/* Affordability strip */}
+    {/* Affordability strip — the debt service ratio and saving rate live in the stress dial above, not here */}
     <SH>Affordability — What It Feels Like to Be a Household</SH>
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(155px, 100%), 1fr))", gap: 10, marginBottom: 18 }}>
-      <AffTile label="Debt Service Ratio" value={c.debtService != null ? `${c.debtService.toFixed(1)}%` : "—"} sub="of disposable income" pct={s.TDSP?.pctRaw} spark={s.TDSP?.sparkRaw} sparkColor={c.debtService > 12.5 ? RED : INDIGO} />
       <AffTile label="Credit Card APR" value={c.cardApr != null ? `${c.cardApr.toFixed(1)}%` : "—"} sub="avg assessed rate" pct={s.TERMCBCCALLNS?.pctRaw} spark={s.TERMCBCCALLNS?.sparkRaw} sparkColor={RED} />
-      <AffTile label="Savings Rate" value={c.savings != null ? `${c.savings.toFixed(1)}%` : "—"} sub={`${c.savingsPct}th pctile of history`} pct={c.savingsPct} spark={s.PSAVERT?.sparkRaw} sparkColor={c.savingsPct < 15 ? RED : INDIGO} />
       <AffTile label="Gas Price" value={c.gas != null ? `$${c.gas.toFixed(2)}` : "—"} sub={`regular · ${pctS(c.gasYoY)} YoY`} pct={s.GASREGW?.pctRaw} spark={s.GASREGW?.sparkRaw} sparkColor={(c.gasYoY ?? 0) > 0 ? RED : GREEN} />
       <AffTile label="Retail Sales" value={pctS(c.retailYoY)} sub="real, YoY" pct={s.RRSFS?.pctRaw} spark={s.RRSFS?.sparkRaw} sparkColor={(c.retailYoY ?? 0) >= 0 ? GREEN : RED} />
       <AffTile label="Sentiment" value={c.sentiment != null ? c.sentiment.toFixed(1) : "—"} sub={`U. Michigan · ${c.sentimentPct}th pctile`} pct={c.sentimentPct} spark={s.UMCSENT?.sparkRaw} sparkColor={c.sentimentPct < 25 ? RED : INDIGO} />
     </div>
 
-    {/* K-shape panel */}
+    {/* Household net worth — also carries the K-shape: the Fed DFA top-1% and bottom-50% wealth shares, with history */}
     <SH>Household Net Worth — The Survey of Consumer Finances</SH>
     <HouseholdWealthPanel />
 
     <SH>Where Private Business Wealth Is — The Everywhere Millionaire, Tested</SH>
     <OwnerWealthPanel />
 
-    <SH>The K-Shaped Consumer — Whose Strength?</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(240px, 100%), 1fr))", gap: 14, marginBottom: 16 }}>
-      <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 16px" }}>
-        <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 4 }}>Top 1% Wealth Share</div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-          <span style={{ fontSize: 28, fontWeight: 700, color: GREEN, fontFamily: fonts.heading }}>{c.top1 != null ? `${c.top1.toFixed(1)}%` : "—"}</span>
-          <span style={{ fontSize: 11, color: (c.top1Dir ?? 0) >= 0 ? GREEN : RED, fontFamily: fonts.mono }}>{c.top1Dir != null ? `${c.top1Dir >= 0 ? "▲" : "▼"} ${Math.abs(c.top1Dir).toFixed(1)}pp/yr` : ""}</span>
-        </div>
-        <div style={{ marginTop: 8 }}><Spark values={s.WFRBST01134?.sparkRaw} color={GREEN} h={34} /></div>
-      </div>
-      <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 16px" }}>
-        <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.5, textTransform: "uppercase", marginBottom: 4 }}>Bottom 50% Wealth Share</div>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-          <span style={{ fontSize: 28, fontWeight: 700, color: (c.bottom50 ?? 9) < 3 ? RED : INDIGO, fontFamily: fonts.heading }}>{c.bottom50 != null ? `${c.bottom50.toFixed(1)}%` : "—"}</span>
-          <span style={{ fontSize: 11, color: (c.bottom50Dir ?? 0) >= 0 ? GREEN : RED, fontFamily: fonts.mono }}>{c.bottom50Dir != null && c.bottom50Dir !== 0 ? `${c.bottom50Dir >= 0 ? "▲" : "▼"} ${Math.abs(c.bottom50Dir).toFixed(1)}pp/yr` : "flat"}</span>
-        </div>
-        <div style={{ marginTop: 8 }}><Spark values={s.WFRBSB50215?.sparkRaw} color={(c.bottom50 ?? 9) < 3 ? RED : INDIGO} h={34} /></div>
-      </div>
-    </div>
-
     <InfoBox color="#818cf8">
       <strong style={{ color: "var(--text-primary)" }}>Reading consumer health.</strong>
-      &nbsp;The <strong>mechanism chart</strong> is the core: healthy consumption is funded by rising real income (green); when spending (indigo) outpaces it and card credit (red) accelerates, growth is being borrowed from the future.
+      &nbsp;The <strong>mechanism chart</strong> is the core: healthy consumption is funded by rising real income (green); when spending (indigo) outpaces it, the gap is covered by a falling saving rate (cyan) or accelerating card credit (red), and growth is being borrowed from the future.
       &nbsp;The <strong>stress dial</strong> distills five signals — real income, the savings buffer, card delinquencies, the debt-service burden, and how fast revolving credit is growing.
-      &nbsp;The <strong>K-shape</strong> panel is the advisor&apos;s caveat: aggregate spending can look fine because the top decile — sitting on record wealth — does an outsized share of it, while the bottom half (just {c.bottom50 != null ? `${c.bottom50.toFixed(1)}%` : "~2%"} of all wealth) feels every APR tick and gas-price move. &quot;The consumer&quot; is really two consumers.
+      &nbsp;The <strong>household net worth</strong> panel is the advisor&apos;s caveat — the K-shape: aggregate spending can look fine because the top decile — sitting on record wealth — does an outsized share of it, while the bottom half, holding a sliver of all wealth, feels every APR tick and gas-price move. &quot;The consumer&quot; is really two consumers.
       &nbsp;All data from FRED; cached 4 hours.
     </InfoBox>
   </>);

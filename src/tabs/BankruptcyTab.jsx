@@ -10,8 +10,10 @@ import { SH, InfoBox } from "../components/shared.jsx";
 //      and the official quarterly series since 2010.
 //   2. The tracked districts side by side — the West Coast, plus W.D. Texas
 //      and S.D. New York, which back the Austin and New York municipality pages.
-//   3. National: official filings by chapter (the credit-stress gauges that lead
-//      them live on the Banks view of the same Credit tab).
+//   3. National: official filings by chapter (the delinquencies and lending
+//      standards that lead them are charted on the Banks view of the same
+//      Credit tab; this page keeps only the header score built from them).
+// Each score appears once, as a header gauge — no repeat verdict cards below.
 //   4. Public-company bankruptcies from EDGAR 8-K Item 1.03.
 // Data: /api/bankruptcy (server/bankruptcy.js). Official counts are U.S. Courts
 // Table F-2 Quarterly; the docket lists are the courts' own CM/ECF feeds and
@@ -48,17 +50,6 @@ function Score({ name, s }) {
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}><span style={label}>{name}</span><span style={{ fontSize: 20, fontWeight: 800, color: c, fontFamily: fonts.heading, letterSpacing: -0.6, lineHeight: 1 }}>{s ? s.score : "…"}</span></div>
       <div style={{ position: "relative", height: 5, borderRadius: 3, marginTop: 5, background: "linear-gradient(90deg, #f87171 0%, #fbbf24 50%, #4ade80 100%)", opacity: 0.85 }}>{s && <div style={{ position: "absolute", left: `calc(${s.score}% - 4px)`, top: -3, width: 8, height: 11, borderRadius: 2, background: "#f8fafc", border: `1.5px solid ${c}` }} />}</div>
       <div style={{ fontSize: 10, fontWeight: 700, color: c, fontFamily: fonts.heading, marginTop: 6, lineHeight: 1.2 }}>{s?.label || "loading"}</div>
-    </div>
-  );
-}
-function VerdictCard({ title, s }) {
-  const c = TONE[s.tone] || SLATE;
-  return (
-    <div style={{ ...card, position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", top: 0, left: 0, bottom: 0, width: 4, background: c }} />
-      <div style={label}>{title}</div>
-      <div style={{ fontSize: 13.5, fontWeight: 700, color: c, fontFamily: fonts.heading, letterSpacing: -0.3, marginTop: 3 }}>{s.label}</div>
-      <div style={{ fontSize: 10.5, color: SLATE, fontFamily: fonts.mono, marginTop: 5, lineHeight: 1.5 }}>{s.why}</div>
     </div>
   );
 }
@@ -109,13 +100,12 @@ export default function BankruptcyTab() {
   const liveCases = (d.live.ch11Recent || []).filter(c => c.court === court);
   const recentCases = (d.recent?.[court]?.cases || []).filter(c => listMode === "all" || c.entity);
   const chips = [
-    ["filings, trailing yr", k(NL?.t4)], ["yoy", pc(NL?.yoy, 1)], ["business ch.11 / qtr", num(NL?.bizCh11)],
+    ["filings, trailing yr", k(NL?.t4)], ["yoy", pc(NL?.yoy, 1)], ["business ch.11 / qtr", `${num(NL?.bizCh11)}${fin(NL?.bizCh11Yoy) ? ` (${pc(NL.bizCh11Yoy, 0)} yoy)` : ""}`],
     ["W.D. Wash. trailing yr", num(home?.t4)], ["W.D. Wash. ch.11 / yr", num(home?.bizCh11T4)],
     ["biz-loan delinquency", fin(F.DRBLACBS?.v) ? `${F.DRBLACBS.v}%` : "—"], ["HY spread", fin(F.BAMLH0A0HYM2?.v) ? `${F.BAMLH0A0HYM2.v.toFixed(2)}%` : "—"],
   ];
   const natChart = d.national.rows.map(r => ({ q: r.q, "Chapter 7": r.ch7, "Chapter 13": r.ch13, "Chapter 11": r.ch11, bizCh11: r.bizCh11 }));
   const homeChart = selRows.map(r => ({ q: r.q, total: r.total, bizCh11: r.bizCh11, ch11: r.ch11 }));
-  const fredLine = (id, name, color, w = 1.5) => <Line key={id} type="monotone" data={d.fredSeries[id]} dataKey="v" name={name} stroke={color} strokeWidth={w} dot={false} isAnimationActive={false} />;
 
   return (<>
     {/* ── header ───────────────────────────────────────────────────────── */}
@@ -127,7 +117,10 @@ export default function BankruptcyTab() {
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 10 }}>{chips.map(([t, v]) => <span key={t} style={{ fontSize: 10, fontFamily: fonts.mono, color: "#cbd5e1", background: "rgba(255,255,255,0.04)", borderRadius: 6, padding: "3px 8px" }}>{t} <strong style={{ color: "var(--text-primary)" }}>{v}</strong></span>)}</div>
         <div style={{ ...note, marginTop: 8 }}>Official counts through {fq(NL?.q)} (U.S. Courts F-2, {d.national.quartersLoaded} quarters since {fq(d.national.since)}) · live dockets refreshed {new Date(d.updated).toLocaleString()} · docket archive {d.live.daysArchived} day{d.live.daysArchived === 1 ? "" : "s"} since {d.live.firstDay}</div>
       </div>
-      <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}><Score name="Filings (national)" s={S.filings} /><Score name="Bank credit stress" s={S.credit} /><Score name="W.D. Washington" s={S.local} /></div>
+      <div>
+        <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}><Score name="Filings (national)" s={S.filings} /><Score name="Bank credit stress" s={S.credit} /><Score name="W.D. Washington" s={S.local} /></div>
+        <div style={{ ...note, marginTop: 10 }}>Bank credit stress scores bank delinquencies, charge-offs and lending standards plus the high-yield spread. Delinquencies and lending standards are charted on the Banks view of this tab, the spread on the Corporate view.</div>
+      </div>
     </div>
 
     {/* ── Seattle first ────────────────────────────────────────────────── */}
@@ -186,7 +179,6 @@ export default function BankruptcyTab() {
             <Line yAxisId="r" type="monotone" dataKey="bizCh11" stroke={AMBER} strokeWidth={1.6} dot={false} isAnimationActive={false} />
           </AreaChart></ResponsiveContainer>,
           `Left axis: all chapters (the household cycle). Right axis: business Chapter 11 (the corporate one) — ${num(sel.bizCh11T4)} in the trailing year, p${sel.bizCh11Pct} of the period since ${d.national.since.slice(0, 4)}, vs ${num(sel.t4)} total filings (p${sel.t4Pct}; the high in that window was ${num(sel.peakT4)}).`)}
-        <VerdictCard title="W.D. Washington" s={S.local} />
         <div style={card}>
           <div style={label}>How to read the local picture</div>
           <div style={{ fontSize: 10.5, color: SLATE, fontFamily: fonts.mono, marginTop: 5, lineHeight: 1.55 }}>Three layers with three latencies. The <strong style={{ color: "#cbd5e1" }}>live docket</strong> is same-day and names the debtor, but only what the court posted in the last day. <strong style={{ color: "#cbd5e1" }}>CourtListener</strong> keeps the names for six months with partial coverage. The <strong style={{ color: "#cbd5e1" }}>official quarterly table</strong> is complete and classifies business vs consumer, but lands about two months after the quarter ends. When the three disagree on direction, the newest is right about timing and the oldest is right about level.</div>
@@ -223,7 +215,7 @@ export default function BankruptcyTab() {
 
     {/* ── national ─────────────────────────────────────────────────────── */}
     <SH>National — Official Filings by Chapter</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(300px, 100%), 1fr))", gap: 12, marginBottom: 14, alignItems: "start" }}>
+    <div style={{ marginBottom: 14 }}>
       {chartBox(`Cases commenced per quarter by chapter, since ${fq(natChart[0]?.q)} · business Chapter 11 on the right axis`,
         <ResponsiveContainer width="100%" height={220}><AreaChart data={natChart} margin={{ top: 6, right: 6, bottom: 0, left: -6 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" /><XAxis dataKey="q" tick={axis} tickFormatter={x => x.slice(0, 4)} minTickGap={34} axisLine={false} tickLine={false} /><YAxis yAxisId="l" tick={axis} axisLine={false} tickLine={false} tickFormatter={k} width={44} /><YAxis yAxisId="r" orientation="right" tick={axis} axisLine={false} tickLine={false} tickFormatter={k} width={36} />
@@ -235,11 +227,6 @@ export default function BankruptcyTab() {
           <Line yAxisId="r" type="monotone" dataKey="bizCh11" stroke={RED} strokeWidth={1.6} dot={false} isAnimationActive={false} />
         </AreaChart></ResponsiveContainer>,
         `${k(Math.max(...d.national.rows.map(r => r.t4).filter(fin)))} a year at the top of this window and a low under the pandemic stimulus and foreclosure moratoria; ${NL ? `${k(NL.t4)} in the trailing year, ${pc(NL.yoy, 1)} year on year.` : ""} The 2010 crisis peak, 1.6M, sits outside the readable spreadsheets.`)}
-      <div style={{ display: "grid", gap: 12 }}>
-        <VerdictCard title="Filings (national)" s={S.filings} />
-        <VerdictCard title="Bank credit stress" s={S.credit} />
-        <div style={{ ...note, padding: "0 4px" }}>The delinquency and charge-off gauges behind the credit-stress score are on the Banks view of this tab, where they belong with loan growth and provisions; the score here reads the same series.</div>
-      </div>
     </div>
 
     {/* ── public companies ─────────────────────────────────────────────── */}

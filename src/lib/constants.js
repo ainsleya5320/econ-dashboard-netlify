@@ -36,24 +36,19 @@ const CPI_COMPONENTS = {
   CUSR0000SETB01: { label: "Gasoline",              color: "#F59E0B", group: "Energy" },
   CUSR0000SEHF01: { label: "Electricity",           color: "#FBBF24", group: "Energy" },
   CUSR0000SEHF02: { label: "Piped Gas (Utility)",   color: "#D97706", group: "Energy" },
-  // ── Transportation ──
-  CUSR0000SETA01: { label: "New Vehicles",           color: "#10B981", group: "Transport" },
-  CUSR0000SETA02: { label: "Used Vehicles",          color: "#34D399", group: "Transport" },
+  // ── Transportation ──  (new & used vehicles are in the Inflation tab's BLS category bars)
   CUSR0000SETG01: { label: "Airline Fares",          color: "#059669", group: "Transport" },
   // ── Medical ──
   CUSR0000SAM1:   { label: "Medical Commodities",   color: "#EC4899", group: "Medical" },
   CUSR0000SAM2:   { label: "Medical Services",      color: "#F472B6", group: "Medical" },
-  // ── Other ──
-  CPIAPPSL:       { label: "Apparel",               color: "#8B5CF6", group: "Other" },
-  CPIRECSL:       { label: "Recreation",             color: "#14B8A6", group: "Other" },
+  // ── Other ──  (apparel & recreation are in the Inflation tab's BLS category bars)
   CUSR0000SEEB:   { label: "Tuition & Childcare",   color: "#6366F1", group: "Other" },
   CUSR0000SEGA:   { label: "Tobacco & Smoking",     color: "#D946EF", group: "Other" },
 };
 const PCE_COMPONENTS = {
-  // ── Monthly aggregates ──
+  // ── Monthly aggregates ──  (ex food & energy = core PCE, shown as PCEPILFE in the Inflation tab's chips and momentum table)
   DSERRG3M086SBEA:  { label: "Services (Total)",    color: "#3B82F6", group: "Aggregate" },
   DGDSRG3M086SBEA:  { label: "Goods (Total)",       color: "#10B981", group: "Aggregate" },
-  DPCCRC1M027SBEA:  { label: "Ex Food & Energy",    color: "#8B5CF6", group: "Aggregate" },
   // ── Quarterly Services breakdown ──
   DHUTRG3Q086SBEA:  { label: "Housing & Utilities", color: "#60A5FA", group: "Services", freq: "Q" },
   DHLCRG3Q086SBEA:  { label: "Healthcare",          color: "#EC4899", group: "Services", freq: "Q" },

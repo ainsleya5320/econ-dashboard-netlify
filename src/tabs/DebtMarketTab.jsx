@@ -23,38 +23,8 @@ const ratingColor = (r) => !r ? "#475569" : /^A/.test(r) ? "#4ade80" : /^BBB|^BB
  * so long-history percentiles come from BAA10Y (Moody's, 1987→).
  */
 
-const GREEN = "#4ade80", AMBER = "#fbbf24", RED = "#f87171", INDIGO = "#818cf8";
+const GREEN = "#4ade80", AMBER = "#fbbf24", RED = "#f87171";
 const HY_C = "#F59E0B", IG_C = "#818cf8", BAA_C = "#a78bfa", COV_C = "#4ade80";
-const TONE_C = { green: GREEN, amber: AMBER, red: RED };
-
-function Spark({ values, color = INDIGO, h = 26 }) {
-  const v = (values || []).filter(x => x != null && isFinite(x));
-  if (v.length < 3) return <div style={{ height: h }} />;
-  const min = Math.min(...v), max = Math.max(...v), range = (max - min) || 1;
-  const pts = v.map((x, i) => `${(i / (v.length - 1)) * 100},${(1 - (x - min) / range) * (h - 4) + 2}`).join(" ");
-  return (
-    <svg viewBox={`0 0 100 ${h}`} width="100%" height={h} preserveAspectRatio="none" style={{ display: "block" }}>
-      <polyline points={pts} fill="none" stroke={color} strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
-    </svg>
-  );
-}
-
-function WarnTile({ label, value, sub, pct, spark, tone, note }) {
-  const c = TONE_C[tone] || INDIGO;
-  return (
-    <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "12px 14px", minWidth: 0, borderLeft: `3px solid ${c}` }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 6 }}>
-        <span style={{ fontSize: 10, color: "var(--text-muted)", fontFamily: fonts.mono, letterSpacing: 0.4, textTransform: "uppercase", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{label}</span>
-        {pct != null && <span style={{ fontSize: 9, color: "#a5b4fc", fontFamily: fonts.mono, whiteSpace: "nowrap" }}>{pct}th %ile</span>}
-      </div>
-      <div style={{ fontSize: 21, fontWeight: 700, color: "var(--text-primary)", fontFamily: fonts.heading, marginTop: 3, lineHeight: 1.1 }}>
-        {value} {note && <span style={{ fontWeight: 400, color: c, fontSize: 10, fontFamily: fonts.mono }}>{note}</span>}
-      </div>
-      {sub && <div style={{ fontSize: 10, color: "var(--text-secondary)", fontFamily: fonts.mono, marginTop: 2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{sub}</div>}
-      <div style={{ marginTop: 6 }}><Spark values={spark} color={c} /></div>
-    </div>
-  );
-}
 
 const chartTooltip = { background: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 11 };
 const axisTick = { fill: "#475569", fontSize: 9, fontFamily: fonts.mono };
@@ -89,17 +59,13 @@ function DebtMarketTab() {
   if (loading && !data) return <div style={{ padding: 50, textAlign: "center", color: "#94a3b8", fontFamily: fonts.heading, fontSize: 14 }}>Loading debt market…</div>;
   if (error || !data?.verdict) return <InfoBox color="#F97316">Unable to load debt-market data — FRED may be temporarily unavailable.</InfoBox>;
 
-  const v = data.verdict, sp = data.spreads, sq = data.squeeze, w = data.warning, b = data.basket;
+  const v = data.verdict, sp = data.spreads, sq = data.squeeze, b = data.basket;
 
   const verdictBlurb =
     v.label === "Priced for Perfection" ? `High-yield spreads at ${v.hy?.toFixed(2)}% pay near the least in ${sp.baa.since ? `~${new Date().getFullYear() - +sp.baa.since} years` : "decades"} for default risk (Baa−10Y at the ${v.baaPct}th percentile since ${sp.baa.since}). Nothing is breaking — but nothing is priced to break, so the risk in credit is asymmetric: little upside in spread compression left, a full repricing below.`
     : v.label === "Credit Stress" ? `High-yield spreads at ${v.hy?.toFixed(2)}% are at levels historically associated with default cycles. Credit markets are pricing real distress.`
-    : v.label === "Stress Building" ? `High-yield spreads at ${v.hy?.toFixed(2)}%${v.d3m > 0 ? `, up ${v.d3m.toFixed(2)}pp in three months` : ""} — the market is beginning to charge for default risk again. Watch the early-warning tiles below for confirmation.`
+    : v.label === "Stress Building" ? `High-yield spreads at ${v.hy?.toFixed(2)}%${v.d3m > 0 ? `, up ${v.d3m.toFixed(2)}pp in three months` : ""} — the market is beginning to charge for default risk again. Confirmation comes from bank lending standards and delinquencies on the Banks view.`
     : `High-yield spreads at ${v.hy?.toFixed(2)}% are in their normal range — credit is neither complacent nor stressed.`;
-
-  // Early-warning tones (SLOOS: net % of banks tightening C&I standards)
-  const sloosTone = w.sloos == null ? null : w.sloos.current >= 20 ? "red" : w.sloos.current > 5 ? "amber" : "green";
-  const delinqTone = w.delinq == null ? null : w.delinq.current >= 2.5 ? "red" : w.delinq.current >= 1.75 ? "amber" : "green";
 
   return (<>
     <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 4 }}>
@@ -175,13 +141,9 @@ function DebtMarketTab() {
       </div>
     </div>
 
-    {/* Early-warning tiles */}
-    <SH>Early Warning — What Leads the Default Cycle</SH>
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(190px, 100%), 1fr))", gap: 10, marginBottom: 18 }}>
-      {w.sloos && <WarnTile label="Banks Tightening C&I" value={`${w.sloos.current?.toFixed(1)}%`} note={sloosTone === "green" ? "easy" : sloosTone === "amber" ? "tightening" : "credit crunch"} sub={`SLOOS net % · leads defaults 2–4q · ${w.sloos.lastDate.slice(0, 7)}`} pct={w.sloos.pct} spark={w.sloos.spark} tone={sloosTone} />}
-      {w.delinq && <WarnTile label="C&I Delinquency" value={`${w.delinq.current?.toFixed(2)}%`} note={delinqTone === "green" ? "low" : delinqTone === "amber" ? "creeping" : "elevated"} sub={`bank business loans · ${w.delinq.lastDate.slice(0, 7)}`} pct={w.delinq.pct} spark={w.delinq.spark} tone={delinqTone} />}
-      {data.rates?.fedfunds && <WarnTile label="Fed Funds" value={`${data.rates.fedfunds.current?.toFixed(2)}%`} sub="the base of every borrowing cost" pct={data.rates.fedfunds.pct} spark={data.rates.fedfunds.spark} />}
-      {data.rates?.dgs10 && <WarnTile label="10Y Treasury" value={`${data.rates.dgs10.current?.toFixed(2)}%`} sub="the IG refi benchmark" pct={data.rates.dgs10.pct} spark={data.rates.dgs10.spark} />}
+    {/* The leading gauges live elsewhere now — one pointer instead of a repeat */}
+    <div style={{ fontSize: 9.5, color: "#64748b", fontFamily: fonts.mono, paddingLeft: 12, marginTop: -8, marginBottom: 18, lineHeight: 1.5 }}>
+      Bank lending standards and delinquencies are on the Banks view of this tab; policy rates and the 10-year are on Rates &amp; Fed.
     </div>
 
     {/* Basket fundamentals */}

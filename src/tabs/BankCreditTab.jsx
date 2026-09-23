@@ -5,8 +5,11 @@ import { SH, InfoBox } from "../components/shared.jsx";
 
 /* ── Bank Credit — the lender's view of the credit cycle ─────────────────────
    Eisman's lens: banks see deterioration first and confess it in loan
-   growth, charge-offs, and provisions. Aggregate data from /api/bank-credit
-   (Fed H.8 weekly loan books + quarterly loss rates, all commercial banks).
+   growth, lending standards, delinquencies, charge-offs, and provisions.
+   This view is the dashboard's one home for bank delinquencies and the
+   Senior Loan Officer survey; the Corporate and Defaults views point here.
+   Aggregate data from /api/bank-credit (Fed H.8 weekly loan books + quarterly
+   delinquency, charge-off and SLOOS series, all commercial banks).
    Per-bank big-4 numbers are curated by hand at earnings time (see
    BIG4_LOANBOOK below) — FMP's as-reported bank statements proved partial
    to the point of being untrustworthy, and invented numbers are worse than
@@ -65,6 +68,21 @@ export default function BankCreditTab() {
     const byDate = {};
     for (const [id, l] of ids) for (const p of l.series || []) (byDate[p.d] = byDate[p.d] || { d: p.d })[id] = p.v;
     return { rows: Object.values(byDate).sort((a, b) => a.d.localeCompare(b.d)), keys: ids.map(([id, l]) => ({ id, label: l.label, color: l.color })) };
+  }, [data]);
+
+  // Delinquency rates + SLOOS lending standards (both quarterly), clipped to a
+  // common start so the two charts share a time axis and the lead reads across
+  const leads = useMemo(() => {
+    const merge = group => {
+      const ids = Object.entries(data?.losses || {}).filter(([, l]) => l.group === group);
+      const byDate = {};
+      for (const [id, l] of ids) for (const p of l.series || []) (byDate[p.d] = byDate[p.d] || { d: p.d })[id] = p.v;
+      return { rows: Object.values(byDate).sort((a, b) => a.d.localeCompare(b.d)), keys: ids.map(([id, l]) => ({ id, label: l.label, color: l.color })) };
+    };
+    const delinq = merge("delinq"), standards = merge("standards");
+    const start = [delinq.rows[0]?.d, standards.rows[0]?.d].filter(Boolean).sort().pop();
+    if (start) for (const m of [delinq, standards]) m.rows = m.rows.filter(r => r.d >= start);
+    return { delinq, standards };
   }, [data]);
 
   // Big-vs-small split (cards + C&I)
@@ -142,6 +160,49 @@ export default function BankCreditTab() {
       </div>
     </div>
 
+    {/* ── Delinquencies & lending standards — what comes before charge-offs ── */}
+    {(leads.delinq.rows.length > 0 || leads.standards.rows.length > 0) && (<>
+      <SH>Delinquencies and Lending Standards — What Comes Before the Losses</SH>
+      <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 16px 8px 6px", marginBottom: 14 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(340px, 100%), 1fr))", gap: 14 }}>
+          <div>
+            <div style={{ fontSize: 10.5, color: "#94a3b8", fontFamily: fonts.mono, paddingLeft: 12, marginBottom: 4 }}>Delinquency rate — % of loans 30+ days past due or nonaccrual</div>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={leads.delinq.rows} margin={{ top: 8, right: 12, left: -8, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <XAxis dataKey="d" tick={{ fill: "#475569", fontSize: 9, fontFamily: fonts.mono }} axisLine={{ stroke: "rgba(255,255,255,0.06)" }} tickLine={false} tickFormatter={d => d.slice(0, 4)} minTickGap={50} />
+                <YAxis tick={{ fill: "#475569", fontSize: 9, fontFamily: fonts.mono }} axisLine={false} tickLine={false} tickFormatter={x => `${x}%`} />
+                <Tooltip contentStyle={chartTooltip} formatter={(x, n) => [`${x}%`, n]} labelFormatter={d => d.slice(0, 10)} />
+                <Legend wrapperStyle={{ fontSize: 10, fontFamily: fonts.mono, paddingTop: 6 }} iconType="circle" iconSize={7} />
+                {leads.delinq.keys.map(k => (
+                  <Line key={k.id} type="monotone" dataKey={k.id} name={k.label} stroke={k.color} strokeWidth={k.id === "DRCLACBS" ? 2.2 : 1.5} dot={false} connectNulls isAnimationActive={false} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div>
+            <div style={{ fontSize: 10.5, color: "#94a3b8", fontFamily: fonts.mono, paddingLeft: 12, marginBottom: 4 }}>Lending standards — net % of banks tightening (above zero = tightening)</div>
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={leads.standards.rows} margin={{ top: 8, right: 12, left: -8, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
+                <XAxis dataKey="d" tick={{ fill: "#475569", fontSize: 9, fontFamily: fonts.mono }} axisLine={{ stroke: "rgba(255,255,255,0.06)" }} tickLine={false} tickFormatter={d => d.slice(0, 4)} minTickGap={50} />
+                <YAxis tick={{ fill: "#475569", fontSize: 9, fontFamily: fonts.mono }} axisLine={false} tickLine={false} tickFormatter={x => `${x}%`} />
+                <Tooltip contentStyle={chartTooltip} formatter={(x, n) => [`${x > 0 ? "+" : ""}${x}%`, n]} labelFormatter={d => d.slice(0, 10)} />
+                <Legend wrapperStyle={{ fontSize: 10, fontFamily: fonts.mono, paddingTop: 6 }} iconType="circle" iconSize={7} />
+                <ReferenceLine y={0} stroke="#94a3b8" strokeDasharray="4 4" strokeOpacity={0.6} />
+                {leads.standards.keys.map(k => (
+                  <Line key={k.id} type="monotone" dataKey={k.id} name={k.label} stroke={k.color} strokeWidth={1.7} dot={false} connectNulls isAnimationActive={false} />
+                ))}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+        <div style={{ fontSize: 9.5, color: "#64748b", fontFamily: fonts.mono, paddingLeft: 12, paddingBottom: 6, paddingTop: 4, lineHeight: 1.5 }}>
+          The sequence: tighter standards (Senior Loan Officer survey) lead delinquencies by roughly two to four quarters, and delinquencies lead the charge-offs above — a loan is written off only after months past due. All commercial banks, quarterly.
+        </div>
+      </div>
+    </>)}
+
     {/* ── Big vs small banks ── */}
     <SH>Where the Stress Hides — Top-100 Banks vs Everyone Else</SH>
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(175px, 100%), 1fr))", gap: 10, marginBottom: 12 }}>
@@ -201,7 +262,7 @@ export default function BankCreditTab() {
     )}
 
     <InfoBox color="#818cf8">
-      <strong style={{ color: "#cbd5e1" }}>The Eisman lens.</strong> Banks are the first to see credit deterioration — they watch every payment in the economy clear — and provisioning rules force them to <em>act</em> on what they see. So read this page top-down as a lie detector: the loan book says whether credit is flowing, charge-offs say what&apos;s already broken, the small-bank/big-bank gap says where it&apos;s breaking, and provisions (when curated) say what the best-informed lenders expect to break <em>next</em>. When all four agree with the Debt &amp; Credit tab&apos;s market spreads, trust the picture; when banks provision while spreads stay tight, trust the banks.
+      <strong style={{ color: "#cbd5e1" }}>The Eisman lens.</strong> Banks are the first to see credit deterioration — they watch every payment in the economy clear — and provisioning rules force them to <em>act</em> on what they see. So read this page top-down as a lie detector: the loan book says whether credit is flowing, charge-offs say what&apos;s already broken, standards and delinquencies say what&apos;s breaking now, the small-bank/big-bank gap says where it&apos;s breaking, and provisions (when curated) say what the best-informed lenders expect to break <em>next</em>. When they agree with the Corporate view&apos;s market spreads, trust the picture; when banks provision while spreads stay tight, trust the banks.
     </InfoBox>
   </>);
 }

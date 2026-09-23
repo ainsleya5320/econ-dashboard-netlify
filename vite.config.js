@@ -23,6 +23,7 @@ import { createTokenEstimates } from './server/tokenEstimates.js'
 import { createOwnerWealth } from './server/ownerWealth.js'
 import { createHouseholdWealth } from './server/householdWealth.js'
 import { createTokenSpot } from './server/tokenSpot.js'
+import { createTightening } from './server/tightening.js'
 import { createCapexReturns } from './server/capexReturns.js'
 import { createMunicipalities } from './server/municipalities.js'
 import { STATE_FIPS } from './src/lib/constants.js'
@@ -1418,12 +1419,10 @@ const CONSUMER_SERIES = {
   TERMCBCCALLNS: { label: 'Credit Card APR',          freq: 'M', limit: 240, unit: '%' },
   GASREGW:       { label: 'Gas Price (regular)',      freq: 'W', limit: 1200, unit: '$' },
   PSAVERT:       { label: 'Personal Savings Rate',    freq: 'M', limit: 480, unit: '%' },
-  DRCLACBS:      { label: 'Consumer Loan Delinquency',freq: 'Q', limit: 160, unit: '%' },
   DRCCLACBS:     { label: 'Credit Card Delinquency',  freq: 'Q', limit: 160, unit: '%' },
-  DRSFRMACBS:    { label: 'Mortgage Delinquency',     freq: 'Q', limit: 160, unit: '%' },
-  WFRBST01134:   { label: 'Top 1% Wealth Share',      freq: 'Q', limit: 160, unit: '%' },
-  WFRBSB50215:   { label: 'Bottom 50% Wealth Share',  freq: 'Q', limit: 160, unit: '%' },
   UMCSENT:       { label: 'Consumer Sentiment',       freq: 'M', limit: 480 },
+  // Consumer and mortgage delinquencies live on Credit → Banks; the wealth
+  // shares on this tab's Household Net Worth panel (Fed DFA). Not fetched here.
 }
 
 async function fetchConsumerHealth() {
@@ -1465,11 +1464,13 @@ async function fetchConsumerHealth() {
   }
   const incMap = yoyAt('DSPIC96'), spMap = yoyAt('PCEC96'), revMap = yoyAt('REVOLSL')
 
-  // Mechanism chart: income vs spending vs revolving-credit YoY, last 60 months
+  // Mechanism chart: income vs spending vs revolving-credit YoY, plus the
+  // saving rate (a level), last 60 months
   let mechanism = []
   if (incMap && spMap && revMap) {
+    const saveMap = Object.fromEntries((s.PSAVERT?.obs || []).map(o => [o.d.slice(0, 7), o.v]))
     const months = [...new Set([...Object.keys(incMap), ...Object.keys(spMap), ...Object.keys(revMap)])].sort().slice(-60)
-    mechanism = months.map(m => ({ d: `${m}-01`, income: incMap[m] ?? null, spend: spMap[m] ?? null, revolving: revMap[m] ?? null }))
+    mechanism = months.map(m => ({ d: `${m}-01`, income: incMap[m] ?? null, spend: spMap[m] ?? null, revolving: revMap[m] ?? null, saving: saveMap[m] ?? null }))
   }
 
   const incomeGrowth = s.DSPIC96?.yoy ?? null
@@ -1485,9 +1486,6 @@ async function fetchConsumerHealth() {
     gas: s.GASREGW?.current ?? null, gasYoY: s.GASREGW?.yoy ?? null,
     savings: s.PSAVERT?.current ?? null, savingsPct: s.PSAVERT?.pctRaw ?? null,
     cardDelinq: s.DRCCLACBS?.current ?? null, cardDelinqDir: s.DRCCLACBS?.deltaYr ?? null,
-    consumerDelinq: s.DRCLACBS?.current ?? null,
-    top1: s.WFRBST01134?.current ?? null, top1Dir: s.WFRBST01134?.deltaYr ?? null,
-    bottom50: s.WFRBSB50215?.current ?? null, bottom50Dir: s.WFRBSB50215?.deltaYr ?? null,
     sentiment: s.UMCSENT?.current ?? null, sentimentPct: s.UMCSENT?.pctRaw ?? null,
     mechanism,
   }
@@ -1908,6 +1906,11 @@ const BANK_LOSS_SERIES = {
   DRBLACBS:      { label: 'C&I (Business)',      group: 'delinq', color: '#10B981' },
   DRCRELEXFACBS: { label: 'Commercial RE',       group: 'delinq', color: '#F59E0B' },
   DRSFRMACBS:    { label: 'Residential Mortgage', group: 'delinq', color: '#818cf8' },
+  DRCLACBS:      { label: 'Consumer (all)',      group: 'delinq', color: '#22d3ee' },
+  // Senior Loan Officer survey: net % of banks tightening standards. Quarterly;
+  // leads delinquencies by two to four quarters.
+  DRTSCILM:      { label: 'C&I — large & mid firms', group: 'standards', color: '#10B981' },
+  DRTSCLCC:      { label: 'Credit cards',        group: 'standards', color: '#EC4899' },
   CORCCT100S:    { label: 'Cards — Top 100 banks', group: 'split', color: '#4ade80' },
   CORCCOBS:      { label: 'Cards — Small banks',   group: 'split', color: '#f87171' },
   CORBLT100S:    { label: 'C&I — Top 100 banks',   group: 'split2', color: '#4ade80' },
@@ -3967,6 +3970,12 @@ export default defineConfig({
         // rather than re-fetching its own copies over HTTP.
         const tokenSpot = createTokenSpot({ dir: __dirname, UA, semiH100: getSemiH100, aiPrices: getAiPrices })
         reRoute('/api/token-spot', () => tokenSpot.get())
+        // Tightening monitor (server/tightening.js): duration supply, auction
+        // absorption, the dollar's stock and flow, and the three derived views
+        // (the tell, divergence, sequence). FRED via the shared cache plus two
+        // Treasury FiscalData tables.
+        const tightening = createTightening({ fetchFredSeries, UA, dir: __dirname })
+        reRoute('/api/tightening', () => tightening.get())
 
         reRoute('/api/us-pulse', () => usPulse.get())
         reRoute('/api/intl-pulse', () => intlPulse.get())

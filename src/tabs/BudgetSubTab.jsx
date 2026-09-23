@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import createPlotlyComponent from "react-plotly.js/factory";
 import Plotly from "plotly.js-dist-min";
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, CartesianGrid, Legend, LineChart, Line } from "recharts";
+import { AreaChart, ComposedChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, CartesianGrid, Legend, LineChart, Line } from "recharts";
 import { fonts } from "../lib/styles.js";
 import { fetchFred } from "../lib/api.js";
 import {
@@ -61,8 +61,8 @@ async function fetchTable9(year, month) {
 
 const FRED_IDS = [
   ["FYFSGDA188S", 100], ["FYFRGDA188S", 100], ["FYONGDA188S", 100], ["FYOIGDA188S", 100],
-  ["A091RC1Q027SBEA", 120], ["FGRECPT", 120], ["FGEXPND", 120],
-  ["GFDEGDQ188S", 120], ["GFDEBTN", 120], ["DGS10", 40], ["GDP", 60],
+  ["A091RC1Q027SBEA", 160], ["FGRECPT", 160],
+  ["GFDEGDQ188S", 120], ["GFDEBTN", 160], ["DGS10", 40],
 ];
 
 function parseTable9(rows) {
@@ -197,6 +197,23 @@ function BudgetSubTab({ fredKey }) {
   const avgRate = marketable ? parseFloat(marketable.avg_interest_rate_amt) : null;
   const refiGap = fin(avgRate) && fin(y10) ? y10 - avgRate : null;
   const latestDefGdp = hist?.length ? [...hist].reverse().find(d => d.def != null) : null;
+
+  // The interest squeeze, quarterly: interest as a share of receipts, and the
+  // effective rate on the whole debt (interest ÷ debt outstanding). Interest as
+  // a share of GDP is on the share-of-GDP chart below, so it is not repeated.
+  const squeeze = useMemo(() => {
+    if (!f) return [];
+    const rec = new Map((f.FGRECPT || []).map(o => [o.d, o.v]));
+    const debtM = new Map((f.GFDEBTN || []).map(o => [o.d, o.v]));
+    return (f.A091RC1Q027SBEA || []).map(({ d, v }) => {
+      const r = rec.get(d), dm = debtM.get(d);
+      return {
+        d,
+        intRec: fin(r) && r > 0 ? +((v / r) * 100).toFixed(1) : null,
+        effRate: fin(dm) && dm > 0 ? +((v / (dm / 1000)) * 100).toFixed(2) : null,
+      };
+    }).filter(p => p.intRec != null);
+  }, [f]);
 
   const rateRows = useMemo(() => {
     if (!rates?.rows) return [];
@@ -340,19 +357,22 @@ function BudgetSubTab({ fredKey }) {
 
           <div>
             <ResponsiveContainer width="100%" height={196}>
-              <AreaChart data={filteredHist.filter(d => d.int != null)} margin={{ top: 6, right: 8, left: -10, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="b-int" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor={AMBER} stopOpacity={0.35} /><stop offset="95%" stopColor={AMBER} stopOpacity={0} /></linearGradient>
-                </defs>
+              <ComposedChart data={squeeze} margin={{ top: 6, right: 0, left: -10, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
                 <XAxis dataKey="d" tick={axis} axisLine={{ stroke: "var(--border-subtle)" }} tickLine={false} tickFormatter={d => d.slice(0, 4)} minTickGap={36} />
-                <YAxis tick={axis} axisLine={false} tickLine={false} tickFormatter={v => `${v.toFixed(1)}%`} />
-                <Tooltip contentStyle={tip} labelStyle={{ color: "var(--text-primary)", fontFamily: fonts.mono }} itemStyle={{ fontFamily: fonts.mono }} labelFormatter={d => `FY${d.slice(0, 4)}`} formatter={v => [pc(v, 2), "interest, % of GDP"]} />
-                <ReferenceLine y={3} stroke={`${RED}55`} strokeDasharray="4 4" label={{ value: "1991 post-war peak ≈ 3.2%", fill: RED, fontSize: 8.5, position: "insideTopRight", fontFamily: fonts.mono }} />
-                <Area type="monotone" dataKey="int" stroke={AMBER} fill="url(#b-int)" strokeWidth={2} dot={false} />
-              </AreaChart>
+                <YAxis yAxisId="l" tick={axis} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
+                <YAxis yAxisId="r" orientation="right" tick={axis} axisLine={false} tickLine={false} width={34} tickFormatter={v => `${v}%`} />
+                <Tooltip contentStyle={tip} labelStyle={{ color: "var(--text-primary)", fontFamily: fonts.mono }} itemStyle={{ fontFamily: fonts.mono }} labelFormatter={d => d.slice(0, 7)}
+                  formatter={(v, n) => [pc(v, n === "intRec" ? 1 : 2), n === "intRec" ? "interest, % of receipts" : "effective rate on the debt"]} />
+                <Area yAxisId="l" type="monotone" dataKey="intRec" name="intRec" stroke={AMBER} fill={AMBER} fillOpacity={0.15} strokeWidth={2} dot={false} />
+                <Line yAxisId="r" type="monotone" dataKey="effRate" name="effRate" stroke={CYAN} strokeWidth={1.4} dot={false} />
+              </ComposedChart>
             </ResponsiveContainer>
-            <Note>Interest as a share of GDP. The previous record was set in the early 1990s on a far smaller debt stock at far higher coupons; this time the stock is doing the work.</Note>
+            <Note>
+              The squeeze: interest as a share of federal receipts (amber, left) and the effective rate on the whole debt, interest ÷ debt
+              outstanding (cyan, right). The effective rate keeps rising as 1–2% debt matures into today's coupons, so the interest share
+              climbs even if yields go nowhere. Interest as a share of GDP is on the long-run chart below.
+            </Note>
           </div>
         </div>
       </Panel>

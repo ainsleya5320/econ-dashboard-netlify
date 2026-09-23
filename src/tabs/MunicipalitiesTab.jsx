@@ -180,7 +180,7 @@ export default function MunicipalitiesTab({ go }) {
     { label: "FHFA all-transactions, yoy", v: Hs.fhfa.yoy, unit: "%", d: Hs.fhfa.d, tone: toneRel(Hs.fhfa.yoy, 1, 1), note: `${Hs.fhfa.note}; ${pc(Hs.fhfa.fromPeak)} from peak` },
     { label: "Zillow home value (ZHVI)", v: Z?.zhvi, unit: "$", d: Z?.d, chg: Z?.zhviYoy, chgKind: "%", tone: toneRel(Z?.zhviYoy, 1, 1) },
     { label: "Zillow rent (ZORI)", v: Z?.zori, unit: "$", d: Z?.d, chg: Z?.zoriYoy, chgKind: "%", tone: toneRel(Z?.zoriYoy, 1, 1), note: `price-to-rent ${Z?.p2r}×, gross yield ${Z?.yield}%` },
-    { label: "Median list price", v: I.medList, unit: "$", d: I.d, chg: I.medListYoy, chgKind: "%", tone: toneRel(I.medListYoy, 1, 1), note: LS ? `Redfin sale price $${num(LS.price)} (${pc(LS.priceYoy)}), ${LS.reducedShare}% of listings cut` : "" },
+    { label: "Median list price", v: I.medList, unit: "$", d: I.d, chg: I.medListYoy, chgKind: "%", tone: toneRel(I.medListYoy, 1, 1), note: `Realtor.com via FRED${fin(LS?.reducedShare) ? ` · ${LS.reducedShare}% of listings cut` : ""}` },
     { label: "Active listings", v: I.active, unit: "", d: I.d, chg: I.activeYoy, chgKind: "%", tone: toneRel(-(I.activeYoy ?? 0), 1, 5), note: "rising inventory = softening" },
     { label: "New listings", v: I.newl, unit: "", d: I.d, chg: I.newYoy, chgKind: "%", tone: "slate" },
     { label: "Median days on market", v: I.dom, unit: " days", d: I.d, chg: fin(I.dom) && fin(I.dom1y) ? I.dom - I.dom1y : null, chgKind: "d", tone: toneRel(-((I.dom ?? 0) - (I.dom1y ?? 0)), 1, 3) },
@@ -190,7 +190,7 @@ export default function MunicipalitiesTab({ go }) {
     { label: `${Pr.cpi.label} CPI, all items yoy`, v: Pr.cpi.metro, unit: "%", d: Pr.cpi.d, tone: toneRel(-(Pr.cpi.metro ?? 0) + 2.5, 1, 0.5), note: `US ${pc(Pr.cpi.usAtSameMonth)} the same month; ${Pr.cpi.note}` },
     { label: `${Pr.rent.label} rent CPI, yoy`, v: Pr.rent.metro, unit: "%", d: Pr.rent.d, tone: toneRel(-(Pr.rent.metro ?? 0) + 3, 1, 0.5), note: `US ${pc(Pr.rent.usAtSameMonth)}` },
     { label: Pr.gas.label, v: Pr.gas.metro, unit: "$", dp: 2, d: Pr.gas.d, chg: Pr.gas.metroYoy, chgKind: "%", tone: toneRel(-(Pr.gas.metroYoy ?? 0), 1, 5), note: `US $${Pr.gas.us}; ${pc(Pr.gas.premium)} premium` },
-    { label: "Regional price parity", v: Pr.rpp.v, unit: "", dp: 1, d: Pr.rpp.d, tone: "slate", note: "BEA, US = 100 — the metro's overall price level" },
+    { label: "Regional price parity", v: Pr.rpp.v, unit: "", dp: 1, d: Pr.rpp.d, tone: "slate", note: `BEA, US = 100 — the metro's overall price level${fin(Pr.rpp.v) ? `; a dollar here buys what ${((100 / Pr.rpp.v) * 100).toFixed(0)} cents buys in the average metro` : ""}` },
   ].filter(r => r.v != null);
   const fmtV = r => (r.raw ? r.v : r.unit === "$" ? `$${num(r.v, r.dp ?? 0)}` : `${num(r.v, r.dp ?? (r.unit === "%" ? 1 : 0))}${r.unit}`);
   const fmtChg = r => (!fin(r.chg) ? "—" : r.chgKind === "pp" ? pp(r.chg) : r.chgKind === "d" ? `${sgn(r.chg)}${Math.abs(r.chg)}d` : pc(r.chg));
@@ -385,7 +385,8 @@ export default function MunicipalitiesTab({ go }) {
       <div style={{ ...card, padding: "6px 8px", overflowX: "auto" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead><tr>{th("Annual (lagged a year)", "left")}{th("Latest")}{th("Year")}{th("Δ yr")}{th("5-yr CAGR")}{th("15 yrs", "center")}</tr></thead>
-          <tbody>{d.growth.map(g => {
+          {/* regional price parity is on the Prices board above, so it is not repeated here */}
+          <tbody>{d.growth.filter(g => g.key !== "rpp").map(g => {
             const rate = g.unit === "%" || g.unit === "ratio" || g.unit === "index";
             return (
               <tr key={g.key} style={{ borderBottom: "1px solid rgba(255,255,255,0.035)" }} title={g.note}>
@@ -398,7 +399,7 @@ export default function MunicipalitiesTab({ go }) {
               </tr>);
           })}</tbody>
         </table>
-        <div style={{ ...note, marginTop: 6 }}>BEA and Census county series. Regional price parity of {Pr.rpp.v} means a dollar here buys what {fin(Pr.rpp.v) ? ((100 / Pr.rpp.v) * 100).toFixed(0) : "—"} cents buys in the average metro.</div>
+        <div style={{ ...note, marginTop: 6 }}>BEA and Census county series. Regional price parity is on the Prices board.</div>
       </div>
       <div style={{ display: "grid", gap: 12 }}>
         <div style={{ ...card, padding: "6px 8px", overflowX: "auto" }}>
