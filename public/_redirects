@@ -1,5 +1,10 @@
-# FMP is the one live path: a function that holds the key server-side.
+# FMP is a live path: a function that holds the key server-side.
 /api/fmp/*  /.netlify/functions/fmp/:splat  200
+
+# CBOE delayed option chains, proxied server-side (the dev server's /cboe-api).
+# CBOE sends no CORS headers, so the browser cannot fetch it directly; a 200
+# rewrite to an absolute URL makes Netlify fetch it and return it same-origin.
+/cboe-api/*  https://cdn-api.cboe.com/api/global/delayed_quotes/options/:splat  200
 
 # Nothing else routes through here. Every /api response is baked to a static
 # file at exactly the path the client requests (scripts/bake.mjs), which is what
