@@ -1,0 +1,76 @@
+name: Special situations digest
+
+# Builds the Special Situations feed, scores it (server/specialScore.js) and
+# emails new ideas at or above MIN_SCORE through Resend — the same service the
+# WARN digest uses. Memory of what was sent lives in the Actions cache, not in
+# the repo, so the job never commits.
+#
+# Secrets to add under Settings → Secrets and variables → Actions:
+#   FMP_KEY            the dashboard's FMP key
+#   RESEND_API_KEY     the Resend key (the WARN digest's works)
+#   DIGEST_TO_EMAIL    where the email goes
+#   DIGEST_FROM_EMAIL  optional; defaults to onboarding@resend.dev
+
+on:
+  schedule:
+    # 14:30 UTC = 07:30 Pacific during daylight time (06:30 in winter), weekdays
+    - cron: "30 14 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      min_score:
+        description: "Email ideas scoring at least"
+        default: "50"
+      dry_run:
+        description: "Build and score only, send nothing"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: special-digest
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    # the Netlify fork merges this file from upstream; only upstream sends
+    if: github.repository == 'ainsleya5320/econ-dashboard'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # what has been sent, plus the parsed-filing archive so each run reads
+      # only filings it has not seen
+      - name: Restore digest memory
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            state/special-digest.json
+            special-archive.json
+          key: special-digest-${{ github.run_id }}
+          restore-keys: special-digest-
+
+      - name: Build, score and send
+        env:
+          FMP_KEY: ${{ secrets.FMP_KEY }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          DIGEST_TO_EMAIL: ${{ secrets.DIGEST_TO_EMAIL }}
+          DIGEST_FROM_EMAIL: ${{ secrets.DIGEST_FROM_EMAIL }}
+          MIN_SCORE: ${{ github.event.inputs.min_score || '50' }}
+          DRY_RUN: ${{ github.event.inputs.dry_run == 'true' && '1' || '0' }}
+        run: node scripts/special-digest.mjs
+
+      - name: Save digest memory
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            state/special-digest.json
+            special-archive.json
+          key: special-digest-${{ github.run_id }}

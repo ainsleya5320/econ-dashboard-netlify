@@ -13,6 +13,10 @@ import { LS, lsGet, lsSet } from "../../lib/deploy.js";
 //            insider clusters, activist 13Ds, pre-deal SPACs priced against
 //            trust, buyback authorisations sized against market cap. Every number pulled from a filing
 //            is a regex match and is labelled parsed.
+//   Top ideas  every board scored and ranked in one list (server/specialScore.js):
+//            situation quality, freshness, catalyst, confluence across boards,
+//            less confidence penalties — each point with its reason. The same
+//            scores drive the weekday email digest (scripts/special-digest.mjs).
 //   Deal Book  the pins: thesis, notes, key dates and the per-type checklist,
 //            persisted server-side. The boards find; the book decides.
 // Data: /api/special-situations and /api/special-dealbook (server/specialSituations.js).
@@ -24,7 +28,7 @@ const CAT = {
   rights: { label: "Rights", color: GREEN }, recap: { label: "Recap", color: AMBER }, insider: { label: "Insider", color: VIOLET }, "13D": { label: "13D", color: PINK },
   spac: { label: "SPAC", color: SKY }, buyback: { label: "Buyback", color: YELLOW },
 };
-const VIEW_ACCENT = { book: INDIGO, spinoffs: INDIGO, mergers: CYAN, reorg: ORANGE, rights: GREEN, recaps: AMBER, insider: VIOLET, activist: PINK, spacs: SKY, buybacks: YELLOW };
+const VIEW_ACCENT = { ideas: GREEN, book: INDIGO, spinoffs: INDIGO, mergers: CYAN, reorg: ORANGE, rights: GREEN, recaps: AMBER, insider: VIOLET, activist: PINK, spacs: SKY, buybacks: YELLOW };
 const fin = v => v != null && isFinite(v);
 const card = { background: cardBg, border: cardBorder, borderRadius: 14, padding: "12px 14px" };
 const label = { fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.5, textTransform: "uppercase" };
@@ -74,23 +78,27 @@ const CHECKLIST = {
 export default function SpecialSituations({ onSelectStock }) {
   const [d, setD] = useState(null);
   const [err, setErr] = useState(null);
-  const [book, setBook] = useState({ entries: [] });
+  const [book, setBook] = useState({ entries: [], dismissed: [] });
   const [view, setView] = useState(null);
   const [secs, setSecs] = useState(0);
+  const [minScore, setMinScore] = useState(45);
+  const [catFilter, setCatFilter] = useState(null);
+  const [showDismissed, setShowDismissed] = useState(false);
+  const [ideaLimit, setIdeaLimit] = useState(25);
   const saveTimer = useRef(null);
 
   useEffect(() => {
     let alive = true;
     fetch("/api/special-situations").then(r => r.json()).then(x => { if (!alive) return; if (x.error) setErr(x.error); else setD(x); }).catch(e => alive && setErr(String(e)));
-    // Netlify fork: this build cannot write to the server, so pins live in
-    // localStorage. Anything saved here wins over the snapshot baked at build
-    // time; with nothing saved yet, that snapshot is the starting point.
+    // Netlify fork: this build cannot write to the server, so pins and dismissals
+    // live in localStorage. Anything saved here wins over the snapshot baked at
+    // build time; with nothing saved yet, that snapshot is the starting point.
     const local = lsGet(LS.dealbook);
     if (local && Array.isArray(local.entries)) {
-      setBook(local); setView(v => v || (local.entries.length ? "book" : "spinoffs"));
+      setBook({ ...local, dismissed: local.dismissed || [] }); setView(v => v || "ideas");
       return;
     }
-    fetch("/api/special-dealbook").then(r => r.json()).then(x => { if (!alive) return; const b = x && Array.isArray(x.entries) ? x : { entries: [] }; setBook(b); setView(v => v || (b.entries.length ? "book" : "spinoffs")); }).catch(() => setView(v => v || "spinoffs"));
+    fetch("/api/special-dealbook").then(r => r.json()).then(x => { if (!alive) return; const b = x && Array.isArray(x.entries) ? { ...x, dismissed: x.dismissed || [] } : { entries: [], dismissed: [] }; setBook(b); setView(v => v || "ideas"); }).catch(() => setView(v => v || "ideas"));
     const t = setInterval(() => setSecs(s => s + 1), 1000);
     return () => { alive = false; clearInterval(t); };
   }, []);
@@ -494,6 +502,69 @@ export default function SpecialSituations({ onSelectStock }) {
     );
   };
 
+  // ── top ideas: every board, scored and ranked ─────────────────────────────
+  const GRADE_COLOR = { A: GREEN, B: CYAN, C: SLATE };
+  const dismissedSet = new Set(book.dismissed || []);
+  const dismiss = id => persist({ ...book, dismissed: dismissedSet.has(id) ? (book.dismissed || []).filter(x => x !== id) : [...(book.dismissed || []), id] });
+  const topIdeas = () => {
+    const all = d.ideas || [];
+    const list = all.filter(i => i.score >= minScore && (!catFilter || i.cat === catFilter) && (showDismissed || !dismissedSet.has(i.id)));
+    const shown = list.slice(0, ideaLimit);
+    const btn = (on, onClick, children, color = GREEN) => <button onClick={onClick} style={{ padding: "3px 9px", borderRadius: 6, cursor: "pointer", fontSize: 10, fontFamily: fonts.mono, border: `1px solid ${on ? color : "rgba(255,255,255,0.12)"}`, background: on ? `${color}1f` : "transparent", color: on ? color : SLATE }}>{children}</button>;
+    return (<>
+      <div style={{ ...card, marginBottom: 10 }}>
+        <div style={{ fontSize: 10.5, color: SLATE, fontFamily: fonts.mono, lineHeight: 1.6 }}>
+          Every board scored on one 0–100 scale: <b style={{ color: "#cbd5e1" }}>situation quality</b> (each type&apos;s own tests from Greenblatt and Suria),{" "}
+          <b style={{ color: "#cbd5e1" }}>freshness</b>, a <b style={{ color: "#cbd5e1" }}>catalyst</b> inside six weeks, and <b style={{ color: "#cbd5e1" }}>confluence</b> — the same
+          stock turning up on another board, the strongest single signal — less penalties where the terms were not read or a number looks wrong.
+          One row per stock; the other boards it is on ride along. A ≥ 60 research now · B ≥ 45 worth a look · C ≥ 30 on the radar.
+          New ideas scoring 50 or more are emailed on weekday mornings once the digest is switched on.
+        </div>
+        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center", marginTop: 8 }}>
+          {[[60, "A only"], [45, "A + B"], [30, "A + B + C"], [0, "everything"]].map(([v, l]) => <React.Fragment key={v}>{btn(minScore === v, () => { setMinScore(v); setIdeaLimit(25); }, l)}</React.Fragment>)}
+          <span style={{ width: 6 }} />
+          {btn(!catFilter, () => setCatFilter(null), "all boards", SLATE)}
+          {Object.entries(CAT).map(([k, c]) => <React.Fragment key={k}>{btn(catFilter === k, () => setCatFilter(catFilter === k ? null : k), c.label, c.color)}</React.Fragment>)}
+          <span style={{ width: 6 }} />
+          {btn(showDismissed, () => setShowDismissed(v => !v), `dismissed · ${dismissedSet.size}`, SLATE)}
+          <span style={{ ...note, marginLeft: "auto" }}>{list.length} ideas</span>
+        </div>
+      </div>
+      {shown.length === 0 && <div style={{ ...card, ...note, padding: 18, textAlign: "center" }}>Nothing at this bar. Lower the grade filter to see more.</div>}
+      {shown.map(i => {
+        const gc = GRADE_COLOR[i.grade] || DIM, off = dismissedSet.has(i.id);
+        return (
+          <div key={i.id} style={{ ...card, marginBottom: 8, display: "grid", gridTemplateColumns: "48px minmax(0,1fr) auto", gap: 12, alignItems: "start", opacity: off ? 0.5 : 1 }}>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ width: 44, height: 44, borderRadius: 22, border: `2px solid ${gc}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, fontWeight: 800, color: gc, fontFamily: fonts.heading }}>{i.score}</div>
+              <div style={{ fontSize: 9, fontFamily: fonts.mono, color: gc, marginTop: 3 }}>{i.grade}</div>
+            </div>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ display: "flex", flexWrap: "wrap", alignItems: "baseline", gap: 6 }}>
+                <Pill color={CAT[i.cat]?.color || SLATE} ml={0}>{CAT[i.cat]?.label || i.cat}</Pill>
+                <Tk t={i.ticker} />
+                <span style={{ fontSize: 11, color: "var(--text-secondary)", fontFamily: fonts.mono }}>{i.name}</span>
+                {i.catalyst && <Pill color={AMBER}>{i.catalyst.label} {fd(i.catalyst.date)}</Pill>}
+                {i.alsoIdeas.map(a => <Pill key={a.cat} color={CAT[a.cat]?.color || SLATE}>also {CAT[a.cat]?.label || a.cat} · {a.score}</Pill>)}
+              </div>
+              <div style={{ fontSize: 11.5, color: "#e2e8f0", fontFamily: fonts.mono, marginTop: 4, lineHeight: 1.45 }}>{i.headline}</div>
+              <div style={{ marginTop: 4 }}>
+                {i.reasons.slice(0, 5).map((r, k) => <div key={k} style={{ fontSize: 10, fontFamily: fonts.mono, color: SLATE, lineHeight: 1.5 }}><span style={{ color: GREEN, display: "inline-block", width: 30 }}>+{r.pts}</span>{r.why}</div>)}
+                {i.risks.map((r, k) => <div key={`r${k}`} style={{ fontSize: 10, fontFamily: fonts.mono, color: AMBER, lineHeight: 1.5 }}><span style={{ display: "inline-block", width: 30 }}>{r.pts}</span>{r.why}</div>)}
+              </div>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, alignItems: "flex-end" }}>
+              <PinBtn cat={i.cat} k={i.key} fields={i.pin} />
+              <button onClick={() => dismiss(i.id)} title={off ? "Bring back" : "Not interested — hide it here"} style={{ background: "transparent", border: "1px solid rgba(255,255,255,0.12)", color: DIM, borderRadius: 5, fontSize: 10, padding: "1px 6px", cursor: "pointer", fontFamily: fonts.mono }}>{off ? "↺" : "✕"}</button>
+              {i.url && <A href={i.url}><span style={{ fontSize: 9.5, fontFamily: fonts.mono }}>filing ↗</span></A>}
+            </div>
+          </div>
+        );
+      })}
+      {list.length > shown.length && <div style={{ textAlign: "center", margin: "6px 0 10px" }}>{btn(false, () => setIdeaLimit(n => n + 25), `show 25 more of ${list.length - shown.length}`, SLATE)}</div>}
+    </>);
+  };
+
   // ── the Deal Book ─────────────────────────────────────────────────────────
   const dealBook = () => {
     const entries = book.entries;
@@ -542,7 +613,9 @@ export default function SpecialSituations({ onSelectStock }) {
     );
   };
 
+  const ideasAB = (d.ideas || []).filter(i => i.score >= 45 && !dismissedSet.has(i.id)).length;
   const views = [
+    { id: "ideas", label: `★ Top ideas · ${ideasAB}`, render: topIdeas },
     { id: "book", label: `Deal Book${book.entries.length ? ` · ${book.entries.length}` : ""}`, render: dealBook },
     { id: "spinoffs", label: `Spinoffs · ${d.spinoffs.length}`, render: spinoffs },
     { id: "mergers", label: `Merger arb · ${d.mergers.length}`, render: mergers },
@@ -557,7 +630,7 @@ export default function SpecialSituations({ onSelectStock }) {
 
   return (<>
     {header}
-    <SubViews views={views} view={view || "spinoffs"} onChange={setView} accent={VIEW_ACCENT[view] || INDIGO} />
+    <SubViews views={views} view={view || "ideas"} onChange={setView} accent={VIEW_ACCENT[view] || INDIGO} />
     <div style={{ marginTop: 14 }}>
       <InfoBox color={INDIGO}>
         <b>How this works.</b> {d.source} Nothing here is a recommendation: a row is a filing that matches a pattern, and the numbers next to it are what a regular expression found in that filing, checked against a live quote. The books&apos; actual method — reading the Form 10 for insider incentives, the plan for the new balance sheet, the proxy for the break price — happens in the Deal Book, which keeps your thesis, dates and the checklist for each situation type on this machine.

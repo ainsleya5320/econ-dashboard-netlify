@@ -38,6 +38,7 @@
 // ============================================================================
 import fs from 'node:fs'
 import path from 'node:path'
+import { scoreIdeas } from './specialScore.js'
 
 const H = 3600e3, TTL = 6 * H, DAY = 864e5
 const fin = v => v != null && Number.isFinite(v)
@@ -628,7 +629,8 @@ export function createSpecialSituations({ fetchYahooSparkline, FMP_KEY, UA, dir,
       if (x.d < d90) continue
       const g = bySym.get(x.s) || { symbol: x.s, buys30: 0, buyers30: new Set(), dollars30: 0, shares30: 0, buys90: 0, buyers90: new Set(), dollars90: 0, shares90: 0, ceoCfo: false, tenPctOnly: true, last: x.d, names: new Map() }
       const usd = x.sh * x.p
-      const exec = /chief executive|chief financial|\bceo\b|\bcfo\b|president/i.test(x.t)
+      // "president" alone, not every vice president
+      const exec = /chief executive|chief financial|\bceo\b|\bcfo\b/i.test(x.t) || (/president/i.test(x.t) && !/vice[ -]?president/i.test(x.t))
       if (exec) g.ceoCfo = true
       if (!/10 percent/i.test(x.t) || /director|officer/i.test(x.t)) g.tenPctOnly = false
       g.buys90++; g.buyers90.add(x.c); g.dollars90 += usd; g.shares90 += x.sh
@@ -844,23 +846,31 @@ export function createSpecialSituations({ fetchYahooSparkline, FMP_KEY, UA, dir,
     }
   }
 
+  // The ranked ideas (server/specialScore.js) are scored on the way out rather
+  // than stored, so freshness is measured from today even on a cached build.
+  const scored = d => (d ? { ...d, ideas: scoreIdeas(d) } : d)
   async function get() {
-    if (mem && Date.now() - mem.ts < TTL) return mem
-    if (!mem) { const disk = load(FILE); if (disk && Date.now() - disk.ts < TTL) { mem = disk; return mem } }
-    if (inflight) return inflight
+    if (mem && Date.now() - mem.ts < TTL) return scored(mem)
+    if (!mem) { const disk = load(FILE); if (disk && Date.now() - disk.ts < TTL) { mem = disk; return scored(mem) } }
+    if (inflight) return inflight.then(scored)
     inflight = (async () => {
       try { const d = await build(); mem = d; save(FILE, d); return d }
       catch (e) { console.warn('special situations build:', e.message); const disk = mem || load(FILE); if (disk) return disk; throw e }
       finally { inflight = null }
     })()
-    return inflight
+    return inflight.then(scored)
   }
 
   // ── the Deal Book: the user's own pins, notes, dates and checklists ───────
   const dealBook = {
     list() { return load(BOOK) || { entries: [] } },
-    save(obj) { const entries = Array.isArray(obj?.entries) ? obj.entries.slice(0, 500) : []; const out = { ts: Date.now(), entries }; save(BOOK, out); return out },
+    save(obj) {
+      const entries = Array.isArray(obj?.entries) ? obj.entries.slice(0, 500) : []
+      // ideas marked "not interested" on the Top ideas view, by idea id
+      const dismissed = Array.isArray(obj?.dismissed) ? obj.dismissed.filter(x => typeof x === 'string').slice(-2000) : []
+      const out = { ts: Date.now(), entries, dismissed }; save(BOOK, out); return out
+    },
   }
 
-  return { get, dealBook }
+  return { get, build, dealBook }
 }

@@ -79,3 +79,6 @@ data/ai/silicon-data-marks.json
 tightening.json
 # Trade flows: 12h feed cache (re-derivable; data/fx/invoicing.json is the tracked reference table)
 trade-flows.json
+# Special situations digest: local preview and run memory (the Actions job keeps its own in the cache)
+special-digest-preview.html
+state/
