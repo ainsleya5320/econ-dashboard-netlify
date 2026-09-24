@@ -4505,8 +4505,11 @@ export default defineConfig({
     // invisible to the dev server until restart). Poll instead.
     watch: { usePolling: true, interval: 1200 },
     proxy: {
+      // CBOE moved the delayed-quotes CDN to cdn-api.cboe.com in Sept 2026; the
+      // old host now answers with a 307, which the proxy hands to the browser,
+      // which follows it cross-origin into a CORS block. Target the new host.
       '/cboe-api': {
-        target: 'https://cdn.cboe.com/api/global/delayed_quotes/options',
+        target: 'https://cdn-api.cboe.com/api/global/delayed_quotes/options',
         changeOrigin: true,
         rewrite: path => path.replace(/^\/cboe-api/, ''),
         secure: true,
