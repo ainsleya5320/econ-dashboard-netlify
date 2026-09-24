@@ -16,6 +16,7 @@ import SP500Overview from "./stocks/SP500Overview.jsx";
 import PeopleScreener from "./stocks/PeopleScreener.jsx";
 import SpecialSituations from "./stocks/SpecialSituations.jsx";
 import StockResearchSheet from "./stocks/StockResearchSheet.jsx";
+import TechnicalAnalysis from "./stocks/TechnicalAnalysis.jsx";
 import {fetchStockDetail} from "../lib/stockDetail.js";
 
 const Plot = createPlotlyComponent(Plotly);
@@ -1037,7 +1038,7 @@ function StockDetailView({ data, onBack, fmpKey }) {
   const DETAIL_TABS = [
     { id: "classic",    label: "Research sheet" },
     { id: "summary",    label: "Financial checks" },
-    { id: "chart",      label: "Chart" },
+    { id: "technicals", label: "Technical analysis" },
     { id: "ratios",     label: "Key Ratios" },
     { id: "financials", label: "Profitability waterfall" },
     { id: "dcf",        label: "Valuation" },
@@ -1156,8 +1157,8 @@ function StockDetailView({ data, onBack, fmpKey }) {
       )}
     </>)}
 
-    {/* ═══ CHART ═══ */}
-    {viewMode === "chart" && priceChart(360)}
+    {/* ═══ TECHNICAL ANALYSIS — replaces the old 90-day chart view ═══ */}
+    {viewMode === "technicals" && <TechnicalAnalysis data={data} fmpKey={fmpKey} />}
 
     {/* ═══ PEERS ═══ */}
     {viewMode === "peers" && <PeerCompare symbol={symbol} fmpKey={fmpKey} />}
