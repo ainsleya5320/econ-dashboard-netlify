@@ -8,6 +8,7 @@ import { quoteQuality } from "../lib/optionsAnalysis.js";
 import { RateCard, SH, InfoBox } from "../components/shared.jsx";
 import ProfitSankey from "./stocks/ProfitSankey.jsx";
 import TickerSearch from "../components/TickerSearch.jsx";
+import DebtCash from "./stocks/DebtCash.jsx";
 import { ValuationBands, PeerCompare, DividendSafety, EarningsWeekAhead, PIEPanel, SyntheticRating } from "./stocks/ResearchPanels.jsx";
 import SP500Screener from "./stocks/SP500Screener.jsx";
 import ExpectationsPanel, { consensusGrowth } from "./stocks/ExpectationsPanel.jsx";
@@ -269,8 +270,9 @@ function ReverseDCF({ data }) {
     <SH>Financial Snapshot</SH>
     <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(140px, 100%),1fr))", gap: 10, marginBottom: 14 }}>
       <RateCard label="Stock Price" value={price} color="#818cf8" format="plain" subtitle={price ? `$${price.toFixed(2)}` : null} small />
-      <RateCard label="Market Cap" value={mktCap} color="#3B82F6" format="bigdollar" small />
-      <RateCard label="TTM Free Cash Flow" value={fcf} color="#10B981" format="bigdollar" small />
+      {/* bigdollar takes $ millions */}
+      <RateCard label="Market Cap" value={mktCap / 1e6} color="#3B82F6" format="bigdollar" small />
+      <RateCard label={`FY${lastCF?.fiscalYear ?? ""} Free Cash Flow`} value={fcf / 1e6} color="#10B981" format="bigdollar" small />
       <RateCard label="FCF / Share" value={fcfPerShare} color="#F59E0B" format="plain" subtitle={fcfPerShare ? `$${fcfPerShare.toFixed(2)}` : null} small />
       <RateCard label="Hist. FCF CAGR" value={histCAGR != null ? histCAGR * 100 : null} color="#8B5CF6" subtitle={histCAGR != null ? `${(histCAGR*100).toFixed(1)}% over ${data.cf.filter(c=>c.freeCashFlow>0).length-1}yr` : "N/A"} small />
     </div>
@@ -1024,7 +1026,6 @@ function VolSurface({ symbol, spot: initialSpot, chain: sharedChain }) {
 function StockDetailView({ data, onBack, fmpKey }) {
   const { symbol, years, prof } = data;
   const [viewMode, setViewMode] = useState("classic");
-  const [descExpanded, setDescExpanded] = useState(false);
 
   const q = data.quote || {};
   const chg = q.change ?? 0;
@@ -1033,51 +1034,17 @@ function StockDetailView({ data, onBack, fmpKey }) {
   const chgColor = isUp ? "#4ade80" : "#f87171";
   const fmtNum = (n) => n != null && !isNaN(n) ? Number(n).toLocaleString(undefined, { maximumFractionDigits: 2 }) : "—";
   const fmtBig = (n) => { if (n == null) return "—"; const a = Math.abs(n); if (a >= 1e12) return `$${(n/1e12).toFixed(2)}T`; if (a >= 1e9) return `$${(n/1e9).toFixed(2)}B`; if (a >= 1e6) return `$${(n/1e6).toFixed(2)}M`; return `$${fmtNum(n)}`; };
-  const fmtVol = (n) => { if (n == null) return "—"; if (n >= 1e6) return `${(n/1e6).toFixed(2)}M`; if (n >= 1e3) return `${(n/1e3).toFixed(1)}K`; return n.toLocaleString(); };
 
   // Morningstar-style subtabs — content areas when a stock is in context
   const DETAIL_TABS = [
     { id: "classic",    label: "Research sheet" },
-    { id: "summary",    label: "Financial checks" },
+    { id: "summary",    label: "Debt & cash" },
     { id: "technicals", label: "Technical analysis" },
     { id: "ratios",     label: "Key Ratios" },
     { id: "financials", label: "Profitability waterfall" },
     { id: "dcf",        label: "Valuation" },
     { id: "peers",      label: "Peers" },
   ];
-
-  const priceChart = (height) => (
-    data.hist && data.hist.length > 1 ? (
-      <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "16px 16px 10px", marginBottom: 16 }}>
-        <ResponsiveContainer width="100%" height={height}>
-          <AreaChart data={data.hist} margin={{ top: 4, right: 0, left: 0, bottom: 0 }}>
-            <defs>
-              <linearGradient id="priceGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={chgColor} stopOpacity={0.3} />
-                <stop offset="100%" stopColor={chgColor} stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <XAxis dataKey="date" hide={height < 200} tick={{ fill: "#475569", fontSize: 9, fontFamily: fonts.mono }} axisLine={{ stroke: "rgba(255,255,255,0.06)" }} tickLine={false} interval={Math.max(0, Math.floor((data.hist.length) / 8) - 1)} />
-            <YAxis domain={["dataMin", "dataMax"]} hide={height < 200} tick={{ fill: "#475569", fontSize: 9, fontFamily: fonts.mono }} axisLine={false} tickLine={false} tickFormatter={v => `$${Number(v).toFixed(0)}`} orientation="right" />
-            <Tooltip contentStyle={{ background: "#1e293b", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 11, fontFamily: fonts.mono }} labelStyle={{ color: "#94a3b8" }} formatter={(v) => [`$${Number(v).toFixed(2)}`, "Price"]} />
-            <Area type="monotone" dataKey="close" stroke={chgColor} fill="url(#priceGrad)" strokeWidth={1.5} dot={false} />
-          </AreaChart>
-        </ResponsiveContainer>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 9, color: "#475569", fontFamily: fonts.mono, marginTop: 4 }}>
-          <span>{data.hist[0]?.date}</span>
-          <span style={{ color: "#64748b" }}>90-Day Price History</span>
-          <span>{data.hist[data.hist.length - 1]?.date}</span>
-        </div>
-      </div>
-    ) : null
-  );
-
-  const statCell = (label, val) => (
-    <div key={label} style={{ padding: "8px 0" }}>
-      <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, marginBottom: 2 }}>{label}</div>
-      <div style={{ fontSize: 12, color: "var(--text-primary)", fontFamily: fonts.mono, fontWeight: 500 }}>{val}</div>
-    </div>
-  );
 
   return (<div className="stock-detail-shell">
     {/* ── Breadcrumb ── */}
@@ -1122,40 +1089,13 @@ function StockDetailView({ data, onBack, fmpKey }) {
     </nav>
     {viewMode==='classic'&&<StockResearchSheet data={data}/>}
 
-    {/* ═══ SUMMARY ═══ */}
+    {/* ═══ DEBT & CASH — leverage, coverage, cash conversion, working capital ═══ */}
     {viewMode === "summary" && (<>
-      {priceChart(120)}
-      {data.quote && (
-        <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 22px", marginBottom: 16 }}>
-          <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.6, textTransform: "uppercase", marginBottom: 4 }}>Trading Information</div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(130px, 100%), 1fr))", gap: "0 24px" }}>
-            {statCell("Open", `$${fmtNum(q.open)}`)}
-            {statCell("Prev Close", `$${fmtNum(q.previousClose)}`)}
-            {statCell("Day Range", `$${fmtNum(q.dayLow)} – $${fmtNum(q.dayHigh)}`)}
-            {statCell("52-Wk Range", `$${fmtNum(q.yearLow)} – $${fmtNum(q.yearHigh)}`)}
-            {statCell("Volume", fmtVol(q.volume))}
-            {statCell("Avg Volume", fmtVol(q.avgVolume ?? prof?.volAvg))}
-            {statCell("Market Cap", fmtBig(q.marketCap ?? prof?.mktCap))}
-            {statCell("P/E", fmtNum(q.pe ?? data.rat?.[data.rat.length-1]?.priceToEarningsRatio))}
-            {statCell("EPS", `$${fmtNum(q.eps ?? data.inc?.[data.inc.length-1]?.epsDiluted)}`)}
-            {statCell("50-Day Avg", `$${fmtNum(q.priceAvg50 ?? prof?.priceAvg50)}`)}
-            {statCell("200-Day Avg", `$${fmtNum(q.priceAvg200 ?? prof?.priceAvg200)}`)}
-          </div>
-        </div>
-      )}
-      {/* Valuation vs its own 20-year history */}
-      <ValuationBands data={data} fmpKey={fmpKey} />
+      <DebtCash data={data} />
       {/* Damodaran synthetic credit rating from interest coverage */}
       <SyntheticRating data={data} />
       {/* Dividend safety read */}
       <DividendSafety data={data} fmpKey={fmpKey} />
-      {prof?.description && (
-        <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "14px 22px", marginBottom: 16 }}>
-          <div style={{ fontSize: 10, color: "#64748b", fontFamily: fonts.mono, letterSpacing: 0.6, textTransform: "uppercase", marginBottom: 6 }}>About {prof?.companyName || symbol}</div>
-          <div style={{ fontSize: 11.5, color: "#94a3b8", lineHeight: 1.65, maxHeight: descExpanded ? "none" : 78, overflow: "hidden" }}>{prof.description}</div>
-          <span onClick={() => setDescExpanded(p => !p)} style={{ fontSize: 10, color: "#818cf8", cursor: "pointer", fontFamily: fonts.mono, marginTop: 6, display: "inline-block" }}>{descExpanded ? "Show less ▲" : "Show more ▼"}</span>
-        </div>
-      )}
     </>)}
 
     {/* ═══ TECHNICAL ANALYSIS — replaces the old 90-day chart view ═══ */}
@@ -1169,6 +1109,8 @@ function StockDetailView({ data, onBack, fmpKey }) {
 
     {/* ═══ VALUATION — reverse DCF + price-implied expectations ═══ */}
     {viewMode === "dcf" && (<>
+      {/* Valuation vs its own 20-year history */}
+      <ValuationBands data={data} fmpKey={fmpKey} />
       <ReverseDCF data={data} />
       <PIEPanel data={data} />
     </>)}
