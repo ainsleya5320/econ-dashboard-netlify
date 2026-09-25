@@ -20,6 +20,9 @@ const ALLOWED = new Set([
   'ratios-ttm', 'key-metrics-ttm', 'income-statement', 'balance-sheet-statement',
   'cash-flow-statement', 'enterprise-values', 'analyst-estimates',
   'price-target-consensus', 'stock-peers', 'market-capitalization',
+  // the stock page's research sheet: annual ratios and key metrics (ROIC,
+  // ROE), and the analyst ratings summary
+  'ratios', 'key-metrics', 'grades-consensus',
 ])
 
 export default async (req) => {
@@ -27,17 +30,22 @@ export default async (req) => {
   if (!key) return json({ error: 'FMP_KEY is not set on this deploy' }, 500)
 
   const url = new URL(req.url)
-  // /.netlify/functions/fmp/quote?symbol=AAPL  ->  endpoint "quote"
-  const endpoint = url.pathname.replace(/^.*\/fmp\/?/, '').split('/')[0]
+  // /api/fmp/historical-price-eod/full?symbol=AAPL -> path "historical-price-eod/full",
+  // allowlisted on its first segment. The whole path is forwarded: keeping only
+  // the first segment turned ".../full" into a different endpoint and broke
+  // five-year price history on the deployed site.
+  const sub = url.pathname.replace(/^.*\/fmp\/?/, '')
+  const endpoint = sub.split('/')[0]
   if (!endpoint) return json({ error: 'no endpoint given' }, 400)
   if (!ALLOWED.has(endpoint)) return json({ error: `endpoint not allowed: ${endpoint}` }, 403)
+  if (!/^[a-z0-9-]+(\/[a-z0-9-]+)*$/.test(sub)) return json({ error: 'bad path' }, 400)
 
   const qs = new URLSearchParams(url.search)
   qs.delete('apikey')          // never honour a caller-supplied key
   qs.set('apikey', key)
 
   try {
-    const r = await fetch(`${UPSTREAM}/${endpoint}?${qs}`, {
+    const r = await fetch(`${UPSTREAM}/${sub}?${qs}`, {
       headers: { 'User-Agent': 'econ-dashboard (netlify)' },
       signal: AbortSignal.timeout(8000),
     })
