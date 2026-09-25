@@ -6,7 +6,8 @@
 .sheet-identity p { margin:5px 0 0; color:var(--sheet-muted); font-size:13px; }
 .sheet-price { text-align:right; font:26px var(--font-number); }
 .sheet-price small { display:block; font:12px var(--font-number); color:var(--sheet-muted); margin-top:4px; }
-.sheet-valuation { display:grid; grid-template-columns:repeat(5,minmax(100px,1fr)); border-bottom:1px solid var(--sheet-ink); }
+/* columns follow the width the sheet actually has, not the window's: it sits beside the app sidebar */
+.sheet-valuation { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(130px,100%),1fr)); border-bottom:1px solid var(--sheet-ink); }
 .sheet-valuation > div { padding:12px 14px; border-right:1px solid var(--sheet-rule); }
 .sheet-valuation > div:last-child { border-right:0; }
 .sheet-valuation span,.sheet-valuation small { display:block; color:var(--sheet-muted); font-size:12px; }
@@ -39,14 +40,15 @@
 .sheet-financials .sheet-group th { position:static; background:#f0f2f4; text-align:left; font:600 12px var(--font-body); letter-spacing:.6px; text-transform:uppercase; color:var(--sheet-blue); padding-top:9px; border-top:1px solid var(--sheet-rule); }
 .sheet-financials tbody tr:not(.sheet-group):hover td,.sheet-financials tbody tr:not(.sheet-group):hover th { background:#f4f8fb; }
 .sheet-financials td[data-negative=true] { color:#9e3e32; }
-.sheet-bottom { display:grid; grid-template-columns:1fr 1fr 1.15fr; gap:22px; margin-top:22px; }
+.sheet-bottom { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(270px,100%),1fr)); gap:22px; margin-top:22px; }
+.sheet-top > *, .sheet-bottom > *, .sheet-quarterly > * { min-width:0; }
 .sheet-small-table { width:100%; border-collapse:collapse; font:13px var(--font-number); }
 .sheet-small-table th { color:var(--sheet-muted); font-weight:500; }
 .sheet-small-table th,.sheet-small-table td { text-align:right; border-bottom:1px solid #e1e6e9; padding:7px 5px; white-space:nowrap; }
 .sheet-small-table th:first-child,.sheet-small-table td:first-child { text-align:left; font-family:var(--font-body); }
 .sheet-observation { border-left:2px solid var(--sheet-blue); padding:0 0 0 12px; margin:12px 0; }
 .sheet-observation p { font-size:14px; margin:4px 0; }
-.sheet-quarterly { display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:22px; }
+.sheet-quarterly { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr)); gap:22px; margin-top:22px; }
 .sheet-source { border-top:2px solid var(--sheet-ink); margin-top:22px; padding-top:12px; }
 .sheet-source a { color:var(--sheet-blue); }
 .sheet-warning { padding:10px 14px; background:#fff5db; border-left:3px solid #a37a20; font-size:13px; }
@@ -54,6 +56,6 @@
 .stock-detail-shell .stock-detail-nav { display:flex; flex-wrap:wrap; gap:4px; margin:12px 0 16px; border-bottom:1px solid var(--border-subtle); }
 .stock-detail-nav button { border:0; border-bottom:2px solid transparent; background:none; color:var(--text-secondary); padding:10px 12px; font:14px var(--font-body); cursor:pointer; }
 .stock-detail-nav button[aria-pressed=true] { border-bottom-color:var(--chart-blue); color:var(--text-primary); }
-@media(max-width:1000px) { .sheet-top { grid-template-columns:1fr; }.sheet-bottom { grid-template-columns:1fr 1fr; }.sheet-bottom > :last-child { grid-column:1/-1; }.sheet-valuation { grid-template-columns:repeat(3,1fr); }.sheet-quarterly { grid-template-columns:1fr; } }
-@media(max-width:600px) { .stock-sheet { padding:14px; }.sheet-valuation { grid-template-columns:repeat(2,1fr); }.sheet-bottom { grid-template-columns:1fr; }.sheet-financials th:first-child,.sheet-financials td:first-child { min-width:175px; max-width:175px; white-space:normal; }.sheet-price { text-align:left; } }
+@media(max-width:1000px) { .sheet-top { grid-template-columns:1fr; } }
+@media(max-width:600px) { .stock-sheet { padding:14px; }.sheet-financials th:first-child,.sheet-financials td:first-child { min-width:175px; max-width:175px; white-space:normal; }.sheet-price { text-align:left; } }
 @media print { .stock-sheet { border:0; padding:0; color:#000; zoom:.72; }.sheet-actions,.sheet-link,.sheet-source details { display:none; }.sheet-scroll { overflow:visible; }.sheet-financials th,.sheet-financials td { min-width:0; padding:5px; font-size:11px; }.sheet-financials th:first-child,.sheet-financials td:first-child { position:static; min-width:160px; }.sheet-top { grid-template-columns:1.7fr 1fr; }.sheet-bottom { grid-template-columns:1fr 1fr 1.15fr; }.sheet-quarterly { grid-template-columns:1fr 1fr; }.stock-sheet section { break-inside:avoid; } }

@@ -1,10 +1,12 @@
 import {fetchFMP} from './api.js';
 import {uniquePeriods,numeric} from './stockResearch.js';
 
-export async function fetchStockDetail(symbol,key) {
+// lite: skip the analyst endpoints (estimates, targets, ratings) — the research
+// sheet does not use them, and the flip-book loads a sheet per page turn.
+export async function fetchStockDetail(symbol,key,{lite=false}={}) {
   if(!/^[A-Z][A-Z0-9.\-]{0,14}$/.test(symbol||''))throw Error('Invalid stock symbol');
   const s=encodeURIComponent(symbol);
-  const requests=[
+  const all=[
     ['inc','Annual income statements',`/income-statement?symbol=${s}&period=annual&limit=20`,'income-statement'],
     ['bs','Annual balance sheets',`/balance-sheet-statement?symbol=${s}&period=annual&limit=20`,'balance-sheet-statement'],
     ['cf','Annual cash-flow statements',`/cash-flow-statement?symbol=${s}&period=annual&limit=20`,'cashflow-statement'],
@@ -20,6 +22,7 @@ export async function fetchStockDetail(symbol,key) {
     ['qbs','Quarterly balance sheets',`/balance-sheet-statement?symbol=${s}&period=quarter&limit=8`,'balance-sheet-statement'],
     ['qcf','Quarterly cash-flow statements',`/cash-flow-statement?symbol=${s}&period=quarter&limit=8`,'cashflow-statement'],
   ];
+  const requests=lite?all.filter(([id])=>!['est','pt','grades'].includes(id)):all;
   const fetched=await Promise.allSettled(requests.map(async([id,,url])=>{
     const d=await fetchFMP(url,key);
     if(Array.isArray(d))return d;
@@ -33,6 +36,6 @@ export async function fetchStockDetail(symbol,key) {
     years:uniquePeriods(raw.inc).map(i=>String(i.fiscalYear)),
     inc:uniquePeriods(raw.inc),bs:uniquePeriods(raw.bs),cf:uniquePeriods(raw.cf),rat:uniquePeriods(raw.rat),km:uniquePeriods(raw.km),
     qinc:uniquePeriods(raw.qinc),qbs:uniquePeriods(raw.qbs),qcf:uniquePeriods(raw.qcf),
-    est:raw.est.sort((a,b)=>(a.date||'').localeCompare(b.date||'')),pt:raw.pt[0]??null,grades:raw.grades[0]??null,retrievedAt:new Date().toISOString(),
+    est:(raw.est||[]).sort((a,b)=>(a.date||'').localeCompare(b.date||'')),pt:raw.pt?.[0]??null,grades:raw.grades?.[0]??null,retrievedAt:new Date().toISOString(),
     sources:requests.map(([id,label,endpoint,doc],i)=>({id,label,endpoint,doc,rows:raw[id].length,status:fetched[i].status==='fulfilled'?(raw[id].length?'Available':'No rows returned'):'Unavailable'}))};
 }
