@@ -56,7 +56,7 @@ export default function LastMile() {
   };
 
   return (
-    <Panel title="Argentina's last mile — against every triple-digit disinflation since 1980" right="annual CPI inflation, log scale · years since the last triple-digit year">
+    <Panel title="Argentina's last mile — against every triple-digit disinflation since 1980" right={`annual CPI inflation, log scale · years since the last triple-digit year${d.imfSource?.kind === "seed" ? ` · IMF snapshot of ${d.imfSource.asOf.slice(0, 10)}` : ""}`}>
       <ResponsiveContainer width="100%" height={chartH(phone, 250)}>
         <ComposedChart data={chart} margin={{ top: 6, right: 28, left: phone ? -18 : -6, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />

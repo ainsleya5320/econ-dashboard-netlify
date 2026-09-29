@@ -27,7 +27,9 @@
 // Sources: FRED (BIS REER, BLS import prices, H.10 rates, Census imports,
 // CPI), Treasury FiscalData MTS table 4 (customs duties, gross and refunds),
 // IMF DataMapper (current accounts, GDP, inflation — keyless). Cached 12h in
-// memory and on disk (trade-flows.json).
+// memory and on disk (trade-flows.json). imf.org refuses Netlify's build
+// machines, so DataMapper falls back to data/seeds/imf-datamapper.json
+// (refreshed by scripts/refresh-seeds.mjs after each WEO release).
 // ============================================================================
 import fs from 'node:fs'
 import path from 'node:path'
@@ -35,6 +37,7 @@ import path from 'node:path'
 const H = 3600e3, TTL = 12 * H
 const FD = 'https://api.fiscaldata.treasury.gov/services/api/fiscal_service'
 const DM = 'https://www.imf.org/external/datamapper/api/v1'
+export const IMF_INDICATORS = ['BCA_NGDPD', 'NGDPD', 'PCPIPCH']
 const fin = v => v != null && Number.isFinite(v)
 const r1 = v => (fin(v) ? +v.toFixed(1) : null), r2 = v => (fin(v) ? +v.toFixed(2) : null)
 const mean = xs => { const v = xs.filter(fin); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null }
@@ -120,10 +123,27 @@ export function createTradeFlows({ fetchFredSeries, UA, dir }) {
   const load = () => { try { return JSON.parse(fs.readFileSync(FILE, 'utf8')) } catch { return null } }
   const save = o => { try { fs.writeFileSync(FILE, JSON.stringify(o)) } catch (e) { console.error('trade-flows save:', e.message) } }
   const F = async (id, limit) => { try { return await fetchFredSeries(id, limit) } catch { return [] } }
-  const dm = async ind => {
-    const r = await fetch(`${DM}/${ind}`, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(60_000) })
-    if (!r.ok) throw new Error(`DataMapper ${ind} HTTP ${r.status}`)
-    return (await r.json()).values?.[ind] || {}
+  const dmLive = async sub => {
+    const r = await fetch(`${DM}/${sub}`, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(60_000) })
+    if (!r.ok) throw new Error(`DataMapper ${sub} HTTP ${r.status}`)
+    return r.json()
+  }
+  // live first; the committed seed when imf.org refuses (all or nothing, so
+  // one build never mixes two WEO vintages)
+  async function imf() {
+    try {
+      const [ca, gdp, cpi, countries] = await Promise.all([
+        ...IMF_INDICATORS.map(ind => dmLive(ind).then(j => j.values?.[ind] || {})),
+        dmLive('countries').then(j => j.countries || {}),
+      ])
+      return { ca, gdp, cpi, countries, source: { kind: 'live', asOf: new Date().toISOString() } }
+    } catch (e) {
+      let seed
+      try { seed = JSON.parse(fs.readFileSync(path.join(dir, 'data', 'seeds', 'imf-datamapper.json'), 'utf8')) } catch { throw e }
+      console.warn(`trade-flows: ${e.message} — using the IMF seed from ${seed.fetchedAt}`)
+      const [ca, gdp, cpi] = IMF_INDICATORS.map(ind => seed.values[ind] || {})
+      return { ca, gdp, cpi, countries: seed.countries, source: { kind: 'seed', asOf: seed.fetchedAt, error: e.message } }
+    }
   }
 
   async function build() {
@@ -132,10 +152,7 @@ export function createTradeFlows({ fetchFredSeries, UA, dir }) {
     for (const e of Object.values(invoicing.economies)) e.name = cleanName(e.name)
 
     // ── IMF DataMapper ──
-    const [ca, gdp, cpi, countries] = await Promise.all([
-      dm('BCA_NGDPD'), dm('NGDPD'), dm('PCPIPCH'),
-      fetch(`${DM}/countries`, { headers: { 'User-Agent': UA }, signal: AbortSignal.timeout(60_000) }).then(r => r.json()).then(j => j.countries || {}),
-    ])
+    const { ca, gdp, cpi, countries, source: imfSource } = await imf()
     const isCountry = iso => !!countries[iso]
     const nameOf = iso => cleanName(countries[iso]?.label || iso)
 
@@ -275,7 +292,7 @@ export function createTradeFlows({ fetchFredSeries, UA, dir }) {
     }
 
     return {
-      built: new Date().toISOString(), tookMs: Date.now() - t0, tariffError, lastActual: LAST_ACTUAL,
+      built: new Date().toISOString(), tookMs: Date.now() - t0, tariffError, lastActual: LAST_ACTUAL, imfSource,
       passThrough: { origins, tariff },
       invoicing,
       reerCa, imbalances, largest, largestYear: topYear, lastMile, lastMileStats,

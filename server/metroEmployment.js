@@ -64,7 +64,10 @@ export function createMetroEmployment({dir,blsKey=''}) {
   const cacheDir=path.join(dir,'.investment-lab');
   const read=name=>{try{return JSON.parse(fs.readFileSync(path.join(cacheDir,name),'utf8'));}catch{return null;}};
   const write=(name,data)=>{fs.mkdirSync(cacheDir,{recursive:true});const file=path.join(cacheDir,name);fs.writeFileSync(file+'.tmp',JSON.stringify(data));fs.renameSync(file+'.tmp',file);};
-  const get=async(url,options={})=>{const r=await fetch(url,{...options,signal:AbortSignal.timeout(25000)});if(!r.ok)throw new Error(`BLS returned HTTP ${r.status}`);return r;};
+  const get=async(url,options={})=>{const r=await fetch(url,{...options,signal:AbortSignal.timeout(25000)});if(!r.ok)throw new Error(`${url.startsWith(API)?'BLS API':'BLS file server'} returned HTTP ${r.status}`);return r;};
+  // download.bls.gov refuses Netlify's build machines; the series ids per metro
+  // rarely change, so a committed copy (scripts/refresh-seeds.mjs) stands in
+  const seed=()=>{try{const d=JSON.parse(fs.readFileSync(path.join(dir,'data','seeds','bls-employment-catalog.json'),'utf8'));return d?.version===1?d:null;}catch{return null;}};
   let metadataPending;
   async function metadata() {
     const old=read('employment-catalog.json');
@@ -76,7 +79,7 @@ export function createMetroEmployment({dir,blsKey=''}) {
         const names=Object.fromEntries(tsv(areas).map(a=>[a.area_code,a.area_name]));
         const catalogs=Object.fromEntries(METROS.map(m=>[m.code,{...selectEmploymentSeries(series,m.code),areaName:names[m.code]??m.name}]));
         const data={version:1,catalogs,fetchedAt:new Date().toISOString()};write('employment-catalog.json',data);return data;
-      }catch(e){if(old?.version===1)return old;throw e;}finally{metadataPending=null;}
+      }catch(e){if(old?.version===1)return old;const s=seed();if(s){console.warn(`metro employment: ${e.message}, using the catalog seed from ${s.fetchedAt}`);return s;}throw e;}finally{metadataPending=null;}
     })();return metadataPending;
   }
   const pending=new Map();

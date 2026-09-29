@@ -37,7 +37,7 @@ export default function GlobalImbalances() {
   const chinaPeak = actual.reduce((m, r) => (!m || r.china > m.china ? r : m), null);
 
   return (
-    <Panel title="Global imbalances — the world's surpluses and deficits" right={`% of world GDP · IMF actuals to ${now?.y}, projections to ${last?.y}`} style={{ marginTop: 12 }}>
+    <Panel title="Global imbalances — the world's surpluses and deficits" right={`% of world GDP · IMF actuals to ${now?.y}, projections to ${last?.y}${d.imfSource?.kind === "seed" ? ` · IMF snapshot of ${d.imfSource.asOf.slice(0, 10)}` : ""}`} style={{ marginTop: 12 }}>
       <ResponsiveContainer width="100%" height={chartH(phone, 260)}>
         <ComposedChart data={rows} stackOffset="sign" margin={{ top: 8, right: 8, left: phone ? -22 : -12, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
