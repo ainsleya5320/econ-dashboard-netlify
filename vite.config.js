@@ -25,6 +25,7 @@ import { createHouseholdWealth } from './server/householdWealth.js'
 import { createTokenSpot } from './server/tokenSpot.js'
 import { createTightening } from './server/tightening.js'
 import { createTradeFlows } from './server/tradeFlows.js'
+import { createMarketMap } from './server/marketMap.js'
 import { createCapexReturns } from './server/capexReturns.js'
 import { createMunicipalities } from './server/municipalities.js'
 import { STATE_FIPS } from './src/lib/constants.js'
@@ -3982,6 +3983,10 @@ export default defineConfig({
         // imbalances, the disinflation last mile. International → Forex and Pulse.
         const tradeFlows = createTradeFlows({ fetchFredSeries, UA, dir: __dirname })
         reRoute('/api/trade-flows', () => tradeFlows.get())
+        // Market map (server/marketMap.js): Real Estate → Market Map — every
+        // state, metro and county, a scorecard per area and a correction-risk
+        // score. Monthly Zillow + Realtor.com joined to the annual Census seed.
+        createMarketMap({ dir: __dirname, fetchFredSeries, UA }).register(server)
 
         reRoute('/api/us-pulse', () => usPulse.get())
         reRoute('/api/intl-pulse', () => intlPulse.get())
@@ -4500,10 +4505,13 @@ export default defineConfig({
     // Honor a harness-assigned port (autoPort) so multiple sessions can run
     // side-by-side; fall back to the usual 5180.
     port: Number(process.env.PORT) || 5180,
-    host: true,
+    // All interfaces by default; an always-on server sets HOST=127.0.0.1 so only
+    // `tailscale serve` on the same machine can reach it.
+    host: process.env.HOST || true,
     // OneDrive-synced folder: native fs events are unreliable (edits can be
-    // invisible to the dev server until restart). Poll instead.
-    watch: { usePolling: true, interval: 1200 },
+    // invisible to the dev server until restart). Poll instead. A server that
+    // never edits its files sets WATCH_POLL=0 to stop polling around the clock.
+    watch: { usePolling: process.env.WATCH_POLL !== '0', interval: 1200 },
     proxy: {
       // CBOE moved the delayed-quotes CDN to cdn-api.cboe.com in Sept 2026; the
       // old host now answers with a 307, which the proxy hands to the browser,

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, ReferenceLine } from "recharts";
 import { fonts, cardBg, cardBorder } from "../lib/styles.js";
 import { SH, InfoBox } from "../components/shared.jsx";
@@ -7,7 +7,7 @@ import MetroComparison from "./realEstate/MetroComparison.jsx";
 import RefinancingView from "./realEstate/RefinancingView.jsx";
 import { DEFAULT_PROPERTY } from "../lib/propertyAnalysis.js";
 import "./realEstate/PropertyResearch.css";
-import StateChoropleth from "../components/StateChoropleth.jsx";
+import MarketMap from "./realEstate/MarketMap.jsx";
 import HousingSubTab, { HousingHealthPanel } from "./HousingSubTab.jsx";
 
 // ============================================================================
@@ -54,14 +54,25 @@ const note = { fontSize: 9.5, color: DIM, fontFamily: fonts.mono, lineHeight: 1.
 const tip = { background: "#0f172a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 11 };
 const pAndI = (P, rate) => { const r = rate / 1200; return P * r / (1 - Math.pow(1 + r, -360)); };
 
-// Map metrics, grouped for the button rail (order = display order)
-const MAP_CATS = {
-  reListPrice: "Prices", rfSalePrice: "Prices", rfSaleYoY: "Prices", reHpiYoY: "Prices", reListYoY: "Prices", zillowHomeValue: "Prices",
-  rePriceToIncome: "Value", rePriceToRent: "Value", reGrossYield: "Value", rePriceSqft: "Value", reBuildCost: "Value", rePriceVsBuild: "Value", reLandShare: "Value",
-  rfSaleToList: "Tape", rfAboveList: "Tape", rfPriceDrops: "Tape", rfMonths: "Tape", rfDom: "Tape", reDom: "Tape", reInvYoY: "Tape", zillowInventory: "Tape",
-  reRentVac: "Vacancy", reOwnVac: "Vacancy",
+// The Market Map replaced the old State Map (Oct 2026). These are the state
+// metrics it keeps because nothing finer exists for free: Redfin's sold-home
+// tape (its county file is ~100 MB), FHFA's repeat-sales index and the
+// build-cost comparison. The rest of the old map (Zillow value, Realtor.com
+// listings, price-to-rent and -income, vacancy) now comes from the Market
+// Map's own pipeline at every level, so each number still has one home.
+const STATE_ONLY_DESC = {
+  rfSalePrice: "Redfin median price of homes that sold.",
+  rfSaleYoY: "Redfin median sale price, year on year.",
+  rfSaleToList: "Sale price as a share of the last list price (Redfin).",
+  rfAboveList: "Share of homes that sold above list (Redfin).",
+  rfMonths: "Months to sell the current inventory at the recent sales pace (Redfin).",
+  rfDom: "Median days on market for homes that sold (Redfin) — Realtor.com's days on market counts listings still for sale.",
+  reHpiYoY: "FHFA all-transactions repeat-sales index, year on year (quarterly).",
+  reBuildCost: `Estimated hard cost to build a square foot: the national ${BUILD_COST_PER_SQFT.value} NAHB figure scaled by each state's construction hourly earnings (labor share 40%).`,
+  rePriceVsBuild: "Realtor.com listing $/sq ft against that build cost.",
+  reLandShare: "1 − build cost ÷ listing $/sq ft: land, soft costs, financing and developer profit together — not an observed land share.",
 };
-const RE_MAP_METRICS = Object.keys(MAP_CATS).map(k => { const m = CHOROPLETH_METRICS.find(x => x.key === k); return m ? { ...m, cat: MAP_CATS[k] } : null; }).filter(Boolean);
+const STATE_EXTRAS = Object.keys(STATE_ONLY_DESC).map(k => { const m = CHOROPLETH_METRICS.find(x => x.key === k); return m ? { ...m, desc: STATE_ONLY_DESC[k] } : null; }).filter(Boolean);
 
 // Hand-curated commercial survey numbers (private-market cap rates and
 // occupancy by property type). Empty until you log a broker release —
@@ -655,7 +666,7 @@ function MetroView({ rents }) {
 }
 
 // ── State map: server-sourced metric cache ──────────────────────────────────
-function buildServerCache({ redfin, rents, build, choroplethCache }) {
+function buildServerCache({ redfin, build, choroplethCache }) {
   const out = {};
   const put = (key, states, national) => { if (states && Object.keys(states).length) out[key] = { ...states, ...(national ? { _national: national } : {}) }; };
   if (redfin?.states) {
@@ -671,22 +682,10 @@ function buildServerCache({ redfin, rents, build, choroplethCache }) {
     put("rfMonths", S("months"), N("months"));
     put("rfDom", S("dom"), N("dom"));
   }
-  if (rents?.states) {
-    const p2r = {}, yld = {};
-    for (const [st, r] of Object.entries(rents.states)) { p2r[st] = { v: r.p2r, d: rents.asOf }; yld[st] = { v: r.yield, d: rents.asOf }; }
-    put("rePriceToRent", p2r, fin(rents.national?.p2r) ? { v: rents.national.p2r, d: rents.asOf } : null);
-    put("reGrossYield", yld, fin(rents.national?.yield) ? { v: rents.national.yield, d: rents.asOf } : null);
-  }
   if (build?.states) {
     const o = {};
     for (const [st, b] of Object.entries(build.states)) o[st] = { v: b.cost, d: b.d };
     put("reBuildCost", o, { v: build.base.value, d: build.us.d });
-  }
-  const zh = choroplethCache?.zillowHomeValue, inc = choroplethCache?.medianIncome;
-  if (zh && inc) {
-    const o = {};
-    for (const [st, v] of Object.entries(zh)) { if (st === "_national") continue; const i = inc[st]; if (v?.v && i?.v) o[st] = { v: v.v / i.v, d: v.d }; }
-    put("rePriceToIncome", o, zh._national?.v && inc._national?.v ? { v: zh._national.v / inc._national.v, d: zh._national.d } : null);
   }
   const ppsf = choroplethCache?.rePriceSqft;
   if (ppsf && build?.states) {
@@ -698,7 +697,7 @@ function buildServerCache({ redfin, rents, build, choroplethCache }) {
 }
 
 // ── Tab ─────────────────────────────────────────────────────────────────────
-export default function RealEstateTab({ hd, md, zillowData, choroplethCache, choroplethMetric, setChoroplethMetric, fetchChoroplethData, choroplethLoading, choroplethProgress }) {
+export default function RealEstateTab({ hd, md, zillowData, choroplethCache, fetchChoroplethData }) {
   const [view, setView] = useState(() => {
     const query = new URLSearchParams(window.location.search);
     const section = query.get('section');
@@ -717,22 +716,20 @@ export default function RealEstateTab({ hd, md, zillowData, choroplethCache, cho
   const credit = useJson("/api/cre-credit");
   const build = useJson("/api/re-buildcost");
 
-  const serverCache = useMemo(() => buildServerCache({ redfin, rents, build, choroplethCache }), [redfin, rents, build, choroplethCache]);
+  const serverCache = useMemo(() => buildServerCache({ redfin, build, choroplethCache }), [redfin, build, choroplethCache]);
   const mapCache = useMemo(() => ({ ...choroplethCache, ...serverCache }), [choroplethCache, serverCache]);
 
-  // the map: keep the shared metric a real-estate one while this tab owns it; FRED-sourced
-  // metrics load state by state, server-sourced ones only need their FRED prerequisites
-  useEffect(() => {
-    if (view !== "map") return;
-    const key = RE_MAP_METRICS.some(m => m.key === choroplethMetric) ? choroplethMetric : RE_MAP_METRICS[0]?.key;
-    if (key && key !== choroplethMetric) setChoroplethMetric(key);
-    const m = RE_MAP_METRICS.find(x => x.key === key);
+  // state-only metrics load on demand: FRED-sourced ones state by state,
+  // server-derived ones only need their FRED prerequisites
+  const onNeedStateMetric = useCallback(key => {
+    const m = STATE_EXTRAS.find(x => x.key === key);
     if (!m) return;
     if (m.source === "server") { for (const dep of m.needs || []) fetchChoroplethData(dep); }
-    else if (!m.source) fetchChoroplethData(key);
-  }, [view, choroplethMetric, setChoroplethMetric, fetchChoroplethData]);
+    else fetchChoroplethData(key);
+  }, [fetchChoroplethData]);
+  const mapExtras = useMemo(() => ({ metrics: STATE_EXTRAS, cache: mapCache, onNeed: onNeedStateMetric }), [mapCache, onNeedStateMetric]);
 
-  const VIEWS = [["fair", "Valuation Context"], ["residential", "Residential"], ["commercial", "Commercial"], ["metro", "Metro Markets"], ["refinance", "Refinancing"], ["map", "State Map"]];
+  const VIEWS = [["fair", "Valuation Context"], ["residential", "Residential"], ["commercial", "Commercial"], ["metro", "Metro Markets"], ["refinance", "Refinancing"], ["map", "Market Map"]];
   return (<>
     <header className="market-masthead"><div><div className="market-edition">Ledger / Property research</div><h1>Real estate</h1><p>Income, supply and the cost of capital.</p></div><button onClick={() => setView('metro')}>Explore local markets ↗</button></header>
     <div style={{ display: "flex", flexWrap: "wrap", gap: 4, background: "var(--bg-subtle)", borderRadius: 10, padding: 3, marginBottom: 18 }}>
@@ -756,9 +753,6 @@ export default function RealEstateTab({ hd, md, zillowData, choroplethCache, cho
       {metroView === "detail" && <MetroView rents={rents} />}
     </>}
     {view === "refinance" && <div className="property-research"><RefinancingView p={property} setP={setProperty} /></div>}
-    {view === "map" && (<>
-      <StateChoropleth title="State-Level Real Estate" metrics={RE_MAP_METRICS} metric={choroplethMetric} setMetric={setChoroplethMetric} cache={mapCache} loading={choroplethLoading} progress={choroplethProgress}
-        note={`Prices: Realtor.com listing price and FHFA index (via FRED), Redfin median SALE price (${redfin?.asOf ? `latest ${mon(redfin.asOf)}` : "loading"}), Zillow typical value. Value: price-to-income (Zillow value ÷ Census median household income), price-to-rent and gross yield (Zillow metro ratios rolled up to states with Zipf weights, since Zillow publishes rents by metro), estimated build cost per sq ft (the national $${BUILD_COST_PER_SQFT.value} NAHB hard cost scaled by each state's construction hourly earnings, labor share 40%), listing $/sq ft vs that cost, and the price-minus-hard-cost residual (1 − build cost ÷ listing $/sq ft). It includes land, soft costs, financing, developer profit and measurement differences; it is not an observed land share. Tape: Redfin sale-to-list, sold-above-list, price-drop share, months of supply and days on market, plus Realtor.com days on market and active-listing growth. Vacancy: Census HVS, annual. State-level foreclosures and private cap rates have no free feed; the national delinquency series on the Commercial tab is the honest substitute.`} />
-    </>)}
+    {view === "map" && <MarketMap extras={mapExtras} />}
   </>);
 }

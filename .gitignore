@@ -82,3 +82,5 @@ trade-flows.json
 # Special situations digest: local preview and run memory (the Actions job keeps its own in the cache)
 special-digest-preview.html
 state/
+# Market map: 24h feed cache (data/seeds/market-map-annual.json is the tracked annual half)
+market-map.json

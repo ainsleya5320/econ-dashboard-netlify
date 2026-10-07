@@ -10,6 +10,7 @@
 
 import { METROS } from '../server/realEstateFeeds.js'
 import { CITIES } from '../server/municipalities.js'
+import { STATES } from '../server/marketMapSeed.js'
 
 // Routes that take no parameters: one request, one file.
 export const PLAIN = [
@@ -42,6 +43,10 @@ export const ENUMERATED = [
   { route: 'options-context', param: 'symbol', values: OPTION_SYMBOLS },
   { route: 're-metro', param: 'code', values: METROS.map(m => m.code) },
   { route: 're-metro-employment', param: 'code', values: METROS.map(m => m.code) },
+  // Real Estate → Market Map: one file per level, and the scorecard histories
+  // one file per state (/api/market-map/history/WA)
+  { route: 'market-map', param: 'level', values: ['state', 'metro', 'county'] },
+  { route: 'market-map/history', param: 'st', values: STATES.map(s => s[0]) },
 ]
 
 // Routes that cannot be baked, and what the fork does with each instead.
