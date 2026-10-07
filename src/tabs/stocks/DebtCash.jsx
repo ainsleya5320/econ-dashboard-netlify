@@ -2,6 +2,8 @@ import React, { useMemo, useState } from "react";
 import { ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, Tooltip, Legend, CartesianGrid, ReferenceLine } from "recharts";
 import { fonts } from "../../lib/styles.js";
 import { isBankOrInsurer } from "../../lib/stockResearch.js";
+import { industryOf, returnOnCapital, INDUSTRY_AS_OF } from "../../lib/costOfCapital.js";
+import OptimalDebt from "./OptimalDebt.jsx";
 import {
   GREEN, AMBER, RED, INDIGO, SLATE, DIM, CYAN, TEAL,
   fin, card, note, tip, axis, chip, DenseHeader, Panel, Note, useIsPhone, chartH,
@@ -50,10 +52,19 @@ function ttm(data) {
   const sum = (rows, f) => rows.reduce((s, r) => s + (n(r[f]) ?? 0), 0);
   const i = Object.fromEntries(["revenue", "ebit", "ebitda", "operatingIncome", "interestExpense", "interestIncome", "netIncome", "depreciationAndAmortization", "grossProfit", "costOfRevenue"].map(f => [f, sum(qi, f)]));
   const c = Object.fromEntries(["operatingCashFlow", "capitalExpenditure", "freeCashFlow", "stockBasedCompensation", "changeInWorkingCapital", "netDebtIssuance", "interestPaid", "commonStockRepurchased", "netDividendsPaid", "acquisitionsNet", "netIncome", "depreciationAndAmortization"].map(f => [f, sum(qc, f)]));
-  // capex is an outflow; a positive quarter is FMP deriving Q4 as FY − 9M with
-  // the sign flipped (DECK fiscal Q4 2026), which cancels a year of capex
-  const badCapex = qc.some(r => n(r.capitalExpenditure) > 0);
-  if (badCapex) { c.capitalExpenditure = null; c.freeCashFlow = null; }
+  // FMP derives Q4 as FY − 9M, and when its fiscal-year figure is missing the
+  // derived quarter comes out as minus the other three (DECK fiscal Q4 2026:
+  // capex positive, stock compensation negative), cancelling a year. Any quarter
+  // with the wrong sign for its line blanks that line's trailing sum.
+  const SIGN = { capitalExpenditure: -1, stockBasedCompensation: 1, depreciationAndAmortization: 1, netDividendsPaid: -1, commonStockRepurchased: -1 };
+  const wrongSign = f => qc.some(r => { const v = n(r[f]); return v != null && v * SIGN[f] < 0; });
+  for (const f of Object.keys(SIGN)) if (wrongSign(f)) c[f] = null;
+  const badCapex = c.capitalExpenditure === null;
+  if (badCapex) c.freeCashFlow = null;
+  // a line that sums to zero over four quarters but is non-zero for the fiscal
+  // year was not broken out quarterly (DECK's stock compensation): blank, not 0
+  const fyI = (data.inc || [])[(data.inc?.length || 0) - 1] || {}, fyC = (data.cf || [])[(data.cf?.length || 0) - 1] || {};
+  for (const [o, fy] of [[i, fyI], [c, fyC]]) for (const f of Object.keys(o)) if (o[f] === 0 && nz(fy[f])) o[f] = null;
   return { y: "TTM", i, c, b: qb[qb.length - 1] || {}, r: {}, k: {}, through: qi[qi.length - 1]?.date, badCapex };
 }
 // the measures, computed the same way for every column
@@ -74,7 +85,7 @@ function measures(p) {
     current: n(r.currentRatio) ?? div(n(b.totalCurrentAssets), n(b.totalCurrentLiabilities)), quick: n(r.quickRatio), cashRatio: n(r.cashRatio),
     dscr: n(r.debtServiceCoverageRatio), borrow: n(c.netDebtIssuance), intPaid,
     ocfNi: div(ocf, ni), fcfNi: div(fcf, ni), fcfMargin: div(fcf, rev), capexRev: div(capex, rev), capexDa: div(capex, da),
-    sbcRev: div(sbc, rev), fcfAfterSbc: fin(fcf) ? fcf - (sbc || 0) : null, wc: n(c.changeInWorkingCapital), quality: n(k.incomeQuality) ?? div(ocf, ni),
+    sbcRev: div(sbc, rev), fcfAfterSbc: fin(fcf) && fin(sbc) ? fcf - sbc : null, wc: n(c.changeInWorkingCapital), quality: n(k.incomeQuality) ?? div(ocf, ni),
     dso: n(k.daysOfSalesOutstanding), dio: n(k.daysOfInventoryOutstanding), dpo: n(k.daysOfPayablesOutstanding), ccc: n(k.cashConversionCycle),
     assetTurn: n(r.assetTurnover), fixedTurn: n(r.fixedAssetTurnover), roic: n(k.returnOnInvestedCapital), roce: n(k.returnOnCapitalEmployed),
     gm: div(n(i.grossProfit), rev), ebitMargin: div(ebit, rev), ebitdaMargin: div(ebitda, rev),
@@ -82,18 +93,23 @@ function measures(p) {
   };
 }
 
-function HistoryTable({ cols, rows }) {
+// rows: [label, get(measures), fmt, colorOf?, industry value?]; the Industry
+// column appears when any row carries a fifth element
+function HistoryTable({ cols, rows, industry }) {
+  const withInd = industry && rows.some(r => fin(r[4]));
   return (
     <div style={{ overflowX: "auto" }}>
       <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 520 }}>
         <thead><tr>
           <th style={{ textAlign: "left", padding: "4px 6px", fontSize: 8.5, color: DIM, fontFamily: fonts.mono, textTransform: "uppercase", borderBottom: "1px solid var(--border-subtle)" }}>measure</th>
           {cols.map(c => <th key={c.y} style={{ textAlign: "right", padding: "4px 6px", fontSize: 8.5, color: c.y === "TTM" ? CYAN : DIM, fontFamily: fonts.mono, borderBottom: "1px solid var(--border-subtle)" }}>{c.y}</th>)}
+          {withInd && <th title={`Damodaran's U.S. average for ${industry}`} style={{ textAlign: "right", padding: "4px 6px", fontSize: 8.5, color: DIM, fontFamily: fonts.mono, borderBottom: "1px solid var(--border-subtle)", borderLeft: "1px solid var(--border-subtle)" }}>INDUSTRY</th>}
         </tr></thead>
-        <tbody>{rows.map(([label, get, fmt, colorOf]) => (
+        <tbody>{rows.map(([label, get, fmt, colorOf, ind]) => (
           <tr key={label} style={{ borderBottom: "1px solid var(--border-subtle)" }}>
             <td style={{ padding: "3px 6px", fontSize: 10.5, fontFamily: fonts.mono, color: "var(--text-secondary)", whiteSpace: "nowrap" }}>{label}</td>
             {cols.map(c => { const v = get(c.m); return <td key={c.y} style={{ padding: "3px 6px", fontSize: 10.5, fontFamily: fonts.mono, textAlign: "right", whiteSpace: "nowrap", color: colorOf ? colorOf(v) : "var(--text-primary)" }}>{fmt(v)}</td>; })}
+            {withInd && <td style={{ padding: "3px 6px", fontSize: 10.5, fontFamily: fonts.mono, textAlign: "right", whiteSpace: "nowrap", color: "var(--text-muted)", borderLeft: "1px solid var(--border-subtle)" }}>{fin(ind) ? fmt(ind) : ""}</td>}
           </tr>
         ))}</tbody>
       </table>
@@ -101,12 +117,21 @@ function HistoryTable({ cols, rows }) {
   );
 }
 
-export default function DebtCash({ data }) {
+export default function DebtCash({ data, coc }) {
   const phone = useIsPhone();
   const [span, setSpan] = useState(10);
   const bank = isBankOrInsurer(data);
-  const rows = useMemo(() => annual(data).map(p => ({ y: p.y, m: measures(p) })), [data]);
-  const t = useMemo(() => { const p = ttm(data); return p ? { y: "TTM", m: measures(p), through: p.through, badCapex: p.badCapex } : null; }, [data]);
+  // return on capital in Damodaran's definition (EBIT after tax ÷ start-of-year
+  // debt + equity − cash), so the row and its industry figure match
+  const roc = useMemo(() => new Map(returnOnCapital(data).map(r => [r.y, r.roic])), [data]);
+  const rows = useMemo(() => annual(data).map(p => ({ y: p.y, m: { ...measures(p), roicD: roc.get(p.y) ?? null } })), [data, roc]);
+  const t = useMemo(() => { const p = ttm(data); return p ? { y: "TTM", m: { ...measures(p), roicD: roc.get("TTM") ?? null }, through: p.through, badCapex: p.badCapex } : null; }, [data, roc]);
+  // his industry averages; days converted from his ratios to sales (inventory
+  // and payables over cost of goods, as FMP's days are)
+  const ind = coc?.ind ?? industryOf(data), I = ind.row || {};
+  const cogsS = fin(I.gross) ? 1 - I.gross : null;
+  const iDays = { dso: fin(I.arS) ? I.arS * 365 : null, dio: fin(I.invS) && cogsS ? (I.invS / cogsS) * 365 : null, dpo: fin(I.apS) && cogsS ? (I.apS / cogsS) * 365 : null };
+  iDays.ccc = [iDays.dso, iDays.dio, iDays.dpo].every(fin) ? iDays.dso + iDays.dio - iDays.dpo : null;
   const quarters = useMemo(() => {
     const qb = (data.qbs || []).filter(r => /^Q/.test(r.period || "")), qc = new Map((data.qcf || []).map(r => [r.date, r]));
     return qb.slice(-8).map(b => { const c = qc.get(b.date) || {}; const debt = n(b.totalDebt), cash = n(b.cashAndShortTermInvestments) ?? n(b.cashAndCashEquivalents); return { d: `${b.fiscalYear} ${b.period}`, debt: debt, cash, net: fin(debt) && fin(cash) ? debt - cash : null, fcf: n(c.capitalExpenditure) > 0 ? null : n(c.freeCashFlow) }; });
@@ -166,7 +191,7 @@ export default function DebtCash({ data }) {
             </tr>
           ))}
           {[
-            ["Debt / equity", x(now.debtEq, 2)], ["Debt / EBITDA", x(now.debtEbitda)], ["Debt / market value", fin(mcap) ? pct(div(now.debt, mcap)) : "—"],
+            ["Debt / equity", x(now.debtEq, 2)], ["Debt / EBITDA", x(now.debtEbitda)], ["Debt / market value", fin(mcap) ? `${pct(div(now.debt, mcap))}${fin(I.de) ? ` · industry ${pct(I.de)}` : ""}` : "—"],
             ["Current ratio", x(now.current, 2)], ["Quick ratio", x(lastFY.quick, 2)], ["Cash ratio", x(lastFY.cashRatio, 2)],
           ].map(([l, v]) => (
             <tr key={l} style={{ borderBottom: "1px solid var(--border-subtle)" }}>
@@ -195,6 +220,8 @@ export default function DebtCash({ data }) {
         </ResponsiveContainer>
       </Panel>
     </div>
+
+    {coc && <OptimalDebt coc={coc} />}
 
     <Panel title="Carrying the debt" right={`${span}-year record${t ? " plus TTM" : ""}`}>
       <HistoryTable cols={cols} rows={[
@@ -249,32 +276,34 @@ export default function DebtCash({ data }) {
     </div>
 
     <Panel title="Cash conversion and operating metrics" right={`${span}-year record${t ? " plus TTM" : ""}`}>
-      <HistoryTable cols={cols} rows={[
+      <HistoryTable cols={cols} industry={ind.name} rows={[
         ["Operating cash flow ÷ net income", m => m.ocfNi, v => pct(v), v => tone(v, 1, 0.8)],
         ["Free cash flow ÷ net income", m => m.fcfNi, v => pct(v), v => tone(v, 0.9, 0.6)],
         ["Free-cash-flow margin", m => m.fcfMargin, v => pct(v, 1)],
         ["FCF after stock compensation", m => m.fcfAfterSbc, money],
-        ["Stock compensation ÷ revenue", m => m.sbcRev, v => pct(v, 1), v => tone(v, 0.03, 0.1, false)],
+        ["Stock compensation ÷ revenue", m => m.sbcRev, v => pct(v, 1), v => tone(v, 0.03, 0.1, false), I.sbcS],
         ["Capex ÷ revenue", m => m.capexRev, v => pct(v, 1)],
-        ["Capex ÷ depreciation", m => m.capexDa, v => x(v)],
+        ["Capex ÷ depreciation", m => m.capexDa, v => x(v), undefined, I.capexDep],
         ["Working-capital change (cash)", m => m.wc, money, v => (fin(v) ? (v >= 0 ? GREEN : AMBER) : DIM)],
         ["Buybacks", m => m.buyback, money],
         ["Dividends paid", m => m.dividends, money],
-        ["Gross margin", m => m.gm, v => pct(v, 1)],
-        ["EBIT margin", m => m.ebitMargin, v => pct(v, 1)],
-        ["Days sales outstanding", m => m.dso, days],
-        ["Days inventory outstanding", m => m.dio, days],
-        ["Days payables outstanding", m => m.dpo, days],
-        ["Cash conversion cycle", m => m.ccc, days],
+        ["Gross margin", m => m.gm, v => pct(v, 1), undefined, I.gross],
+        ["EBIT margin", m => m.ebitMargin, v => pct(v, 1), undefined, I.opm],
+        ["Days sales outstanding", m => m.dso, days, undefined, iDays.dso],
+        ["Days inventory outstanding", m => m.dio, days, undefined, iDays.dio],
+        ["Days payables outstanding", m => m.dpo, days, undefined, iDays.dpo],
+        ["Cash conversion cycle", m => m.ccc, days, undefined, iDays.ccc],
         ["Asset turnover", m => m.assetTurn, v => x(v, 2)],
         ["Fixed-asset turnover", m => m.fixedTurn, v => x(v, 1)],
-        ["Return on invested capital", m => m.roic, v => pct(v, 1), v => tone(v, 0.12, 0.06)],
+        ["Return on invested capital", m => m.roicD, v => pct(v, 1), v => tone(v, 0.12, 0.06), I.roc],
         ["Return on capital employed", m => m.roce, v => pct(v, 1)],
       ]} />
       <Note>
         Cash conversion above 100% means reported profit understates cash (heavy depreciation, customer prepayments); persistently below 80% means
         profit is being tied up in receivables, inventory or capex. Free cash flow after stock compensation treats stock pay as the cash cost it
-        replaces. Working-capital days, turnover and returns are FMP key metrics, so the TTM column is blank for them.
+        replaces. Working-capital days, turnover and return on capital employed are FMP key metrics, so the TTM column is blank for them;
+        return on invested capital is Damodaran's definition (operating income after tax ÷ debt + equity − cash at the start of the year).
+        The Industry column is his U.S. average for {ind.how === "market" ? "the market (no industry match)" : ind.name} ({INDUSTRY_AS_OF}); his receivable, inventory and payable ratios are turned into days the way FMP counts them.
         {t?.badCapex && <> <span style={{ color: AMBER }}>TTM capex and free cash flow are blank: one of FMP&apos;s last four quarters reports capex with the wrong sign, so the sum would be wrong. The fiscal-year columns are unaffected.</span></>}
       </Note>
     </Panel>

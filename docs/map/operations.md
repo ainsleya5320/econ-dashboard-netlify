@@ -4,7 +4,7 @@ Back to the [master map](../../CLAUDE.md).
 
 ## Projects
 - [package.json](../../package.json): npm scripts (dev, build, preview) and dependencies (React, Recharts, Plotly, Anthropic SDK, xlsx)
-- [scripts/refresh-damodaran.mjs](../../scripts/refresh-damodaran.mjs): rebuilds src/lib/damodaran.json from Damodaran's yearly spreadsheets
+- [scripts/refresh-damodaran.mjs](../../scripts/refresh-damodaran.mjs): rebuilds src/lib/damodaran.json and src/lib/damodaranIndustries.json from Damodaran's yearly spreadsheets
 - [scripts/refresh-seeds.mjs](../../scripts/refresh-seeds.mjs): rebuilds data/seeds/ (BLS metro catalog, IMF DataMapper, the Market Map's annual Census and Realtor.com data)
 - [scripts/special-digest.mjs](../../scripts/special-digest.mjs): builds and scores the special-situations feed, emails new ideas through Resend
 - [tests/](../../tests): node:test unit tests for local market, metro, options, property and stock-research code

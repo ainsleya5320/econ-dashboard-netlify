@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { fonts, cardBg, cardBorder } from "../../lib/styles.js";
 import { fetchFMP } from "../../lib/api.js";
 import DAMODARAN from "../../lib/damodaran.json";
@@ -429,7 +429,9 @@ function PieSlider({ label, value, onChange, min, max, step, fmt }) {
   );
 }
 
-export function PIEPanel({ data }) {
+// defaultWacc: the company's cost of capital from the Valuation tab's Cost of
+// capital panel (Damodaran bottom-up); the slider still overrides it
+export function PIEPanel({ data, defaultWacc }) {
   // ── Seed every driver from the company's own history ──
   const seed = useMemo(() => {
     const inc = data.inc || [], cf = data.cf || [], bs = data.bs || [];
@@ -464,7 +466,11 @@ export function PIEPanel({ data }) {
 
   const [g, setG] = useState(null);        // base revenue growth
   const [m, setM] = useState(null);        // base operating margin
-  const [wacc, setWacc] = useState(0.085);
+  const seedW = w => (fin(w) ? Math.min(0.15, Math.max(0.05, Math.round(w / 0.0025) * 0.0025)) : 0.085);
+  const [wacc, setWaccRaw] = useState(() => seedW(defaultWacc));
+  const waccTouched = useRef(false);
+  const setWacc = v => { waccTouched.current = true; setWaccRaw(v); };
+  useEffect(() => { if (!waccTouched.current) setWaccRaw(seedW(defaultWacc)); }, [defaultWacc]);
   const [T, setT] = useState(10);
   useEffect(() => {
     if (seed && g == null) {
@@ -539,7 +545,7 @@ export function PIEPanel({ data }) {
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(170px, 100%), 1fr))", gap: 16 }}>
           <PieSlider label="Revenue growth" value={g} onChange={setG} min={-0.10} max={0.40} step={0.005} fmt={fmtPc} />
           <PieSlider label="Operating margin" value={m} onChange={setM} min={0.01} max={0.60} step={0.005} fmt={fmtPc} />
-          <PieSlider label="WACC" value={wacc} onChange={setWacc} min={0.06} max={0.12} step={0.0025} fmt={fmtPc} />
+          <PieSlider label="WACC" value={wacc} onChange={setWacc} min={0.05} max={0.15} step={0.0025} fmt={fmtPc} />
           <PieSlider label="Forecast horizon (yrs)" value={T} onChange={v => setT(Math.round(v))} min={5} max={20} step={1} fmt={v => `${v}y`} />
         </div>
       </div>

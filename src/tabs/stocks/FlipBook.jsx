@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { fonts, cardBg, cardBorder } from "../../lib/styles.js";
 import { fetchStockDetail } from "../../lib/stockDetail.js";
 import StockResearchSheet from "./StockResearchSheet.jsx";
+import { screenCostOfCapital } from "../../lib/costOfCapital.js";
 
 // ============================================================================
 // VALUE BOOK — Stocks → 📖 Value book. Flip through the white research sheets
@@ -47,12 +48,13 @@ const SORTS = [
   { id: "ev", label: "EV / EBITDA, lowest first", short: "EV/EBITDA", key: "evEbitda", dir: 1, positive: true, fmt: mult },
   { id: "div", label: "Dividend yield", short: "dividend yield", key: "divYield", dir: -1, fmt: pct },
   { id: "roic", label: "Return on capital", short: "ROIC", key: "roic", dir: -1, fmt: pct },
+  { id: "excess", label: "Return on capital − cost of capital" },
   { id: "alpha", label: "A to Z" },
 ];
 const IDEA_CAT = { spinoff: "Spin-off", merger: "Merger arb", reorg: "Post-reorg", rights: "Rights", recap: "Recap", insider: "Insider buying", "13D": "13D", spac: "SPAC", buyback: "Buyback" };
 
 const entry = (x, line) => ({ symbol: x.symbol, name: x.name, sector: x.sector, line });
-function sp500Entries(rows, sort, sector) {
+function sp500Entries(rows, sort, sector, inputs) {
   const r = rows.filter(x => x.symbol && (!sector || x.sector === sector));
   if (sort === "alpha") return [...r].sort((a, b) => a.symbol.localeCompare(b.symbol)).map(x => entry(x, [x.sector, x.industry].filter(Boolean).join(" · ")));
   if (sort === "magic") {
@@ -65,13 +67,25 @@ function sp500Entries(rows, sort, sector) {
     return pool.map(x => ({ x, s: cheap.get(x.symbol) + good.get(x.symbol) })).sort((a, b) => a.s - b.s)
       .map(({ x }) => entry(x, `EV/EBITDA ${mult(x.evEbitda)} · ROIC ${pct(x.roic)}`));
   }
+  if (sort === "excess") {
+    // Damodaran's value-creation test, approximated from the screen: the
+    // industry beta at the company's net debt and the industry's credit spread
+    // (the stock page has the full build-up). Banks, insurers and brokers are
+    // judged on equity, so they are left out.
+    // ROIC above 100% is unreadable here (negative or tiny invested capital,
+    // or a provider error: two REITs at 270–390%), so those few are left out
+    return r.map(x => ({ x, c: fin(x.roic) && Math.abs(x.roic) <= 1 ? screenCostOfCapital(x, inputs || {}) : null }))
+      .filter(({ c }) => c && Number.isFinite(c.wacc))
+      .map(({ x, c }) => ({ x, c, e: x.roic - c.wacc })).sort((a, b) => b.e - a.e)
+      .map(({ x, c, e }) => entry(x, `ROIC ${pct(x.roic)} − cost of capital ${pct(c.wacc)} = ${e >= 0 ? "+" : "−"}${Math.abs(e * 100).toFixed(1)} pts`));
+  }
   const S = SORTS.find(s => s.id === sort) || SORTS[1];
   return r.filter(x => fin(x[S.key]) && (!S.positive || x[S.key] > 0))
     .sort((a, b) => S.dir * (a[S.key] - b[S.key]))
     .map(x => entry(x, `${S.short} ${S.fmt(x[S.key])}`));
 }
 
-export default function FlipBook({ fmpKey, tickers = [], onOpen }) {
+export default function FlipBook({ fmpKey, tickers = [], onOpen, inputs }) {
   const prefs0 = useMemo(() => lsGet(LS_PREFS, {}), []);
   const [book, setBook] = useState(prefs0.book || "sp500");
   const [sort, setSort] = useState(prefs0.sort || "magic");
@@ -101,12 +115,12 @@ export default function FlipBook({ fmpKey, tickers = [], onOpen }) {
   const bySym = useMemo(() => new Map((universe || []).map(r => [r.symbol, r])), [universe]);
   const sectors = useMemo(() => [...new Set((universe || []).map(r => r.sector).filter(Boolean))].sort(), [universe]);
   const entries = useMemo(() => {
-    if (book === "sp500") return universe ? sp500Entries(universe, sort, sector) : [];
+    if (book === "sp500") return universe ? sp500Entries(universe, sort, sector, inputs) : [];
     if (book === "watch") return tickers.map(t => { const x = bySym.get(t); return { symbol: t, name: x?.name || t, sector: x?.sector, line: x ? `${x.sector || ""}${fin(x.fcfYield) ? ` · FCF yield ${pct(x.fcfYield)}` : ""}` : "watchlist" }; });
     if (book === "ideas") return (ideas || []).filter(i => i.ticker && i.score >= 45 && /^[A-Z][A-Z0-9.\-]{0,14}$/.test(i.ticker))
       .map(i => ({ symbol: i.ticker, name: i.name, line: `${IDEA_CAT[i.cat] || i.cat} · ${i.grade} ${i.score} — ${i.headline}` }));
     return keepers.map(k => ({ symbol: k.symbol, name: k.name || k.symbol, line: `kept ${k.at}` }));
-  }, [book, sort, sector, universe, ideas, keepers, tickers, bySym]);
+  }, [book, sort, sector, universe, ideas, keepers, tickers, bySym, inputs]);
 
   // come back to the page you left, per book and order — but not while the
   // list is still loading, or the empty book would overwrite the saved page
@@ -254,6 +268,7 @@ export default function FlipBook({ fmpKey, tickers = [], onOpen }) {
         <div style={{ fontSize: 9.5, color: DIM, fontFamily: fonts.mono, marginTop: 6 }} data-ready={ready}>
           next: {nextReady.map(n => <span key={n.s} style={{ color: n.ok ? GREEN : DIM, marginRight: 8 }}>{n.s} {n.ok ? "✓" : "…"}</span>)}
           {book === "sp500" && sort === "magic" && <span style={{ marginLeft: 6 }}>· magic formula ranks cheapness (EV/EBITDA) plus return on capital, financials and utilities left out</span>}
+          {book === "sp500" && sort === "excess" && <span style={{ marginLeft: 6 }}>· Damodaran's test: does the company earn more on capital than capital costs? Cost of capital approximated from the screen (industry beta at its net debt); the stock page's Valuation tab has the full build-up. Banks, insurers and brokers left out, as are the few with a return on capital over 100% (negative or tiny invested capital, or a data error).</span>}
         </div>
       )}
       {book === "keep" && !keepers.length && <div style={{ fontSize: 10.5, color: SLATE, fontFamily: fonts.mono, marginTop: 8 }}>Nothing kept yet. Press K on any page to keep it here.</div>}

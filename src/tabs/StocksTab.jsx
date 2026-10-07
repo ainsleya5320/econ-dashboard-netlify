@@ -19,6 +19,10 @@ import SpecialSituations from "./stocks/SpecialSituations.jsx";
 import FlipBook from "./stocks/FlipBook.jsx";
 import StockResearchSheet from "./stocks/StockResearchSheet.jsx";
 import TechnicalAnalysis from "./stocks/TechnicalAnalysis.jsx";
+import { CostOfCapitalPanel, ExcessReturnPanel, IndustryYardstick } from "./stocks/CostOfCapital.jsx";
+import { useDiscountInputs } from "./stocks/useDiscountInputs.js";
+import StoryValuation from "./stocks/StoryValuation.jsx";
+import { costOfCapital } from "../lib/costOfCapital.js";
 import {fetchStockDetail} from "../lib/stockDetail.js";
 
 const Plot = createPlotlyComponent(Plotly);
@@ -222,8 +226,15 @@ function SliderInput({ label, value, onChange, min, max, step, fmt }) {
   );
 }
 
-function ReverseDCF({ data }) {
-  const [discRate, setDiscRate] = useState(0.10);
+// defaultRate: the cost of equity from the Cost of capital panel. FMP's free
+// cash flow is after interest (cash to shareholders), so it is discounted at the
+// cost of equity and compared with market value, not enterprise value.
+function ReverseDCF({ data, defaultRate }) {
+  const seedRate = r => (r != null && isFinite(r) ? Math.min(0.15, Math.max(0.06, Math.round(r / 0.0025) * 0.0025)) : 0.10);
+  const [discRate, setDiscRateRaw] = useState(() => seedRate(defaultRate));
+  const touched = useRef(false);
+  const setDiscRate = v => { touched.current = true; setDiscRateRaw(v); };
+  useEffect(() => { if (!touched.current) setDiscRateRaw(seedRate(defaultRate)); }, [defaultRate]);
   const [termGrowth, setTermGrowth] = useState(0.03);
   const [projYears, setProjYears] = useState(10);
   const [showProj, setShowProj] = useState(false);
@@ -279,7 +290,7 @@ function ReverseDCF({ data }) {
 
     <SH>Assumptions</SH>
     <div style={{ background: cardBg, border: cardBorder, borderRadius: 14, padding: "20px 24px", marginBottom: 14, display: "flex", gap: 24, flexWrap: "wrap" }}>
-      <SliderInput label="Discount Rate (WACC)" value={discRate} onChange={setDiscRate} min={0.06} max={0.15} step={0.005} fmt={v => `${(v*100).toFixed(1)}%`} />
+      <SliderInput label="Discount rate (cost of equity)" value={discRate} onChange={setDiscRate} min={0.06} max={0.15} step={0.0025} fmt={v => `${(v*100).toFixed(1)}%`} />
       <SliderInput label="Terminal Growth Rate" value={termGrowth} onChange={setTermGrowth} min={0.01} max={0.05} step={0.005} fmt={v => `${(v*100).toFixed(1)}%`} />
       <SliderInput label="Projection Period" value={projYears} onChange={setProjYears} min={5} max={20} step={1} fmt={v => `${v} yrs`} />
     </div>
@@ -1023,7 +1034,10 @@ function VolSurface({ symbol, spot: initialSpot, chain: sharedChain }) {
   </>);
 }
 
-function StockDetailView({ data, onBack, fmpKey }) {
+function StockDetailView({ data, onBack, fmpKey, treasury }) {
+  // Damodaran's bottom-up cost of capital, computed once for every panel
+  const discountInputs = useDiscountInputs(treasury);
+  const coc = useMemo(() => costOfCapital(data, discountInputs), [data, discountInputs]);
   const { symbol, years, prof } = data;
   const [viewMode, setViewMode] = useState("classic");
 
@@ -1091,7 +1105,7 @@ function StockDetailView({ data, onBack, fmpKey }) {
 
     {/* ═══ DEBT & CASH — leverage, coverage, cash conversion, working capital ═══ */}
     {viewMode === "summary" && (<>
-      <DebtCash data={data} />
+      <DebtCash data={data} coc={coc} />
       {/* Damodaran synthetic credit rating from interest coverage */}
       <SyntheticRating data={data} />
       {/* Dividend safety read */}
@@ -1110,9 +1124,13 @@ function StockDetailView({ data, onBack, fmpKey }) {
     {/* ═══ VALUATION — reverse DCF + price-implied expectations ═══ */}
     {viewMode === "dcf" && (<>
       {/* Valuation vs its own 20-year history */}
+      <CostOfCapitalPanel data={data} coc={coc} inputs={discountInputs} />
+      <ExcessReturnPanel data={data} coc={coc} />
+      <IndustryYardstick data={data} coc={coc} />
       <ValuationBands data={data} fmpKey={fmpKey} />
-      <ReverseDCF data={data} />
-      <PIEPanel data={data} />
+      <ReverseDCF data={data} defaultRate={coc.ke} />
+      <StoryValuation data={data} coc={coc} />
+      <PIEPanel data={data} defaultWacc={coc.wacc ?? coc.ke} />
     </>)}
 
     {/* ═══ KEY RATIOS ═══ */}
@@ -1157,7 +1175,8 @@ function StockDetailView({ data, onBack, fmpKey }) {
   </div>);
 }
 
-function StocksTab({ fmpKey, openTicker, onTickerOpened }) {
+function StocksTab({ fmpKey, openTicker, onTickerOpened, treasury }) {
+  const discountInputs = useDiscountInputs(treasury);
   const [tickers, setTickers] = useState(() => {
     // Fast initial render from localStorage; server will override on mount
     try { const saved = localStorage.getItem("econ-dash-tickers"); return saved ? JSON.parse(saved) : DEFAULT_TICKERS; } catch { return DEFAULT_TICKERS; }
@@ -1267,7 +1286,7 @@ function StocksTab({ fmpKey, openTicker, onTickerOpened }) {
           <div style={{ fontSize: 13, color: "var(--text-secondary)" }}>Preparing financial history, recent quarters and market prices.</div>
         </div>
       ) : detailData ? (
-        <StockDetailView key={detailData.symbol} data={detailData} onBack={closeDetail} fmpKey={fmpKey} />
+        <StockDetailView key={detailData.symbol} data={detailData} onBack={closeDetail} fmpKey={fmpKey} treasury={treasury} />
       ) : (
         <div style={{ textAlign: "center", padding: 60, color: "#f87171", fontFamily: fonts.heading }}>
           <div style={{ fontSize: 16, marginBottom: 8 }}>Failed to load data for {detailSymbol}</div>
@@ -1368,7 +1387,7 @@ function StocksTab({ fmpKey, openTicker, onTickerOpened }) {
   if (stockView === "book") {
     return (<>
       {viewToggle}
-      <FlipBook fmpKey={fmpKey} tickers={tickers} onOpen={openDetail} />
+      <FlipBook fmpKey={fmpKey} tickers={tickers} onOpen={openDetail} inputs={discountInputs} />
     </>);
   }
 

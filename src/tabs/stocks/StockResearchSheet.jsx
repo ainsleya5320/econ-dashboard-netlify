@@ -1,6 +1,7 @@
 import React,{useMemo,useState} from 'react';
 import {ResponsiveContainer,LineChart,Line,XAxis,YAxis,Tooltip,CartesianGrid} from 'recharts';
 import {annualRecords,trailingRecord,quarterRecords,periodMetrics,growthRate,currentValuation,sheetWarnings,numeric,ratio,difference,isBankOrInsurer} from '../../lib/stockResearch.js';
+import {industryOf} from '../../lib/costOfCapital.js';
 import './StockResearchSheet.css';
 
 const num=(v,dp=1)=>numeric(v)===null?'—':Number(v).toLocaleString('en-US',{minimumFractionDigits:dp,maximumFractionDigits:dp});
@@ -25,6 +26,9 @@ export default function StockResearchSheet({data}) {
   const quarter=useMemo(()=>quarterRecords(data),[data]),latest=ttm||annual.at(-1),lastFY=annual.at(-1);
   const current=periodMetrics(latest),valuation=currentValuation(data,latest),prof=data.prof||{},quote=data.quote||{};
   const financial=isBankOrInsurer(data);
+  // Damodaran's U.S. industry average beside each headline figure
+  const industry=industryOf(data),ir=industry.row||{};
+  const vsIndustry=(text,value,format)=>numeric(value)===null?text:text+' · industry '+format(value);
   const shown=annual.slice(-years),columns=[...shown,...(ttm?[ttm]:[])],warnings=sheetWarnings(data,annual,ttm);
   const currency=latest?.currency||prof.currency||'Currency unavailable',quoteCurrency=prof.currency||'';
   const priceDate=numeric(quote.timestamp)!==null?new Date(Number(quote.timestamp)*1000).toISOString().slice(0,10):null;
@@ -40,10 +44,10 @@ export default function StockResearchSheet({data}) {
     <header className="sheet-masthead"><div className="sheet-identity"><div className="sheet-kicker">{data.symbol} / {prof.exchange||prof.exchangeShortName||'Listed equity'}</div><h1>{prof.companyName||data.symbol}</h1><p>{[prof.sector,prof.industry].filter(Boolean).join(' / ')}</p></div><div className="sheet-price">{num(data.price,2)} {quoteCurrency}<small>{change===null?'Change unavailable':(change>=0?'+':'')+num(change,2)+'%'} / quote {priceDate||'date unavailable'}</small></div></header>
     <div className="sheet-valuation">{[
       ['Market value',compact(valuation.cap),quoteCurrency],
-      ['Price / earnings',multiple(valuation.pe),ttm?'Trailing diluted EPS':'Latest fiscal-year EPS'],
-      financial?['Price / book',multiple(valuation.priceBook),'Market value / shareholders’ equity']:['Free cash flow yield',pct(valuation.fcfYield),ttm?'Trailing FCF / market value':'Latest FY FCF / market value'],
+      ['Price / earnings',multiple(valuation.pe),vsIndustry(ttm?'Trailing diluted EPS':'Latest fiscal-year EPS',ir.peTrail,multiple)],
+      financial?['Price / book',multiple(valuation.priceBook),vsIndustry('Market value / shareholders’ equity',ir.pbv,multiple)]:['Free cash flow yield',pct(valuation.fcfYield),ttm?'Trailing FCF / market value':'Latest FY FCF / market value'],
       ['Dividend cash yield',pct(valuation.dividendYield),ttm?'Trailing common cash dividends':'Latest FY common cash dividends'],
-      [financial?'Return on equity':'Return on invested capital',pct(periodMetrics(lastFY)[financial?'roe':'roic']),'FY '+(lastFY?.year||'—')+' / provider definition'],
+      [financial?'Return on equity':'Return on invested capital',pct(periodMetrics(lastFY)[financial?'roe':'roic']),vsIndustry('FY '+(lastFY?.year||'—')+' / provider definition',financial?ir.roe:ir.roc,pct)],
     ].map(([label,value,note])=><div key={label}><span>{label}</span><strong>{value}</strong><small>{note}</small></div>)}</div>
     <div className="sheet-top"><section><div className="sheet-heading"><h2>Price record</h2><div className="sheet-actions">{[1,3,5].map(y=><button key={y} onClick={()=>setChartYears(y)} aria-pressed={chartYears===y}>{y}Y</button>)}</div></div>
       {priceRows.length>1?<div className="sheet-chart"><ResponsiveContainer width="100%" height="100%"><LineChart data={priceRows} margin={{top:8,right:10,bottom:5,left:0}}><CartesianGrid vertical={false} stroke="#bdc7cf"/><XAxis dataKey="date" tickFormatter={d=>d.slice(0,4)} minTickGap={70} tick={{fontSize:12}} tickLine={false}/><YAxis domain={['auto','auto']} tickFormatter={v=>num(v,0)} orientation="right" tick={{fontSize:12}} tickLine={false} width={50}/><Tooltip labelFormatter={d=>d} formatter={v=>[num(v,2)+' '+quoteCurrency,'Price']} contentStyle={{background:'#fff',color:'#1c2a37',border:'1px solid #bec7ce',fontSize:13}} itemStyle={{color:'#215784'}}/><Line dataKey="price" stroke="#215784" strokeWidth={1.6} dot={false} isAnimationActive={false}/></LineChart></ResponsiveContainer></div>:<p className="sheet-note">Price history is unavailable.</p>}
