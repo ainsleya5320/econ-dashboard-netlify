@@ -162,6 +162,9 @@ function useTheme() {
 const PREFS = "marketmap:prefs";
 const readPrefs = () => { try { return JSON.parse(localStorage.getItem(PREFS) || "{}") || {}; } catch { return {}; } };
 const writePrefs = p => { try { localStorage.setItem(PREFS, JSON.stringify(p)); } catch { /* private window */ } };
+// lets another view open the map on a given level, metric and view: the map
+// reads its preferences when it mounts
+export const presetMarketMap = p => writePrefs({ ...readPrefs(), ...p });
 
 const levelCache = {}, historyCache = {};
 let geoPromise = null;

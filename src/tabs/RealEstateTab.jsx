@@ -7,7 +7,7 @@ import MetroComparison from "./realEstate/MetroComparison.jsx";
 import RefinancingView from "./realEstate/RefinancingView.jsx";
 import { DEFAULT_PROPERTY } from "../lib/propertyAnalysis.js";
 import "./realEstate/PropertyResearch.css";
-import MarketMap from "./realEstate/MarketMap.jsx";
+import MarketMap, { presetMarketMap } from "./realEstate/MarketMap.jsx";
 import HousingSubTab, { HousingHealthPanel } from "./HousingSubTab.jsx";
 
 // ============================================================================
@@ -29,9 +29,10 @@ import HousingSubTab, { HousingHealthPanel } from "./HousingSubTab.jsx";
 //                 replacement ratio, REIT enterprise EBITDA yields by property type
 //   Metro         one metro at a time (Seattle first): Realtor.com listing
 //                 flow, Case-Shiller vs the 20-city, unemployment, Zillow
-//                 value/rent — plus every metro ranked on price-to-rent
-//   State Map     prices (list and SALE), value (price-to-income, price-to-
-//                 rent, build cost, land share), market tape (Redfin), vacancy
+//                 value/rent (the cross-section of every metro is the map's)
+//   Market Map    every state, metro and county on one choropleth, with a
+//                 scorecard and a table (realEstate/MarketMap.jsx); Redfin,
+//                 FHFA and build-cost metrics stay at state level
 // Every panel wears its source and cadence; a print older than its cadence
 // allows is flagged "lagged" rather than left to look wrong.
 // What's NOT here, honestly: private-market cap rates and occupancy by
@@ -590,10 +591,9 @@ function CommercialView({ cre, reit, credit }) {
 }
 
 // ── Metro ───────────────────────────────────────────────────────────────────
-function MetroView({ rents }) {
+function MetroView({ rents, onOpenMap }) {
   const [list, setList] = useState([]);
   const [code, setCode] = useState(() => { try { return localStorage.getItem("re-metro") || "42660"; } catch { return "42660"; } });
-  const [sortP2r, setSortP2r] = useState("desc");
   useEffect(() => { fetch("/api/re-metro").then(r => r.json()).then(d => setList(d.metros || [])).catch(() => {}); }, []);
   useEffect(() => { try { localStorage.setItem("re-metro", code); } catch {} }, [code]);
   // Netlify fork: addressed as a baked file path rather than a query string, so
@@ -603,7 +603,6 @@ function MetroView({ rents }) {
   const cur = m && m.code === code ? m : null;
   const L = cur?.listing, cs = cur?.caseShiller, ur = cur?.unemployment, z = cur?.zillow;
   const natP2r = rents?.national?.p2r ?? null;
-  const ranked = useMemo(() => { const arr = (rents?.metros || []).slice(0, 60); arr.sort((a, b) => (sortP2r === "desc" ? b.p2r - a.p2r : a.p2r - b.p2r)); return arr; }, [rents, sortP2r]);
   const sel = { padding: "7px 12px", borderRadius: 8, border: "1px solid rgba(129,140,248,0.4)", background: "rgba(129,140,248,0.12)", color: "#c7d2fe", fontSize: 12, fontFamily: fonts.mono, cursor: "pointer" };
   return (<>
     <SH>Metro — One Market at a Time</SH>
@@ -632,36 +631,10 @@ function MetroView({ rents }) {
       </div>
     </>)}
 
-    {ranked.length > 0 && (
-      <div style={{ ...card, padding: "10px 12px", marginBottom: 12, overflowX: "auto" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", flexWrap: "wrap", gap: 8, marginBottom: 6 }}>
-          <div style={label}>The 60 largest metros ranked on price-to-rent · U.S. {fin(natP2r) ? `${natP2r}×` : "—"}</div>
-          <button onClick={() => setSortP2r(s => (s === "desc" ? "asc" : "desc"))} style={{ ...sel, padding: "4px 10px", fontSize: 10 }}>{sortP2r === "desc" ? "most expensive first ▾" : "cheapest first ▴"}</button>
-        </div>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 640 }}>
-          <thead><tr>{["Metro", "Home value", "YoY", "Rent / mo", "Rent YoY", "Price-to-rent", "Gross yield"].map((h, i) => <th key={h} style={{ padding: "6px 8px", fontSize: 8.5, color: DIM, fontFamily: fonts.mono, textTransform: "uppercase", letterSpacing: 0.4, textAlign: i ? "right" : "left", fontWeight: 600, borderBottom: "1px solid rgba(255,255,255,0.06)" }}>{h}</th>)}</tr></thead>
-          <tbody>
-            {ranked.map(r => {
-              const c = fin(natP2r) ? (r.p2r > natP2r * 1.25 ? RED : r.p2r > natP2r * 1.05 ? AMBER : r.p2r < natP2r * 0.85 ? CYAN : GREEN) : SLATE;
-              const isSel = list.find(x => x.code === code)?.z === r.name;
-              const tdS = { padding: "5px 8px", fontSize: 10.5, fontFamily: fonts.mono, textAlign: "right", color: "#cbd5e1", whiteSpace: "nowrap" };
-              return (
-                <tr key={r.name} style={{ borderBottom: "1px solid rgba(255,255,255,0.04)", background: isSel ? "rgba(129,140,248,0.08)" : "transparent" }}>
-                  <td style={{ ...tdS, textAlign: "left", color: isSel ? "#c7d2fe" : "#cbd5e1", fontWeight: isSel ? 700 : 400 }}>{r.name}<span style={{ color: DIM, marginLeft: 6, fontSize: 9 }}>#{r.rank}</span></td>
-                  <td style={tdS}>{usd(r.zhvi)}</td>
-                  <td style={{ ...tdS, color: r.zhviYoy < 0 ? RED : GREEN }}>{pc(r.zhviYoy)}</td>
-                  <td style={tdS}>{usd0(r.zori)}</td>
-                  <td style={{ ...tdS, color: r.zoriYoy < 0 ? RED : GREEN }}>{pc(r.zoriYoy)}</td>
-                  <td style={{ ...tdS, color: c, fontWeight: 700 }}>{r.p2r.toFixed(1)}×</td>
-                  <td style={tdS}>{pc0(r.yield)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <div style={{ ...note, marginTop: 6 }}>Zillow typical value ÷ 12 × Zillow asking rent. Coastal metros run 25–35×, the Midwest and South 12–18×; a metro far above the U.S. ratio is priced for appreciation, not income. <AsOf d={rents?.asOf} cadence="monthly" src="Zillow ZHVI / ZORI metro files" /></div>
-      </div>
-    )}
+    <div style={{ ...note, margin: "2px 0 12px" }}>
+      Every metro ranked on price-to-rent — and on fifty other measures — lives in the Market Map.{" "}
+      <button onClick={onOpenMap} style={{ background: "none", border: "none", padding: 0, color: INDIGO, cursor: "pointer", fontFamily: fonts.mono, fontSize: 9.5, textDecoration: "underline" }}>Open it on metros, sorted by price-to-rent →</button>
+    </div>
   </>);
 }
 
@@ -750,7 +723,7 @@ export default function RealEstateTab({ hd, md, zillowData, choroplethCache, fet
       <div className="property-research"><div className="lab-nav" aria-label="Metro market views">
         {[["comparison", "Market dashboard"], ["detail", "Local market detail"]].map(([id, text]) => <button key={id} aria-pressed={metroView === id} data-active={metroView === id} onClick={() => setMetroView(id)}>{text}</button>)}
       </div>{metroView === "comparison" && <MetroComparison />}</div>
-      {metroView === "detail" && <MetroView rents={rents} />}
+      {metroView === "detail" && <MetroView rents={rents} onOpenMap={() => { presetMarketMap({ level: "metro", metric: "p2r", mode: "table" }); setView("map"); }} />}
     </>}
     {view === "refinance" && <div className="property-research"><RefinancingView p={property} setP={setProperty} /></div>}
     {view === "map" && <MarketMap extras={mapExtras} />}
