@@ -26,8 +26,9 @@ Two reasons it works this way rather than as serverless functions:
    Netlify's synchronous functions cap at 10s on the free tier and 26s on Pro.
    Every one of those would time out on a cold start.
 2. **The data does not move faster than the build.** Almost every feed already
-   carries a 4-hour-to-7-day TTL. A twice-daily rebuild is comfortably ahead of
-   all of them.
+   carries a 4-hour-to-7-day TTL, so a daily rebuild keeps each within a day.
+   More often costs Netlify deploy credits for no fresher data (the arithmetic is
+   in `.github/workflows/refresh.yml`).
 
 Baking also means **no API key is ever compiled into the browser bundle**, which
 the upstream app does (`VITE_FRED_KEY` and `VITE_FMP_KEY` in `App.jsx`). That is
@@ -103,7 +104,7 @@ added upstream merge in unchanged.
 
 4. Create a build hook (**Build & deploy → Build hooks**) and add the URL as the
    `NETLIFY_BUILD_HOOK` repository secret. `.github/workflows/refresh.yml` then
-   redeploys at 06:00 and 18:00 Pacific to refresh the data.
+   redeploys once a day at 06:00 Pacific to refresh the data.
 
 ## Running locally
 
